@@ -158,7 +158,7 @@ IDLE 상태에서는 얼굴이 마우스 커서를 따라갑니다. 측면 뷰�
 
 - `system`: macOS 공개 API로 받습니다. 모두 권한이 필요 없습니다.
 - `app`: 앱 안에서 생깁니다. 포모도로 타이머의 종료와 휴식 시작, 캐릭터 클릭입니다. "알림" 반응은 우선 앱의 타이머에만 연결합니다.
-- `external`: 다른 프로그램이 앱에 보냅니다. 앱은 `pixelpet://event/<이벤트 id>` URL 스킴을 등록하고, 이 URL을 받으면 해당 이벤트를 발생시킵니다.
+- `external`: 다른 프로그램이 앱에 보냅니다. 앱은 `pixipet://event/<이벤트 id>` URL 스킴을 등록하고, 이 URL을 받으면 해당 이벤트를 발생시킵니다.
 
 ### Claude 작업 알림 연결
 
@@ -167,8 +167,8 @@ Claude Code의 훅(hook)으로 `external` 이벤트를 보냅니다. `~/.claude/
 ```json
 {
   "hooks": {
-    "Stop": [{"hooks": [{"type": "command", "command": "open -g 'pixelpet://event/claude.taskDone'"}]}],
-    "Notification": [{"hooks": [{"type": "command", "command": "open -g 'pixelpet://event/claude.needsInput'"}]}]
+    "Stop": [{"hooks": [{"type": "command", "command": "open -g 'pixipet://event/claude.taskDone'"}]}],
+    "Notification": [{"hooks": [{"type": "command", "command": "open -g 'pixipet://event/claude.needsInput'"}]}]
   }
 }
 ```

@@ -18,8 +18,8 @@
   "events": [
     {"id": "timer.finished",       "name": "타이머 종료",         "reaction": "alert",     "priority": 3, "source": "app",      "api": "앱의 타이머 (포모도로 집중 시간 종료 등)", "permission": null},
     {"id": "timer.breakStarted",   "name": "휴식 시작",           "reaction": "wake",      "priority": 2, "source": "app",      "api": "앱의 타이머 (포모도로 휴식 시작)", "permission": null},
-    {"id": "claude.taskDone",      "name": "Claude 작업 완료",    "reaction": "celebrate", "priority": 3, "source": "external", "api": "Claude Code Stop 훅 → open -g pixelpet://event/claude.taskDone", "permission": null},
-    {"id": "claude.needsInput",    "name": "Claude 입력 대기",    "reaction": "alert",     "priority": 3, "source": "external", "api": "Claude Code Notification 훅 → open -g pixelpet://event/claude.needsInput", "permission": null},
+    {"id": "claude.taskDone",      "name": "Claude 작업 완료",    "reaction": "celebrate", "priority": 3, "source": "external", "api": "Claude Code Stop 훅 → open -g pixipet://event/claude.taskDone", "permission": null},
+    {"id": "claude.needsInput",    "name": "Claude 입력 대기",    "reaction": "alert",     "priority": 3, "source": "external", "api": "Claude Code Notification 훅 → open -g pixipet://event/claude.needsInput", "permission": null},
     {"id": "pet.clicked",          "name": "캐릭터 클릭",         "reaction": "celebrate", "priority": 3, "source": "app",      "api": "캐릭터 창의 마우스 이벤트", "permission": null},
     {"id": "screen.unlocked",      "name": "화면 잠금 해제",      "reaction": "greet",     "priority": 2, "source": "system",   "api": "DistributedNotificationCenter: com.apple.screenIsUnlocked", "permission": null},
     {"id": "system.didWake",       "name": "잠자기에서 깨어남",   "reaction": "wake",      "priority": 2, "source": "system",   "api": "NSWorkspace.didWakeNotification", "permission": null},
