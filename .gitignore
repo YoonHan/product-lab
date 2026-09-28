@@ -2,3 +2,7 @@
 node_modules/
 products/*/design-system/dist/
 .playwright-mcp/
+__pycache__/
+
+# reference analysis with frames recovered from a paid asset; keep it local only
+playground/2026-09-28-pixel-animals/report.html

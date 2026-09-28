@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "reactions": {
+    "alert":     "주의를 끌어야 하는 일이 생겼을 때 (타이머 종료, Claude가 입력을 기다림)",
+    "curious":   "무언가가 가까이 왔을 때 (커서 접근)",
+    "greet":     "사용자가 돌아왔을 때 (화면 잠금 해제)",
+    "wake":      "잠에서 깨거나 활동을 다시 시작할 때",
+    "sleepy":    "오래 방치되거나 컴퓨터가 잠들려 할 때",
+    "celebrate": "좋은 일이 생겼을 때 (Claude 작업 완료, 클릭, 충전 시작)",
+    "busy":      "사용자가 작업용 앱으로 전환했을 때",
+    "wander":    "아무 일도 없을 때의 기본 행동"
+  },
+  "defaults": {
+    "idle": "wander",
+    "after": "idle",
+    "cooldownSec": 20
+  },
+  "events": [
+    {"id": "timer.finished",       "name": "타이머 종료",         "reaction": "alert",     "priority": 3, "source": "app",      "api": "앱의 타이머 (포모도로 집중 시간 종료 등)", "permission": null},
+    {"id": "timer.breakStarted",   "name": "휴식 시작",           "reaction": "wake",      "priority": 2, "source": "app",      "api": "앱의 타이머 (포모도로 휴식 시작)", "permission": null},
+    {"id": "claude.taskDone",      "name": "Claude 작업 완료",    "reaction": "celebrate", "priority": 3, "source": "external", "api": "Claude Code Stop 훅 → open -g pixelpet://event/claude.taskDone", "permission": null},
+    {"id": "claude.needsInput",    "name": "Claude 입력 대기",    "reaction": "alert",     "priority": 3, "source": "external", "api": "Claude Code Notification 훅 → open -g pixelpet://event/claude.needsInput", "permission": null},
+    {"id": "pet.clicked",          "name": "캐릭터 클릭",         "reaction": "celebrate", "priority": 3, "source": "app",      "api": "캐릭터 창의 마우스 이벤트", "permission": null},
+    {"id": "screen.unlocked",      "name": "화면 잠금 해제",      "reaction": "greet",     "priority": 2, "source": "system",   "api": "DistributedNotificationCenter: com.apple.screenIsUnlocked", "permission": null},
+    {"id": "system.didWake",       "name": "잠자기에서 깨어남",   "reaction": "wake",      "priority": 2, "source": "system",   "api": "NSWorkspace.didWakeNotification", "permission": null},
+    {"id": "system.willSleep",     "name": "잠자기 직전",         "reaction": "sleepy",    "priority": 2, "source": "system",   "api": "NSWorkspace.willSleepNotification", "permission": null},
+    {"id": "power.pluggedIn",      "name": "충전기 연결",         "reaction": "celebrate", "priority": 1, "source": "system",   "api": "IOKit IOPSNotificationCreateRunLoopSource", "permission": null},
+    {"id": "power.lowBattery",     "name": "배터리 부족",         "reaction": "sleepy",    "priority": 1, "source": "system",   "api": "IOKit IOPSCopyPowerSourcesInfo", "permission": null, "params": {"percent": 20}},
+    {"id": "user.idle",            "name": "입력 없음",           "reaction": "sleepy",    "priority": 1, "source": "system",   "api": "CGEventSource.secondsSinceLastEventType 주기 확인", "permission": null, "params": {"minutes": 5}},
+    {"id": "user.returned",        "name": "입력 재개",           "reaction": "wake",      "priority": 1, "source": "system",   "api": "CGEventSource.secondsSinceLastEventType 주기 확인", "permission": null},
+    {"id": "cursor.near",          "name": "커서 접근",           "reaction": "curious",   "priority": 1, "source": "system",   "api": "NSEvent.mouseLocation 주기 확인", "permission": null, "params": {"distancePt": 60}},
+    {"id": "app.activated",        "name": "작업 앱 전환",        "reaction": "busy",      "priority": 1, "source": "system",   "api": "NSWorkspace.didActivateApplicationNotification", "permission": null, "params": {"bundleIds": ["com.apple.dt.Xcode", "com.microsoft.VSCode"]}}
+  ]
+}

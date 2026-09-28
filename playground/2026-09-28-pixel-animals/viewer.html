@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>픽셀 동물 뷰어</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #eef2f5; --surface: #ffffff; --surface-2: #e5ebf0; --ink: #16212c; --muted: #566677;
+    --line: #d2dae1; --accent: #b8661f; --accent-soft: rgba(184, 102, 31, 0.12); --on: #425f7b; --on-ink: #f2f5f8;
+    --pixel: "Silkscreen", "IBM Plex Mono", monospace;
+    --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { color-scheme: dark; --paper: #0f151b; --surface: #161e26; --surface-2: #1d2731; --ink: #e2e8ed; --muted: #97a6b3; --line: #28343f; --accent: #e59a52; --accent-soft: rgba(229, 154, 82, 0.14); }
+  }
+  :root[data-theme="dark"] { color-scheme: dark; --paper: #0f151b; --surface: #161e26; --surface-2: #1d2731; --ink: #e2e8ed; --muted: #97a6b3; --line: #28343f; --accent: #e59a52; --accent-soft: rgba(229, 154, 82, 0.14); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.6 var(--body); padding-inline: 20px; word-break: keep-all; }
+  .app { max-width: 1280px; margin: 0 auto; padding-block: 24px 48px; display: grid; gap: 18px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+  header h1 { margin: 0; font-size: 20px; font-weight: 600; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  header select { margin-left: auto; }
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; }
+  .panel h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); }
+  .side { display: grid; gap: 14px; }
+
+  .stage-wrap { display: grid; gap: 10px; }
+  .stage { position: relative; height: 420px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); }
+  .stage canvas { position: absolute; left: 0; top: 0; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .stage .now { position: absolute; left: 12px; top: 10px; font: 11px var(--pixel); padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.45); color: #fff; letter-spacing: 0.04em; }
+  .bg-doc { background: #fff repeating-linear-gradient(to bottom, transparent 0 18px, #e3e5e8 18px 22px, transparent 22px 30px) 24px 24px / calc(100% - 48px) 100% no-repeat; }
+  .bg-light { background: #ececec; }
+  .bg-dark { background: #1e1e1e; }
+  .bg-wall { background: linear-gradient(135deg, #1d3b5a, #6a4c93 45%, #f28f3b); }
+  .bg-pastel { background: linear-gradient(135deg, #e7f0fb, #fbe6d4); }
+  .bg-stage { background: #425f7b; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .group { display: flex; gap: 4px; align-items: center; }
+  .group > span { font-size: 12px; color: var(--muted); margin-right: 4px; }
+  button, select { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button:hover { border-color: var(--muted); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button[aria-pressed="true"] { background: var(--on); color: var(--on-ink); border-color: var(--on); }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  label.check { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; cursor: pointer; }
+
+  .strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .strip button { padding: 4px; display: grid; gap: 2px; justify-items: center; flex: none; }
+  .strip canvas { image-rendering: pixelated; background: var(--surface-2); border-radius: 3px; }
+  .strip small { font: 10px var(--mono); color: var(--muted); }
+  .strip button.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+  .anims { display: grid; gap: 4px; }
+  .anims button { display: flex; justify-content: space-between; gap: 8px; text-align: left; padding: 6px 10px; }
+  .anims .n { font: 11px var(--pixel); letter-spacing: 0.04em; }
+  .anims .m { font: 11px var(--mono); color: var(--muted); }
+  .anims button[aria-pressed="true"] .m { color: inherit; opacity: 0.8; }
+
+  .events { display: grid; gap: 6px; max-height: 360px; overflow-y: auto; padding-right: 6px; }
+  .event { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; }
+  .event b { font-weight: 600; font-size: 13px; }
+  .event small { grid-column: 1; color: var(--muted); font-size: 11.5px; line-height: 1.45; }
+  .event code { font: 11px var(--mono); }
+  .event button { grid-row: 1 / span 2; grid-column: 2; }
+  .log { font: 12px/1.55 var(--mono); color: var(--muted); background: var(--surface-2); border-radius: 6px; padding: 8px 10px; min-height: 64px; max-height: 120px; overflow-y: auto; white-space: pre-wrap; }
+  .pal { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
+  .pal div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: center; font-size: 12px; }
+  .pal i { width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--line); }
+  .pal code { font: 11px var(--mono); color: var(--muted); display: block; }
+  kbd { font: 11px var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; }
+  .hint { font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 960px) { .main { grid-template-columns: 1fr; } .stage { height: 320px; } }
+  @media (max-width: 480px) { body { padding-inline: 16px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>픽셀 동물 뷰어</h1>
+    <span class="sub">sprites/*.json → <code>node tools/build.mjs</code> → 이 페이지</span>
+    <select id="animal" aria-label="동물 선택"></select>
+  </header>
+
+  <div class="main">
+    <div class="stage-wrap">
+      <div class="stage bg-wall" id="stage"><canvas id="pet"></canvas><canvas id="grid"></canvas><span class="now" id="now">IDLE</span></div>
+      <div class="toolbar">
+        <div class="group"><span>재생</span>
+          <button id="play" aria-pressed="true" title="스페이스">재생 중</button>
+          <button id="prev" title="←">이전 프레임</button>
+          <button id="next" title="→">다음 프레임</button>
+        </div>
+        <div class="group" id="speed"><span>속도</span></div>
+        <div class="group" id="scale"><span>배율</span></div>
+      </div>
+      <p class="hint" id="scale-note" hidden></p>
+      <div class="toolbar">
+        <div class="group"><span>배경</span>
+          <select id="bg" aria-label="배경">
+            <option value="bg-doc">흰 문서</option>
+            <option value="bg-light">라이트 모드 창</option>
+            <option value="bg-dark">다크 모드 창</option>
+            <option value="bg-wall" selected>어두운 배경화면</option>
+            <option value="bg-pastel">밝은 배경화면</option>
+            <option value="bg-stage">원본 무대 (#425F7B)</option>
+          </select>
+        </div>
+        <label class="check"><input type="checkbox" id="outline" checked> 흰 테두리 1px · 4방향</label>
+        <label class="check"><input type="checkbox" id="move" checked> 이동하는 동작에서 이동</label>
+        <label class="check"><input type="checkbox" id="auto" checked> 자동 행동</label>
+        <label class="check"><input type="checkbox" id="track" checked> IDLE에서 마우스 추적</label>
+        <label class="check"><input type="checkbox" id="showGrid"> 격자</label>
+        <label class="check"><input type="checkbox" id="onion"> 어니언 스킨</label>
+      </div>
+      <div class="panel">
+        <h2 id="strip-title">프레임</h2>
+        <div class="strip" id="strip"></div>
+        <p class="hint">프레임을 누르면 그 프레임에서 멈춥니다. 아래 숫자는 틱(100ms) 수입니다. <kbd>Space</kbd> 재생·정지, <kbd>←</kbd> <kbd>→</kbd> 프레임 이동</p>
+      </div>
+      <div class="panel">
+        <h2>팔레트</h2>
+        <div class="pal" id="pal"></div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h2>동작</h2>
+        <div class="anims" id="anims"></div>
+      </div>
+      <div class="panel">
+        <h2>이벤트 시뮬레이터</h2>
+        <p class="hint">OS 이벤트가 오면 반응(reaction)으로 바뀌고, 동물은 그 반응에 연결된 동작을 차례로 재생합니다. 잠들기처럼 이어서 반복하는 동작은 다음 이벤트가 올 때까지 유지합니다. 아직 그리지 않은 동작은 건너뜁니다.</p>
+        <div class="events" id="events"></div>
+        <div class="log" id="log" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="dist/pet-data.js"></script>
+<script>
+(() => {
+  const DATA = window.PET_DATA;
+  const $ = id => document.getElementById(id);
+  if (!DATA) { document.body.innerHTML = "<p style='padding:24px'>dist/pet-data.js가 없습니다. <code>node tools/build.mjs</code>를 먼저 실행하세요.</p>"; return; }
+
+  const TICK = DATA.tickMs;
+  const state = {
+    animal: Object.keys(DATA.sprites)[0], anim: "idle", step: 0, left: 1,
+    playing: true, speed: 1, scale: 2.5, outline: true, move: true, grid: false, onion: false, auto: true, track: true, queue: [], path: [], blinkIn: 40, blinkLeft: 0, doubleBlink: false, cursor: null, lookDir: "fwd",
+    x: 0, dir: 1, queue: [], reaction: null, loopsLeft: 0,
+  };
+  const sprite = () => DATA.sprites[state.animal];
+  const anims = () => sprite().animations;
+
+  // ---- frame cache -----------------------------------------------------------
+  const cache = new Map();
+  function frameCanvas(name, outlined, blink = false) {
+    const key = `${state.animal}/${name}/${outlined}/${blink}`;
+    if (cache.has(key)) return cache.get(key);
+    const s = sprite(), [w, h] = s.size, pad = outlined ? 1 : 0, rows = s.frames[name];
+    const swap = blink && s.blink ? { [s.blink.eye]: s.blink.closed } : {};
+    const c = document.createElement("canvas"); c.width = w + pad * 2; c.height = h + pad * 2;
+    const g = c.getContext("2d");
+    if (outlined) {
+      g.fillStyle = "#ffffff";
+      const skip = new Set(s.outline?.skip ?? []);   // colours drawn without the white outline (e.g. zzz)
+      rows.forEach((r, y) => { for (let x = 0; x < w; x++) if (r[x] !== "." && !skip.has(r[x])) { g.fillRect(x + 2, y + 1, 1, 1); g.fillRect(x, y + 1, 1, 1); g.fillRect(x + 1, y, 1, 1); g.fillRect(x + 1, y + 2, 1, 1); } });
+    }
+    rows.forEach((r, y) => { for (let x = 0; x < w; x++) { const ch = swap[r[x]] ?? r[x]; if (ch === ".") continue; g.fillStyle = s.palette[ch].hex; g.fillRect(x + pad, y + pad, 1, 1); } });
+    cache.set(key, c); return c;
+  }
+
+  // ---- stage -----------------------------------------------------------------
+  const stage = $("stage"), pet = $("pet"), grid = $("grid"), pg = pet.getContext("2d"), gg = grid.getContext("2d");
+  let AW = 0, AH = 0;
+  function layout() {
+    const r = stage.getBoundingClientRect();
+    AW = Math.floor(r.width / state.scale); AH = Math.floor(r.height / state.scale);
+    for (const c of [pet]) { c.width = AW; c.height = AH; c.style.width = AW * state.scale + "px"; c.style.height = AH * state.scale + "px"; }
+    const dpr = window.devicePixelRatio || 1;
+    grid.width = Math.round(AW * state.scale * dpr); grid.height = Math.round(AH * state.scale * dpr);
+    grid.style.width = AW * state.scale + "px"; grid.style.height = AH * state.scale + "px";
+    gg.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const exact = Number.isInteger(state.scale * dpr);
+    $("scale-note").hidden = exact;
+    $("scale-note").textContent = exact ? "" : `이 화면(기기 배율 ${dpr}x)에서는 ${state.scale}배가 픽셀마다 크기가 달라져 고르게 그려지지 않습니다. Retina 화면에서는 정확합니다.`;
+    if (!state.x) state.x = Math.round(AW / 2);
+    state.x = Math.min(Math.max(state.x, 0), AW);
+    draw();
+  }
+  function groundY() { return AH - Math.max(6, Math.round(AH * 0.18)); }
+
+  function current() { const a = anims()[state.anim]; return a.seq[Math.min(state.step, a.seq.length - 1)]; }
+
+  // ---- cursor tracking while idle -------------------------------------------
+  // The fox turns around when the cursor passes behind it, and picks a head direction
+  // from the angle between its eye and the cursor (measured toward the side it faces).
+  function lookFrame(base) {
+    const s = sprite(), lk = s.look;
+    if (!state.track || !state.cursor || !lk || !lk.animations.includes(state.anim) || (state.reaction && state.reaction !== "auto")) return base;
+    const c = state.cursor;
+    const behind = (state.dir > 0 && c.x < state.x - lk.turnMargin) || (state.dir < 0 && c.x > state.x + lk.turnMargin);
+    if (behind) {
+      // turn around through the "turn" animation when the fox has one, otherwise flip at once
+      if (anims().turn) {
+        if (!state.turnPending) { state.turnPending = true; state.queue = ["turn"]; state.reaction = "auto"; setTimeout(goNext, 0); }
+        return base;
+      }
+      state.dir *= -1;
+    }
+    const hx = state.x + (lk.headCenter[0] - s.anchor[0]) * state.dir;
+    const hy = groundY() - s.anchor[1] + lk.headCenter[1];
+    const fwd = (c.x - hx) * state.dir, up = hy - c.y;
+    if (Math.hypot(fwd, up) >= lk.deadZone) {
+      let deg = Math.atan2(up, fwd) * 180 / Math.PI;           // -180..180, 0 = straight ahead
+      if (deg > 90) deg = 90; if (deg < -90) deg = -90;         // cursor behind the head but in front of the body
+      state.lookDir = (lk.sectors.find(sec => deg >= sec.min) ?? lk.sectors[lk.sectors.length - 1]).dir;
+    }
+    return lk.frames[state.lookDir]?.[base] ?? base;
+  }
+
+  function draw() {
+    pg.clearRect(0, 0, AW, AH);
+    const s = sprite(), [w, h] = s.size, [ax, ay] = s.anchor, pad = state.outline ? 1 : 0;
+    const blinking = state.blinkLeft > 0 && s.blink?.animations.includes(state.anim);
+    const drawFrame = (name, alpha) => {
+      const img = frameCanvas(name, state.outline, blinking && alpha === 1);
+      const x = Math.round(state.x) - ax - pad, y = groundY() - ay - pad;
+      pg.save(); pg.globalAlpha = alpha;
+      if (state.dir < 0) { pg.translate(Math.round(state.x) * 2, 0); pg.scale(-1, 1); }
+      pg.drawImage(img, x, y); pg.restore();
+    };
+    if (state.onion) {
+      const a = anims()[state.anim], prev = a.seq[(state.step - 1 + a.seq.length) % a.seq.length];
+      if (a.seq.length > 1) drawFrame(prev[0], 0.3);
+    }
+    drawFrame(lookFrame(current()[0]), 1);
+    gg.clearRect(0, 0, grid.width, grid.height);
+    if (state.grid && state.scale >= 3) {
+      gg.strokeStyle = "rgba(127,127,127,0.35)"; gg.lineWidth = 1 / (window.devicePixelRatio || 1);
+      gg.beginPath();
+      for (let x = 0; x <= AW; x++) { gg.moveTo(x * state.scale, 0); gg.lineTo(x * state.scale, AH * state.scale); }
+      for (let y = 0; y <= AH; y++) { gg.moveTo(0, y * state.scale); gg.lineTo(AW * state.scale, y * state.scale); }
+      gg.stroke();
+    }
+    const looking = state.track && state.cursor && sprite().look?.animations.includes(state.anim) && (!state.reaction || state.reaction === "auto");
+    $("now").textContent = state.anim.toUpperCase().replace("_", " ") + (state.reaction && state.reaction !== "auto" ? `  ·  ${state.reaction}` : "") + (looking ? `  ·  look ${state.lookDir.replace("_", " ")}` : "");
+    markStrip();
+  }
+
+  // ---- animation clock -------------------------------------------------------
+  const DEFAULT_HOLD = 6;   // ticks a one-shot animation rests on its last frame when "hold" is not set
+  function setAnim(name, { keepReaction = false } = {}) {
+    if (!anims()[name]) return false;
+    if (!keepReaction) { state.queue = []; state.path = []; state.reaction = null; state.flowing = false; }
+    state.anim = name; state.step = 0; state.left = anims()[name].seq[0][1];
+    state.holdLeft = null; state.turnPending = false;
+    if (anims()[name].flipAt === 0) state.dir *= -1;
+    renderAnims(); renderStrip(); draw(); return true;
+  }
+  function moveBy(px) {
+    if (!state.move || !px) return;
+    state.x += px * state.dir;
+    const half = sprite().size[0] / 2;
+    if (state.x > AW - half) { state.x = AW - half; state.dir = -1; }
+    if (state.x < half) { state.x = half; state.dir = 1; }
+  }
+  function blinkTick() {
+    const b = sprite().blink;
+    if (!b) return;
+    if (state.blinkLeft > 0) { if (--state.blinkLeft === 0 && state.doubleBlink) { state.doubleBlink = false; state.blinkIn = 3; } return; }
+    if (--state.blinkIn > 0) return;
+    state.blinkLeft = b.forTicks;
+    state.doubleBlink = !state.doubleBlink && Math.random() < b.doubleChance;
+    if (!state.doubleBlink) state.blinkIn = b.everyTicks[0] + Math.floor(Math.random() * (b.everyTicks[1] - b.everyTicks[0]));
+  }
+  function advance() {
+    const a = anims()[state.anim];
+    blinkTick();
+    autoTick();
+    if (state.holdLeft !== null) {           // resting on the last frame of a one-shot animation
+      if (--state.holdLeft <= 0) { state.holdLeft = null; goNext(); }
+      return;
+    }
+    moveBy(a.moveX);
+    if (--state.left > 0) return;
+    const last = state.step === a.seq.length - 1;
+    if (last) {
+      if (!a.loop) {
+        state.left = 1;
+        if (state.reaction || state.flowing || state.auto) { state.holdLeft = a.hold ?? DEFAULT_HOLD; if (state.holdLeft <= 0) { state.holdLeft = null; goNext(); } }
+        return;
+      }
+      // a loop with an intro (loopFrom) keeps going until something else happens, e.g. sleeping
+      if (state.reaction && a.loopFrom === undefined && --state.loopsLeft <= 0) return goNext();
+    }
+    state.step = last ? (a.loopFrom ?? 0) : state.step + 1;
+    state.left = a.seq[state.step][1];
+    if (a.flipAt === state.step) state.dir *= -1;     // e.g. halfway through turning around
+    moveBy(a.seq[state.step][2]);
+  }
+
+  // automatic behaviour: now and then play an idle variant or wander around
+  let autoWait = 120;
+  function autoTick() {
+    if (!state.auto || state.reaction || state.anim !== "idle") return;
+    if (--autoWait > 0) return;
+    autoWait = 120 + Math.floor(Math.random() * 120);
+    const s = sprite(), choices = [...(s.idleVariants ?? []), ...(s.reactions?.wander ?? [])].filter(n => s.animations[n]);
+    if (!choices.length) return;
+    const pick = choices[Math.floor(Math.random() * choices.length)];
+    if (Math.random() < 0.5) state.dir *= -1;
+    state.queue = [pick]; state.reaction = "auto"; goNext();
+  }
+  function returnToIdle() { setAnim(anims()[DATA.events.defaults.after] ? DATA.events.defaults.after : Object.keys(anims())[0]); }
+  let acc = 0, last = performance.now();
+  function frame(now) {
+    const dt = Math.min(250, now - last); last = now;
+    if (state.playing) {
+      acc += dt * state.speed;
+      let changed = false;
+      while (acc >= TICK) { acc -= TICK; advance(); changed = true; }
+      if (changed) draw();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---- events → reactions → animations --------------------------------------
+  const log = msg => { const el = $("log"); el.textContent = (msg + "\n" + el.textContent).split("\n").slice(0, 40).join("\n"); };
+  function fire(ev) {
+    const reaction = ev.reaction, planned = sprite().reactions?.[reaction] ?? [];
+    const ready = planned.filter(a => anims()[a]), missing = planned.filter(a => !anims()[a]);
+    log(`${ev.name} (${ev.id}) → ${reaction} → ${planned.join(", ") || "연결된 동작 없음"}` + (missing.length ? `\n   아직 그리지 않아 건너뜀: ${missing.join(", ")}` : ""));
+    if (!ready.length) { log("   재생할 동작이 없어 현재 동작을 유지합니다."); return; }
+    state.queue = ready.slice(); state.reaction = reaction; state.path = [];
+    // a one-shot animation in progress (getting up, a jump in mid-air) finishes first;
+    // loops (sleeping, digging, walking) are interrupted right away
+    const cur = anims()[state.anim];
+    if (!cur.loop && state.holdLeft === null) { state.flowing = true; return; }
+    state.holdLeft = null; goNext();
+  }
+  // Every animation starts and ends in a pose (standing, sitting, lying...). Before the next
+  // animation plays, the fox walks the transition table from its current pose to the pose the
+  // next one starts in (e.g. curled → lie → stand), so it never pops between poses.
+  const poseOf = n => anims()[n]?.pose ?? ["stand", "stand"];
+  function route(from, to) {
+    if (from === to) return [];
+    const tr = sprite().transitions ?? {}, prev = { [from]: null }, todo = [from];
+    while (todo.length) {
+      const p = todo.shift();
+      for (const [nxt, path] of Object.entries(tr[p] ?? {})) {
+        if (nxt in prev) continue;
+        prev[nxt] = [p, path]; todo.push(nxt);
+        if (nxt === to) { const out = []; for (let q = to; prev[q]; q = prev[q][0]) out.unshift(...prev[q][1]); return out; }
+      }
+    }
+    return [];
+  }
+  function goNext() {
+    state.flowing = true;
+    const play = n => { state.loopsLeft = state.reaction === "auto" ? 3 : 2; setAnim(n, { keepReaction: true }); };
+    if (state.path.length) return play(state.path.shift());
+    const name = state.queue.shift();
+    const here = poseOf(state.anim)[1], there = name ? poseOf(name)[0] : "stand";
+    const path = route(here, there);
+    if (path.length) { if (name) state.queue.unshift(name); state.path = path.slice(1); return play(path[0]); }
+    if (!name) return returnToIdle();
+    play(name);
+  }
+
+  // ---- UI --------------------------------------------------------------------
+  function renderAnimalSelect() {
+    const sel = $("animal");
+    sel.innerHTML = Object.values(DATA.sprites).map(s => `<option value="${s.name}">${s.displayName ?? s.name}</option>`).join("");
+    sel.value = state.animal;
+    sel.onchange = () => { state.animal = sel.value; setAnim(anims().idle ? "idle" : Object.keys(anims())[0]); renderPalette(); };
+  }
+  function renderAnims() {
+    const box = $("anims"), s = sprite();
+    const names = [...Object.keys(s.animations), ...(s.planned ?? []).filter(p => !s.animations[p])];
+    box.innerHTML = "";
+    names.forEach(n => {
+      const a = s.animations[n], b = document.createElement("button"); b.type = "button";
+      const ticks = a ? a.seq.reduce((t, [, k]) => t + k, 0) : 0;
+      const kind = !a ? "" : a.loopFrom !== undefined ? " · 이어서 반복" : a.loop ? "" : " · 한 번";
+      b.innerHTML = `<span class="n">${n.toUpperCase().replace("_", " ")}</span><span class="m">${a ? `${new Set(a.seq.map(([f]) => f)).size}장 · ${(ticks * TICK / 1000).toFixed(1)}초${kind}` : "예정"}</span>`;
+      b.disabled = !a; b.setAttribute("aria-pressed", String(n === state.anim));
+      b.onclick = () => { setAnim(n); state.flowing = true; };   // one-shots return to idle when done
+      box.appendChild(b);
+    });
+  }
+  function renderStrip() {
+    const a = anims()[state.anim], box = $("strip"), [w, h] = sprite().size;
+    $("strip-title").textContent = `프레임 · ${state.anim.toUpperCase().replace("_", " ")} · ${a.seq.length}단계`;
+    box.innerHTML = "";
+    a.seq.forEach(([f, t], i) => {
+      const b = document.createElement("button"); b.type = "button"; b.dataset.i = i;
+      const c = document.createElement("canvas"); c.width = w; c.height = h; c.style.width = w * 2 + "px"; c.style.height = h * 2 + "px";
+      c.getContext("2d").drawImage(frameCanvas(f, false), 0, 0);
+      const cap = document.createElement("small"); cap.textContent = `${f} · ${t}`;
+      b.append(c, cap); b.title = `${f}, ${t * TICK}ms`;
+      b.onclick = () => { state.playing = false; syncPlay(); state.step = i; state.left = t; draw(); };
+      box.appendChild(b);
+    });
+    markStrip();
+  }
+  function markStrip() { $("strip").querySelectorAll("button").forEach(b => b.classList.toggle("current", +b.dataset.i === state.step)); }
+  function renderPalette() {
+    $("pal").innerHTML = Object.entries(sprite().palette).map(([k, p]) => `<div><i style="background:${p.hex}"></i><span>${p.role}<code>${k} · ${p.hex}</code></span></div>`).join("");
+  }
+  function renderEvents() {
+    const box = $("events");
+    box.innerHTML = "";
+    DATA.events.events.forEach(ev => {
+      const d = document.createElement("div"); d.className = "event";
+      d.innerHTML = `<b>${ev.name}</b><small><code>${ev.id}</code> → ${ev.reaction}<br>${ev.api}${ev.permission ? ` · 권한: ${ev.permission}` : " · 권한 필요 없음"}</small>`;
+      const b = document.createElement("button"); b.type = "button"; b.textContent = "발생"; b.onclick = () => fire(ev);
+      d.appendChild(b); box.appendChild(d);
+    });
+  }
+  function syncPlay() { const b = $("play"); b.setAttribute("aria-pressed", String(state.playing)); b.textContent = state.playing ? "재생 중" : "정지됨"; }
+  function stepBy(d) {
+    const a = anims()[state.anim]; state.playing = false; syncPlay();
+    state.step = (state.step + d + a.seq.length) % a.seq.length; state.left = a.seq[state.step][1]; draw();
+  }
+  function choice(boxId, values, labelOf, get, set) {
+    const box = $(boxId);
+    values.forEach(v => {
+      const b = document.createElement("button"); b.type = "button"; b.textContent = labelOf(v);
+      b.onclick = () => { set(v); box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); };
+      b.setAttribute("aria-pressed", String(get() === v)); box.appendChild(b);
+    });
+  }
+
+  $("play").onclick = () => { state.playing = !state.playing; syncPlay(); };
+  $("prev").onclick = () => stepBy(-1);
+  $("next").onclick = () => stepBy(1);
+  choice("speed", [0.5, 1, 2], v => v + "×", () => state.speed, v => state.speed = v);
+  // 2.5 is exact on Retina screens (5 device pixels per sprite pixel); elsewhere it is uneven
+  choice("scale", [1, 2, 2.5, 3], v => v + "", () => state.scale, v => { const r = state.x / AW; state.scale = v; layout(); state.x = Math.round(r * AW); draw(); });
+  $("bg").onchange = e => { stage.className = "stage " + e.target.value; };
+  $("outline").onchange = e => { state.outline = e.target.checked; draw(); };
+  $("move").onchange = e => { state.move = e.target.checked; };
+  $("auto").onchange = e => { state.auto = e.target.checked; };
+  $("track").onchange = e => { state.track = e.target.checked; draw(); };
+  stage.addEventListener("pointermove", e => {
+    const r = stage.getBoundingClientRect();
+    state.cursor = { x: (e.clientX - r.left) / state.scale, y: (e.clientY - r.top) / state.scale };
+    draw();
+  });
+  stage.addEventListener("pointerleave", () => { state.cursor = null; state.lookDir = "fwd"; draw(); });
+  $("showGrid").onchange = e => { state.grid = e.target.checked; draw(); };
+  $("onion").onchange = e => { state.onion = e.target.checked; draw(); };
+  window.addEventListener("keydown", e => {
+    if (e.target.closest("select, input")) return;
+    if (e.code === "Space") { e.preventDefault(); state.playing = !state.playing; syncPlay(); }
+    if (e.code === "ArrowLeft") stepBy(-1);
+    if (e.code === "ArrowRight") stepBy(1);
+  });
+  window.addEventListener("resize", layout);
+
+  renderAnimalSelect(); renderAnims(); renderPalette(); renderEvents(); renderStrip();
+  layout(); syncPlay();
+  log("이벤트의 '발생' 버튼을 눌러 반응을 확인하세요.");
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

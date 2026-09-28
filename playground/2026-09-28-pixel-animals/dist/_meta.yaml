@@ -1,0 +1,13 @@
+# Everything in dist/ is generated from code in this directory; nothing here is drawn or
+# downloaded by hand. Rebuild instead of editing.
+source: generated
+generator: code
+derived:
+  - files: [fox.png, fox-outlined.png, fox.sheet.json, pet-data.js]
+    from: sprites/fox.json
+    by: node tools/build.mjs
+  - files: [fox-all-animations.mp4]
+    from: sprites/fox.json
+    by: tools/render_video.py (Pillow, numpy, ffmpeg)
+license: original work
+created: 2026-09-28
