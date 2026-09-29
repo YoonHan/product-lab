@@ -350,20 +350,76 @@ def look_segment(s, ticks, seg_i, facing):
     return facing
 
 
-def draw_cursor(canvas, x, y, size=1.6):
-    """A macOS-style arrow pointer with its tip at (x, y), drawn smooth at 4x and scaled down."""
-    ss = 4
-    pts = [(0, 0), (0, 17), (4.2, 13), (7, 19.5), (9.8, 18.3), (7.2, 12.2), (12.5, 12.2)]
-    w, h = int(16 * size * ss), int(24 * size * ss)
-    img = Image.new('RGBA', (w, h), (0, 0, 0, 0))
+# The LOOK cursor is something the animal would watch: a sunflower seed that bobs 1px for the
+# hamster, a butterfly that flaps for the fox. Pixel art with the sprites' white 1px outline,
+# CURSOR_PX video pixels per pixel, centred on the cursor point.
+CURSOR_PX = 4
+CURSOR_COLOURS = {
+    'O': (255, 255, 255, 255),                           # outline
+    'K': (24, 22, 26, 255), 'G': (150, 148, 144, 255),   # seed shell and its stripes
+    'Y': (255, 170, 60, 255), 'y': (214, 110, 40, 255), 'B': (40, 30, 34, 255),   # butterfly
+}
+SEED = """
+...OOOO...
+..OKKKKO..
+.OKGKKGKO.
+OKKGKKGKKO
+OKKGKKGKKO
+OKKGKKGKKO
+OKKGKKGKKO
+OKKGKKGKKO
+OKKGKKGKKO
+.OKGKKGKO.
+.OKGKKGKO.
+.OKGKKGKO.
+.OKGKKGKO.
+..OKKKKO..
+..OKKKKO..
+...OKKO...
+....OO....
+"""
+BUTTERFLY = ["""
+.OOO.....OOO.
+OyYYO...OYYyO
+OYYYYO.OYYYYO
+OYYYYOBOYYYYO
+.OYYYOBOYYYO.
+..OOYOBOYOO..
+..OYYOBOYYO..
+..OyYOBOYyO..
+...OOO.OOO...
+""", """
+.............
+....OO.OO....
+...OYYOYYO...
+...OYYBYYO...
+...OYOBOYO...
+...OYOBOYO...
+...OyOBOyO...
+....OO.OO....
+.............
+"""]
+
+
+def pixel_art(art):
+    rows = art.strip('\n').split('\n')
+    img = Image.new('RGBA', (max(map(len, rows)) * CURSOR_PX, len(rows) * CURSOR_PX), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    poly = [(2 * ss + px * size * ss, 2 * ss + py * size * ss) for px, py in pts]
-    d.polygon(poly, fill=(0, 0, 0, 255))
-    inner = [(2 * ss + px * size * ss, 2 * ss + py * size * ss) for px, py in
-             [(1.4, 3.2), (1.4, 13.6), (4.6, 10.6), (7.6, 17.4), (8.6, 17), (5.8, 10.6), (10, 10.6)]]
-    d.polygon(inner, fill=(255, 255, 255, 255))
-    img = img.resize((w // ss, h // ss), Image.LANCZOS)
-    canvas.alpha_composite(img, (int(x - 2 * size), int(y - 2 * size)))
+    for y, row in enumerate(rows):
+        for x, c in enumerate(row):
+            if c in CURSOR_COLOURS:
+                d.rectangle((x * CURSOR_PX, y * CURSOR_PX, (x + 1) * CURSOR_PX - 1, (y + 1) * CURSOR_PX - 1),
+                            fill=CURSOR_COLOURS[c])
+    return img
+
+
+def draw_cursor(canvas, x, y, t):
+    """The LOOK cursor centred on (x, y) at LOOK tick t."""
+    if ANIMAL == 'hamster':
+        img, y = pixel_art(SEED), y + (CURSOR_PX if (t // 6) % 2 else 0)
+    else:
+        img = pixel_art(BUTTERFLY[(t // 3) % 2])
+    canvas.alpha_composite(img, (int(x - img.width / 2), int(y - img.height / 2)))
 
 
 def top_row(rows):
@@ -759,7 +815,7 @@ def main():
             badge(layer, SEGMENTS[seg][1], alpha, font, VIDEO_W // 2, badge_bottom[seg])
             canvas.alpha_composite(layer)
         if cursor:
-            draw_cursor(canvas, *cursor)
+            draw_cursor(canvas, *cursor, i - seg_ticks[seg][0])
         ff.stdin.write(canvas.convert('RGB').tobytes())
     ff.stdin.close()
     ff.wait()
