@@ -2,11 +2,13 @@
 
 Needs Pillow, numpy and ffmpeg. Frames are drawn from sprites/<animal>.json exactly as the app
 would draw them (white 1px outline, integer scale) and piped to ffmpeg; one tick = one video
-frame. Each animal has its own stage: the fox (and the arctic fox) runs across a field at
-sunset, the hamster potters about its enclosure in the evening, on deep wood-shaving bedding.
+frame. Each animal has its own stage: the fox runs across a field at sunset, the arctic fox
+across snow in Hokkaido at dusk, and the hamster potters about its enclosure in the evening,
+on deep wood-shaving bedding.
 
 Usage: python3 tools/render_video.py [fox|arctic-fox|hamster] [stage] [out.mp4]
-       stages: fox (default for both foxes), hamster (the enclosure), beach (a sandy beach by the sea)
+       stages: fox (the fox's default), hokkaido (the arctic fox's), hamster (the enclosure),
+               beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -18,7 +20,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'fox'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -352,13 +354,15 @@ def look_segment(s, ticks, seg_i, facing):
 
 
 # The LOOK cursor is something the animal would watch: a sunflower seed that bobs 1px for the
-# hamster, a butterfly that flaps for the fox. Pixel art with the sprites' white 1px outline,
-# CURSOR_PX video pixels per pixel, centred on the cursor point.
+# hamster, a butterfly that flaps for the fox, and for the arctic fox in the snow a shima-enaga
+# (Hokkaido's white long-tailed tit) that flaps and faces the way it flies. Pixel art with the
+# sprites' white 1px outline, CURSOR_PX video pixels per pixel, centred on the cursor point.
 CURSOR_PX = 4
 CURSOR_COLOURS = {
     'O': (255, 255, 255, 255),                           # outline
     'K': (24, 22, 26, 255), 'G': (150, 148, 144, 255),   # seed shell and its stripes
     'Y': (255, 170, 60, 255), 'y': (214, 110, 40, 255), 'B': (40, 30, 34, 255),   # butterfly
+    'E': (246, 244, 240, 255), 'N': (92, 88, 96, 255), 'P': (214, 170, 164, 255),  # shima-enaga (and K)
 }
 SEED = """
 ...OOOO...
@@ -402,6 +406,27 @@ OYYYYOBOYYYYO
 """]
 
 
+ENAGA = ["""
+......OOOO....
+..OO.OEEEEO...
+.ONNOEEEEEEO..
+..ONNEEEEKEKO.
+OOOOEEEEEEEO..
+OKKKEPEEEEEO..
+.OOOKEEEEEO...
+.....OOOOO....
+""", """
+......OOOO....
+.....OEEEEO...
+....OEEEEEEO..
+...OEEEEEKEKO.
+OOOOEEEEEEEO..
+OKKKENNEEEEO..
+.OOOKONNEEO...
+.....OOOOO....
+"""]
+
+
 def pixel_art(art):
     rows = art.strip('\n').split('\n')
     img = Image.new('RGBA', (max(map(len, rows)) * CURSOR_PX, len(rows) * CURSOR_PX), (0, 0, 0, 0))
@@ -418,6 +443,13 @@ def draw_cursor(canvas, x, y, t):
     """The LOOK cursor centred on (x, y) at LOOK tick t."""
     if ANIMAL == 'hamster':
         img, y = pixel_art(SEED), y + (CURSOR_PX if (t // 6) % 2 else 0)
+    elif ANIMAL == 'arctic-fox':
+        img, y = pixel_art(ENAGA[(t // 2) % 2]), y + (CURSOR_PX if (t // 6) % 2 else 0)
+        # face the way the bird flies (it faces right as drawn); hold the last way while it hovers
+        dx = next((cursor_at(u)[0] - cursor_at(u - 1)[0] for u in range(t, 0, -1)
+                   if cursor_at(u)[0] != cursor_at(u - 1)[0]), 1)
+        if dx < 0:
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
     else:
         img = pixel_art(BUTTERFLY[(t // 3) % 2])
     canvas.alpha_composite(img, (int(x - img.width / 2), int(y - img.height / 2)))
@@ -769,7 +801,189 @@ def beach_stage():
     return background, draw_moving
 
 
-STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage}
+# ---- arctic fox: a snowy evening in Hokkaido -------------------------------------------------
+# Blue hour after snowfall. Mt. Yotei ("Ezo Fuji") stands in the pink afterglow, a line of snowy
+# firs and white birches runs along the horizon, and a red torii and a lit stone lantern stand
+# at the edge of the field. Snow keeps falling, slowly. The snow near the fox is in blue shade,
+# clearly darker than its white coat, so the fox and its white outline still read.
+HOKKAIDO = dict(
+    SKY=[(0, (20, 26, 56)), (200, (42, 54, 98)), (380, (104, 108, 160)), (480, (190, 156, 188)),
+         (560, (232, 190, 200))],
+    SNOW=[(560, (196, 204, 228)), (600, (156, 170, 206)), (720, (112, 128, 172))],
+    MOUNTAIN=(1000, 312, 330),        # peak x, peak y, half width at the horizon (video px)
+    TORII_X=58, LANTERN_X=162,        # cells on the horizon layer (drawn 20 cells left): clear of the fox
+                                      # before the run and after it (the layer scrolls 32 cells)
+)
+H_COLOURS = {
+    'S': (238, 243, 250), 's': (206, 216, 234),             # snow on things, its shade
+    'K': (46, 36, 50), 'R': (200, 64, 52), 'r': (148, 44, 42), 'D': (70, 56, 64),   # torii
+    'G': (132, 138, 156), 'g': (98, 104, 124), 'L': (255, 196, 110),                # stone lantern
+    'W': (232, 230, 222), 'B': (58, 56, 66),                  # birch bark and its marks
+    'F': (40, 60, 82), 'f': (30, 46, 66),                     # firs
+}
+TORII = """
+.SSSSSSSSSSSSSSSS.
+KKKKKKKKKKKKKKKKKK
+.rRRRRRRRRRRRRRRr.
+...RR...ss...RR...
+.RRRRRRRRRRRRRRRR.
+...RR...RR...RR...
+...RR........RR...
+...RR........RR...
+...RR........RR...
+...rR........rR...
+...rR........rR...
+..DDDD......DDDD..
+"""
+LANTERN = """
+...SS...
+.SSSSSS.
+GGGGGGGG
+.gGGGGg.
+..GLLG..
+..GLLG..
+..gGGg..
+...GG...
+...GG...
+..gGGg..
+.GGGGGG.
+"""
+
+
+def hokkaido_stage():
+    import numpy as np, math, random
+    P, Hk = SCALE, HOKKAIDO
+    ys = np.arange(VIDEO_H)
+    yy, xx = np.mgrid[0:VIDEO_H, 0:VIDEO_W]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    img = np.where((yy < HORIZON_Y)[..., None], ramp(Hk['SKY'])[:, None, :], ramp(Hk['SNOW'])[:, None, :]).astype(float)
+    cx, cy = (xx // P) * P + P / 2, (yy // P) * P + P / 2
+    def paint(mask, colour, alpha=1.0):
+        nonlocal img
+        m = mask[..., None] * alpha
+        img = img * (1 - m) + np.array(colour, float) * m
+    # afterglow low in the west (left) of the sky
+    glow = 0.35 * np.exp(-(((xx - 180) / 700) ** 2 + ((yy - HORIZON_Y) / 170) ** 2)) * (yy < HORIZON_Y)
+    img = img * (1 - glow[..., None]) + np.array((250, 196, 190.)) * glow[..., None]
+    # Mt. Yotei: a broad cone with concave flanks, snow over its upper half with a ragged edge,
+    # lit pink on the left (the afterglow) and blue on the right
+    mx, my, half = Hk['MOUNTAIN']
+    d = np.abs(cx - mx) / half
+    top = my + (HORIZON_Y - my) * (1 - (1 - np.clip(d, 0, 1)) ** 1.6)
+    peak_flat = (np.abs(cx - mx) < 2 * P)
+    cone = (cy >= np.where(peak_flat, my, top)) & (cy < HORIZON_Y) & (d <= 1)
+    rnd = random.Random(3)
+    jag = {c: rnd.choice([-2, -1, 0, 0, 1, 2]) * P for c in range(VIDEO_W // P + 1)}
+    snowline = my + 0.46 * (HORIZON_Y - my) + np.vectorize(jag.get)(xx // P)
+    left = cx < mx
+    paint(cone, (86, 96, 140))
+    paint(cone & left, (120, 112, 150), 0.6)
+    paint(cone & (cy < snowline), (218, 224, 240))
+    paint(cone & (cy < snowline) & left, (246, 222, 226), 0.55)
+    # gullies: a few darker streaks down the snow on the shaded side
+    for gx in (mx + 3 * P, mx + 9 * P, mx + 16 * P):
+        paint(cone & (np.abs(cx - gx - (cy - my) * 0.35) < P / 2) & (cy < snowline + 3 * P) & (cy > my + 3 * P),
+              (170, 180, 210), 0.7)
+    # the far edge of the snowfield catches the afterglow
+    paint((yy >= HORIZON_Y) & (yy < HORIZON_Y + P), (236, 214, 224), 0.5)
+    img += np.random.default_rng(7).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+    def art(text):
+        rows = text.strip('\n').split('\n')
+        return [(x, y - len(rows) + 1, ch) for y, r in enumerate(rows) for x, ch in enumerate(r) if ch != '.']
+    horizon = []            # (x cell, [(dx, dy, colour key)]) on the horizon layer
+    # firs of mixed heights, each with snow on the tips of its tiers
+    x = 0
+    while x < period:
+        h = rnd.randint(3, 7)
+        cells = []
+        for i in range(h):
+            w = max(0, (h - i) // 2 - (i == h - 1))
+            for dx in range(-w, w + 1):
+                cells.append((dx, -i, 'S' if (i % 2 == 1 and abs(dx) == w) or i == h - 1 else rnd.choice('Ff')))
+        horizon.append((x, cells))
+        x += rnd.randint(2, 5) if rnd.random() < 0.8 else rnd.randint(6, 10)
+    # birches in front of the firs: white trunks with dark marks and a few bare twigs
+    for bx in (8, 12, 47, 102, 118, 150, 196, 231):
+        h = rnd.randint(9, 13)
+        cells = [(0, -i, 'B' if rnd.random() < 0.22 else 'W') for i in range(h)]
+        for i in range(h // 2, h, 2):
+            s_ = rnd.choice([-1, 1])
+            cells += [(s_, -i, 'B'), (2 * s_, -i - 1, 'B')]
+        horizon.append((bx, cells))
+    horizon.append((Hk['TORII_X'], art(TORII)))
+    horizon.append((Hk['LANTERN_X'], art(LANTERN)))
+    # on the snow, scrolling with the ground: drifts (a lit crest over a blue shadow, longer
+    # nearer the viewer) and dry grass poking through, so the ground visibly moves on a run
+    props = []
+    for _ in range(46):
+        y = rnd.randrange(HORIZON_Y // P + 1, VIDEO_H // P)
+        near = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
+        x, w = rnd.randrange(period), rnd.randint(2, 3) + int(near * 6)
+        lift = [0 if abs(i - w / 2) > w / 4 else -1 for i in range(w)] if w > 4 else [0] * w
+        props.append((x, [(i, lift[i]) for i in range(w)], y, (230, 236, 250), 0.35 + 0.35 * near))
+        props.append((x + 1, [(i, 1) for i in range(w - 1)], y, (92, 106, 156), 0.22 + 0.25 * near))
+    for _ in range(22):
+        y = rnd.randrange(HORIZON_Y // P + 1, VIDEO_H // P)
+        near = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
+        h = 1 + int(near * 2.5)
+        cells = [(0, -i) for i in range(h)] + ([(rnd.choice([-1, 1]), -h + 1)] if h > 1 else [])
+        props.append((rnd.randrange(period), cells, y, (96, 84, 88), 0.55 + 0.35 * near))
+    props = (period, props)
+    # sparkles on the snow: few and slow, so they never pull the eye off the fox
+    sparkles = [(rnd.randrange(period), rnd.randrange(HORIZON_Y // P + 2, VIDEO_H // P), rnd.uniform(0.3, 0.6),
+                 rnd.uniform(0, 2 * math.pi), rnd.uniform(1.6, 3.4)) for _ in range(34)]
+    # falling snow in two layers: far flakes are small, faint and slow; near ones bigger and faster
+    flakes = [(rnd.uniform(0, VIDEO_W), rnd.uniform(0, VIDEO_H), far) for far in [True] * 90 + [False] * 34]
+
+    def draw_moving(canvas, t, travelled):
+        hshift = round(travelled * HORIZON_SPEED)
+        # the lantern's warm light, on the grid, under everything on the horizon
+        glow = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        gd = ImageDraw.Draw(glow)
+        lx = (Hk['LANTERN_X'] - hshift) % period - 20 + 3.5
+        ly = base - 6.5
+        for gx in range(int(lx) - 8, int(lx) + 9):
+            for gy in range(int(ly) - 6, base + 1):
+                r_ = math.hypot(gx + 0.5 - lx, (gy + 0.5 - ly) * 1.2)
+                if r_ < 7:
+                    gd.rectangle([gx * P, gy * P, gx * P + P - 1, gy * P + P - 1], fill=(255, 186, 110, int(255 * 0.22 * (1 - r_ / 7) ** 1.5)))
+        canvas.alpha_composite(glow)
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        dr = ImageDraw.Draw(layer)
+        def cell(x, y, colour, a, size=P):
+            dr.rectangle([x, y, x + size - 1, y + size - 1], fill=colour + (int(255 * max(0, min(1, a))),))
+        for x0, cells in horizon:
+            sx = (x0 - hshift) % period - 20
+            if sx < -20 or sx > cols + 2:
+                continue
+            for dx, dy, ch in cells:
+                cell((sx + dx) * P, (base + dy) * P, H_COLOURS[ch], 1)
+        canvas.alpha_composite(layer)
+        draw_props(canvas, props, travelled)
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        dr = ImageDraw.Draw(layer)
+        gshift = lambda y: round(travelled * ground_speed(y * P + P / 2))
+        for x, y, base_a, phase, per in sparkles:
+            s_ = 0.5 + 0.5 * math.sin(2 * math.pi * t / per + phase)
+            a = base_a * s_ ** 3
+            if a > 0.05:
+                X = (x - gshift(y)) % period
+                if X < cols:
+                    cell(X * P, y * P, (250, 252, 255), a)
+        for x0, y0, far in flakes:
+            speed, drift, size, a = (26, 0.35, P // 2, 0.5) if far else (58, 0.9, P, 0.8)
+            y = (y0 + speed * t) % (VIDEO_H + 20) - 10
+            x = (x0 + 14 * math.sin(t * 0.8 + y0) - travelled * SCALE * drift * 0.25) % VIDEO_W
+            cell(int(x // size) * size, int(y // size) * size, (246, 249, 255), a, size)
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide'}
 
 
