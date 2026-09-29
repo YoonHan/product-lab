@@ -1201,10 +1201,31 @@ CORGI = dict(
 PARK = dict(
     SKY=[(0, (96, 164, 226)), (300, (150, 200, 238)), (500, (206, 232, 246))],
     LAWN=[(500, (132, 186, 96)), (600, (112, 170, 80)), (720, (88, 146, 64))],
+    PASTURE=((168, 206, 128), (140, 190, 100)),
+    COW={'W': (246, 244, 238), 'K': (44, 40, 44), 'n': (232, 160, 160), 'D': (60, 54, 56),
+         'B': (150, 96, 60), 'b': (120, 74, 46)},
 )
+PASTURE_ROWS = 8                                          # the tree line sits this many cells behind the fence
+# far cows, 11x6 cells facing right: head up, grazing with the muzzle on the grass, and chewing with
+# the head lifted a row
+COW_FRAMES = {
+    'up':    ["........KWK", "WWKKWWWKKWK", "WKKKWWKWKnn", "WWWWWnWW...", "D.D...D.D..", "D.D...D.D.."],
+    'graze': ["...........", "WWKKWWWK...", "WKKKWWKWK..", "WWWWWnWWKWK", "D.D...D.Knn", "D.D...D.D.."],
+    'chew':  ["...........", "WWKKWWWK...", "WKKKWWKWKWK", "WWWWWnWWKnn", "D.D...D.D..", "D.D...D.D.."],
+}
+BROWN_COW = str.maketrans({'W': 'B', 'K': 'b'})
+
+
+def cow_frame(t, phase):
+    """Grazing in bursts: nibble (muzzle down, then up a row) for a few seconds, then lift the head."""
+    c = (t + phase) % 7.0
+    if c < 4.6:
+        return 'graze' if int(c / 0.35) % 3 else 'chew'
+    return 'up'
 
 
 def park_stage():
+    """A sunny lawn at the edge of a farm: cows graze on the far pasture behind a wooden ranch fence."""
     import numpy as np, math, random
     P, K = SCALE, PARK
     ys = np.arange(VIDEO_H)
@@ -1212,22 +1233,36 @@ def park_stage():
     ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
     img = np.where((yy < HORIZON_Y)[..., None], ramp(K['SKY'])[:, None, :], ramp(K['LAWN'])[:, None, :]).astype(float)
     img = np.where(((yy >= HORIZON_Y) & (yy < HORIZON_Y + P))[..., None], img * 0.6 + np.array((170, 210, 120.)) * 0.4, img)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    top = base - PASTURE_ROWS
+    for y in range(top, base + 1):                         # the far pasture, lighter with distance
+        f = (y - top) / PASTURE_ROWS
+        img[y * P:(y + 1) * P] = [a + (b - a) * f for a, b in zip(*K['PASTURE'])]
     img += np.random.default_rng(7).uniform(-1.2, 1.2, img.shape)
     background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
     rnd = random.Random(21)
-    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
     period = cols * 2
-    clouds = []
-    for _ in range(6):
-        cx0, cy0, w = rnd.randrange(period), rnd.randrange(4, 26), rnd.randint(6, 12)
-        cells = [(dx, 0) for dx in range(w)] + [(dx, -1) for dx in range(1, w - 1)] + [(dx, -2) for dx in range(2, w // 2 + 2)]
-        clouds.append((cx0, cy0, cells))
-    trees = []                                            # round trees along the far edge
+    clouds = []                                           # puffy clouds: round tops on a flat base, a shaded belly
+    for i in range(7):
+        cx0, cy0, w = i * period // 7 + rnd.randrange(16), rnd.randrange(9, 30), rnd.randint(12, 20)
+        bumps = [(rnd.randint(3, w // 2), rnd.randint(3, 4)), (rnd.randint(w // 2, w - 4), rnd.randint(2, 3))]
+        cells = set((dx, dy) for dx in range(w) for dy in (0, -1))
+        for bx, r in bumps:
+            cells |= {(dx, dy) for dx in range(bx - r, bx + r + 1) for dy in range(-r - 1, 1)
+                      if (dx - bx) ** 2 + (dy + 1) ** 2 <= r * r + 1 and 0 <= dx < w}
+        clouds.append((cx0, cy0, [(dx, dy, dy == 0) for dx, dy in sorted(cells)]))
+    trees = []                                            # round trees along the far edge of the pasture
     x = 0
     while x < period:
         r = rnd.randint(3, 5)
         trees.append((x, r, rnd.random() < 0.5))
         x += r * 2 + rnd.randint(-1, 3)
+    cows = []                                             # a small herd spread along the pasture
+    x = 6
+    while x < period - 12:
+        brown, flip = rnd.random() < 0.2, rnd.random() < 0.5
+        cows.append((x, rnd.randint(3, 4), brown, flip, rnd.uniform(0, 7)))
+        x += rnd.choice((18, 26, 38, 52))
     props = []
     for _ in range(40):                                   # grass tufts, taller nearer the viewer
         y = rnd.randrange(HORIZON_Y // P + 2, VIDEO_H // P)
@@ -1235,13 +1270,18 @@ def park_stage():
         h = 1 + int(near * 2)
         cells = [(0, -i) for i in range(h)] + ([(1, -h + 1)] if h > 1 else [])
         props.append((rnd.randrange(period), cells, y, (70, 128, 52), 0.6 + 0.3 * near))
-    for _ in range(26):                                   # little flowers
+    petals = [(250, 250, 240), (250, 214, 80), (240, 150, 180), (190, 160, 230)]
+    for _ in range(70):                                   # flowers: dots far off, little four-petal ones nearer
         y = rnd.randrange(HORIZON_Y // P + 2, VIDEO_H // P)
         near = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
-        col = (250, 250, 240) if rnd.random() < 0.6 else (250, 214, 80)
-        x = rnd.randrange(period)
-        props.append((x, [(0, 0)], y, col, 0.85))
-        props.append((x, [(0, 1)], y, (70, 128, 52), 0.7))
+        col, x = rnd.choice(petals), rnd.randrange(period)
+        if near < 0.35:
+            props.append((x, [(0, 0)], y, col, 0.9))
+            props.append((x, [(0, 1)], y, (70, 128, 52), 0.7))
+        else:
+            props.append((x, [(0, 2), (0, 3)], y, (70, 128, 52), 0.8))
+            props.append((x, [(-1, 1), (1, 1), (0, 0), (0, 2)], y, col, 0.95))
+            props.append((x, [(0, 1)], y, (250, 200, 60) if col != (250, 214, 80) else (220, 130, 50), 1.0))
     props = (period, props)
 
     def draw_moving(canvas, t, travelled):
@@ -1251,25 +1291,32 @@ def park_stage():
             dr.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=colour + (int(255 * a),))
         cshift = round(travelled * 0.03 + t * 0.3)
         for cx0, cy0, cells in clouds:
-            for dx, dy in cells:
-                cell((cx0 + dx - cshift) % period - 12, cy0 + dy, (252, 253, 255), 0.85)
+            X = (cx0 - cshift) % period - 16
+            for dx, dy, belly in cells:
+                cell(X + dx, cy0 + dy, (222, 234, 246) if belly else (252, 253, 255), 0.95)
         tshift = round(travelled * HORIZON_SPEED)
         for x0, r, dark in trees:                          # a trunk and a round crown, lit on top
             X = (x0 - tshift) % period - 10
             for dx in range(-r, r + 1):
                 for dy in range(-r, r + 1):
                     if dx * dx + dy * dy <= r * r + 1:
-                        top = dy < -r // 2
                         col = (58, 118, 58) if dark else (74, 138, 64)
-                        cell(X + dx, base - r - 1 + dy, (96, 160, 80) if top else col)
-            cell(X, base, (110, 80, 56)); cell(X, base - 1, (110, 80, 56))
+                        cell(X + dx, top - r - 1 + dy, (96, 160, 80) if dy < -r // 2 else col)
+            cell(X, top, (110, 80, 56))
+        for x0, back, brown, flip, phase in cows:
+            X = (x0 - tshift) % period - 12
+            rows = COW_FRAMES[cow_frame(t, phase)]
+            for ry, row in enumerate(rows):
+                row = row.translate(BROWN_COW) if brown else row
+                for rx, ch in enumerate(row[::-1] if flip else row):
+                    if ch != '.':
+                        cell(X + rx, base - back - len(rows) + 1 + ry, K['COW'][ch])
         fshift = round(travelled * 0.35)
-        for x in range(cols + 2):                          # the picket fence
-            X = (x + fshift) % 3
-            fx = x
-            cell(fx, base - 2, (246, 244, 236), 0.95)      # the rail
-            if X == 0:
-                cell(fx, base - 3, (246, 244, 236), 0.95); cell(fx, base - 1, (246, 244, 236), 0.95); cell(fx, base, (246, 244, 236), 0.95)
+        for x in range(cols + 2):                          # a wooden ranch fence: two rails, a post every 8 cells
+            cell(x, base - 3, (160, 112, 72)); cell(x, base - 1, (160, 112, 72))
+            if (x + fshift) % 8 == 0:
+                for y in range(base - 4, base + 1):
+                    cell(x, y, (122, 82, 52))
         canvas.alpha_composite(layer)
         draw_props(canvas, props, travelled)
     return background, draw_moving
