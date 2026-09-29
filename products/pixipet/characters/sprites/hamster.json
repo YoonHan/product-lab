@@ -2,7 +2,6 @@
   "name": "hamster",
   "displayName": "드워프 햄스터 (정글리안)",
   "version": 1,
-  "inProgress": true,
   "tickMs": 50,
   "size": [26, 28],
   "anchor": [13, 27],
