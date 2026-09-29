@@ -1,0 +1,944 @@
+{
+  "name": "penguin",
+  "tickMs": 50,
+  "frameSize": [
+    38,
+    32
+  ],
+  "anchor": [
+    20,
+    31
+  ],
+  "images": {
+    "plain": {
+      "file": "penguin.png",
+      "size": [
+        532,
+        384
+      ],
+      "frames": {
+        "idle_0": {
+          "x": 342,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1": {
+          "x": 38,
+          "y": 0,
+          "w": 38,
+          "h": 32
+        },
+        "walk_0": {
+          "x": 0,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "walk_1": {
+          "x": 38,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "walk_2": {
+          "x": 76,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "walk_3": {
+          "x": 114,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "turn_a": {
+          "x": 0,
+          "y": 64,
+          "w": 38,
+          "h": 32
+        },
+        "turn_b": {
+          "x": 38,
+          "y": 64,
+          "w": 38,
+          "h": 32
+        },
+        "lean": {
+          "x": 190,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "thud": {
+          "x": 228,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "belly": {
+          "x": 266,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "slide_0": {
+          "x": 114,
+          "y": 96,
+          "w": 38,
+          "h": 32
+        },
+        "slide_1": {
+          "x": 152,
+          "y": 96,
+          "w": 38,
+          "h": 32
+        },
+        "slide_2": {
+          "x": 190,
+          "y": 96,
+          "w": 38,
+          "h": 32
+        },
+        "slide_3": {
+          "x": 228,
+          "y": 96,
+          "w": 38,
+          "h": 32
+        },
+        "stand": {
+          "x": 494,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "trip": {
+          "x": 152,
+          "y": 160,
+          "w": 38,
+          "h": 32
+        },
+        "flap_down": {
+          "x": 380,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "flap_out": {
+          "x": 418,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "flap_up": {
+          "x": 456,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_up": {
+          "x": 0,
+          "y": 256,
+          "w": 38,
+          "h": 32
+        },
+        "eat_fall_0": {
+          "x": 38,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "eat_fall_1": {
+          "x": 76,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "eat_fall_2": {
+          "x": 114,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "eat_gulp_0": {
+          "x": 152,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "eat_gulp_1": {
+          "x": 190,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "eat_gulp_2": {
+          "x": 228,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "eat_swallow_0": {
+          "x": 266,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "eat_swallow_1": {
+          "x": 304,
+          "y": 224,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up": {
+          "x": 38,
+          "y": 256,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_up_fwd": {
+          "x": 0,
+          "y": 288,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up_fwd": {
+          "x": 38,
+          "y": 288,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_down_fwd": {
+          "x": 0,
+          "y": 320,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_down_fwd": {
+          "x": 38,
+          "y": 320,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_down": {
+          "x": 0,
+          "y": 352,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_down": {
+          "x": 38,
+          "y": 352,
+          "w": 38,
+          "h": 32
+        }
+      }
+    },
+    "outlined": {
+      "file": "penguin-outlined.png",
+      "size": [
+        560,
+        408
+      ],
+      "padding": 1,
+      "frames": {
+        "idle_0": {
+          "x": 361,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1": {
+          "x": 41,
+          "y": 1,
+          "w": 38,
+          "h": 32
+        },
+        "walk_0": {
+          "x": 1,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "walk_1": {
+          "x": 41,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "walk_2": {
+          "x": 81,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "walk_3": {
+          "x": 121,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "turn_a": {
+          "x": 1,
+          "y": 69,
+          "w": 38,
+          "h": 32
+        },
+        "turn_b": {
+          "x": 41,
+          "y": 69,
+          "w": 38,
+          "h": 32
+        },
+        "lean": {
+          "x": 201,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "thud": {
+          "x": 241,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "belly": {
+          "x": 281,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "slide_0": {
+          "x": 121,
+          "y": 103,
+          "w": 38,
+          "h": 32
+        },
+        "slide_1": {
+          "x": 161,
+          "y": 103,
+          "w": 38,
+          "h": 32
+        },
+        "slide_2": {
+          "x": 201,
+          "y": 103,
+          "w": 38,
+          "h": 32
+        },
+        "slide_3": {
+          "x": 241,
+          "y": 103,
+          "w": 38,
+          "h": 32
+        },
+        "stand": {
+          "x": 521,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "trip": {
+          "x": 161,
+          "y": 171,
+          "w": 38,
+          "h": 32
+        },
+        "flap_down": {
+          "x": 401,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "flap_out": {
+          "x": 441,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "flap_up": {
+          "x": 481,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_up": {
+          "x": 1,
+          "y": 273,
+          "w": 38,
+          "h": 32
+        },
+        "eat_fall_0": {
+          "x": 41,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "eat_fall_1": {
+          "x": 81,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "eat_fall_2": {
+          "x": 121,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "eat_gulp_0": {
+          "x": 161,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "eat_gulp_1": {
+          "x": 201,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "eat_gulp_2": {
+          "x": 241,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "eat_swallow_0": {
+          "x": 281,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "eat_swallow_1": {
+          "x": 321,
+          "y": 239,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up": {
+          "x": 41,
+          "y": 273,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_up_fwd": {
+          "x": 1,
+          "y": 307,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up_fwd": {
+          "x": 41,
+          "y": 307,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_down_fwd": {
+          "x": 1,
+          "y": 341,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_down_fwd": {
+          "x": 41,
+          "y": 341,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_down": {
+          "x": 1,
+          "y": 375,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_down": {
+          "x": 41,
+          "y": 375,
+          "w": 38,
+          "h": 32
+        }
+      }
+    }
+  },
+  "animations": {
+    "idle": {
+      "loop": true,
+      "steps": [
+        {
+          "frame": "idle_0",
+          "ms": 600
+        },
+        {
+          "frame": "idle_1",
+          "ms": 600
+        }
+      ]
+    },
+    "walk": {
+      "loop": true,
+      "steps": [
+        {
+          "frame": "walk_0",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_1",
+          "ms": 100
+        },
+        {
+          "frame": "walk_2",
+          "ms": 100
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100
+        }
+      ]
+    },
+    "turn": {
+      "loop": false,
+      "holdMs": 0,
+      "flipAt": 2,
+      "steps": [
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "turn_b",
+          "ms": 100
+        },
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "idle_0",
+          "ms": 50
+        }
+      ]
+    },
+    "slide": {
+      "loop": true,
+      "loopFrom": 3,
+      "pose": [
+        "stand",
+        "sliding"
+      ],
+      "steps": [
+        {
+          "frame": "lean",
+          "ms": 150
+        },
+        {
+          "frame": "thud",
+          "ms": 100
+        },
+        {
+          "frame": "belly",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "slide_0",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "slide_1",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "slide_2",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "slide_3",
+          "ms": 100,
+          "moveX": 2
+        }
+      ]
+    },
+    "slide_stop": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "sliding",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "belly",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "belly",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "belly",
+          "ms": 150,
+          "moveX": 1
+        },
+        {
+          "frame": "belly",
+          "ms": 600
+        },
+        {
+          "frame": "lean",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "fall": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "walk_0",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_1",
+          "ms": 100
+        },
+        {
+          "frame": "walk_2",
+          "ms": 100
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100
+        },
+        {
+          "frame": "walk_0",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_1",
+          "ms": 100
+        },
+        {
+          "frame": "trip",
+          "ms": 150
+        },
+        {
+          "frame": "lean",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "thud",
+          "ms": 100
+        },
+        {
+          "frame": "belly",
+          "ms": 100
+        },
+        {
+          "frame": "thud",
+          "ms": 50
+        },
+        {
+          "frame": "belly",
+          "ms": 1000
+        },
+        {
+          "frame": "lean",
+          "ms": 200
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "flap": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "idle_0",
+          "ms": 200
+        },
+        {
+          "frame": "flap_down",
+          "ms": 50
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_up",
+          "ms": 100
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_down",
+          "ms": 50
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_up",
+          "ms": 100
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_down",
+          "ms": 50
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_up",
+          "ms": 100
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_down",
+          "ms": 50
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_up",
+          "ms": 100
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_down",
+          "ms": 100
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "eat": {
+      "loop": false,
+      "holdMs": 300,
+      "steps": [
+        {
+          "frame": "idle_0_up",
+          "ms": 300
+        },
+        {
+          "frame": "eat_fall_0",
+          "ms": 100
+        },
+        {
+          "frame": "eat_fall_1",
+          "ms": 100
+        },
+        {
+          "frame": "eat_fall_2",
+          "ms": 100
+        },
+        {
+          "frame": "eat_gulp_0",
+          "ms": 200
+        },
+        {
+          "frame": "eat_gulp_1",
+          "ms": 200
+        },
+        {
+          "frame": "eat_gulp_2",
+          "ms": 200
+        },
+        {
+          "frame": "idle_0_up",
+          "ms": 200
+        },
+        {
+          "frame": "eat_swallow_0",
+          "ms": 200
+        },
+        {
+          "frame": "eat_swallow_1",
+          "ms": 200
+        },
+        {
+          "frame": "idle_0",
+          "ms": 300
+        },
+        {
+          "frame": "flap_down",
+          "ms": 50
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_up",
+          "ms": 100
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_down",
+          "ms": 50
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "flap_up",
+          "ms": 100
+        },
+        {
+          "frame": "flap_out",
+          "ms": 50
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    }
+  },
+  "outline": {
+    "skip": [
+      "e",
+      "E"
+    ]
+  },
+  "blink": {
+    "animations": [
+      "idle"
+    ],
+    "eye": "o",
+    "closed": "k",
+    "everyTicks": [
+      50,
+      120
+    ],
+    "forTicks": 2,
+    "doubleChance": 0.25
+  },
+  "transitions": {
+    "sliding": {
+      "stand": [
+        "slide_stop"
+      ]
+    }
+  },
+  "idleVariants": [
+    "flap",
+    "fall"
+  ],
+  "look": {
+    "animations": [
+      "idle"
+    ],
+    "headCenter": [
+      22,
+      16
+    ],
+    "sectors": [
+      {
+        "dir": "up",
+        "min": 60
+      },
+      {
+        "dir": "up_fwd",
+        "min": 20
+      },
+      {
+        "dir": "fwd",
+        "min": -20
+      },
+      {
+        "dir": "down_fwd",
+        "min": -60
+      },
+      {
+        "dir": "down",
+        "min": -90
+      }
+    ],
+    "deadZone": 5,
+    "turnMargin": 3,
+    "frames": {
+      "up": {
+        "idle_0": "idle_0_up",
+        "idle_1": "idle_1_up"
+      },
+      "up_fwd": {
+        "idle_0": "idle_0_up_fwd",
+        "idle_1": "idle_1_up_fwd"
+      },
+      "down_fwd": {
+        "idle_0": "idle_0_down_fwd",
+        "idle_1": "idle_1_down_fwd"
+      },
+      "down": {
+        "idle_0": "idle_0_down",
+        "idle_1": "idle_1_down"
+      }
+    }
+  },
+  "reactions": {
+    "alert": [
+      "flap"
+    ],
+    "curious": [
+      "walk"
+    ],
+    "greet": [
+      "flap"
+    ],
+    "wake": [
+      "flap"
+    ],
+    "sleepy": [],
+    "celebrate": [
+      "slide",
+      "flap"
+    ],
+    "busy": [
+      "eat"
+    ],
+    "wander": [
+      "walk"
+    ]
+  }
+}

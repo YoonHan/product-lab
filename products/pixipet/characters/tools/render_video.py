@@ -3,12 +3,12 @@
 Needs Pillow, numpy and ffmpeg. Frames are drawn from sprites/<animal>.json exactly as the app
 would draw them (white 1px outline, integer scale) and piped to ffmpeg; one tick = one video
 frame. Each animal has its own stage: the fox runs across a field at sunset, the arctic fox
-across snow in Hokkaido at dusk, and the hamster potters about its enclosure in the evening,
-on deep wood-shaving bedding.
+across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midnight sun, and
+the hamster potters about its enclosure in the evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|hamster] [stage] [out.mp4]
-       stages: fox (the fox's default), hokkaido (the arctic fox's), hamster (the enclosure),
-               beach (a sandy beach by the sea)
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|hamster] [stage] [out.mp4]
+       stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
+               hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -285,7 +285,7 @@ def timeline(s):
                 move = (a.get('moveX') or 0) + ((a['seq'][step][2] if len(a['seq'][step]) > 2 else 0) or 0 if starts else 0)
                 ticks.append((f, facing < 0, seg_i == 0 and n in blink_at, seg_i, None, move * facing))
             end_pose, last = a.get('pose', ['stand', 'stand'])[1], seq[-1][0]
-        if seg_i == len(SEGMENTS) - 1 or end_pose == 'running':   # running flows straight into stopping
+        if seg_i == len(SEGMENTS) - 1 or end_pose in ('running', 'sliding'):   # flows straight into stopping
             continue
         # the pause: breathe when standing, keep breathing when asleep, otherwise hold the pose
         if end_pose == 'stand':
@@ -354,8 +354,9 @@ def look_segment(s, ticks, seg_i, facing):
 
 
 # The LOOK cursor is something the animal would watch: a sunflower seed that bobs 1px for the
-# hamster, a butterfly that flaps for the fox, and for the arctic fox in the snow a shima-enaga
-# (Hokkaido's white long-tailed tit) that flaps and faces the way it flies. Pixel art with the
+# hamster, a butterfly that flaps for the fox, for the arctic fox in the snow a shima-enaga
+# (Hokkaido's white long-tailed tit) that flaps and faces the way it flies, and a fish for the
+# penguin. Pixel art with the
 # sprites' white 1px outline, CURSOR_PX video pixels per pixel, centred on the cursor point.
 CURSOR_PX = 4
 CURSOR_COLOURS = {
@@ -363,6 +364,7 @@ CURSOR_COLOURS = {
     'K': (24, 22, 26, 255), 'G': (150, 148, 144, 255),   # seed shell and its stripes
     'Y': (255, 170, 60, 255), 'y': (214, 110, 40, 255), 'B': (40, 30, 34, 255),   # butterfly
     'E': (246, 244, 240, 255), 'N': (92, 88, 96, 255), 'P': (214, 170, 164, 255),  # shima-enaga (and K)
+    'U': (79, 106, 134, 255), 'u': (196, 210, 222, 255),                             # fish (and K for its eye)
 }
 SEED = """
 ...OOOO...
@@ -427,6 +429,24 @@ OKKKENNEEEEO..
 """]
 
 
+# the penguin's fish (as in its eat animation); the tail fork beats between the two frames
+FISH = ["""
+.....OO...
+.O..OUUOO.
+OUOOUUUKUO
+.OUUuuuuuO
+OUOOOuuOO.
+.O...OO...
+""", """
+.....OO...
+..O.OUUOO.
+.OUOUUUKUO
+.OUUuuuuuO
+.OUOOuuOO.
+..O..OO...
+"""]
+
+
 def pixel_art(art):
     rows = art.strip('\n').split('\n')
     img = Image.new('RGBA', (max(map(len, rows)) * CURSOR_PX, len(rows) * CURSOR_PX), (0, 0, 0, 0))
@@ -443,9 +463,12 @@ def draw_cursor(canvas, x, y, t):
     """The LOOK cursor centred on (x, y) at LOOK tick t."""
     if ANIMAL == 'hamster':
         img, y = pixel_art(SEED), y + (CURSOR_PX if (t // 6) % 2 else 0)
-    elif ANIMAL == 'arctic-fox':
-        img, y = pixel_art(ENAGA[(t // 2) % 2]), y + (CURSOR_PX if (t // 6) % 2 else 0)
-        # face the way the bird flies (it faces right as drawn); hold the last way while it hovers
+    elif ANIMAL in ('arctic-fox', 'penguin'):
+        if ANIMAL == 'arctic-fox':
+            img, y = pixel_art(ENAGA[(t // 2) % 2]), y + (CURSOR_PX if (t // 6) % 2 else 0)
+        else:                                    # a fish swimming through the air, its tail beating
+            img, y = pixel_art(FISH[(t // 3) % 2]), y + (CURSOR_PX if (t // 8) % 2 else 0)
+        # face the way it moves (it faces right as drawn); hold the last way while it hovers
         dx = next((cursor_at(u)[0] - cursor_at(u - 1)[0] for u in range(t, 0, -1)
                    if cursor_at(u)[0] != cursor_at(u - 1)[0]), 1)
         if dx < 0:
@@ -983,15 +1006,156 @@ def hokkaido_stage():
     return background, draw_moving
 
 
-STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage}
+# ---- penguin: Antarctic sea ice under the midnight sun ----------------------------------------
+# The sun sits low over the sea and never sets; the sky is gold at the horizon and pale blue
+# above. Tabular icebergs drift on a strip of dark sea, a colony of tiny penguins stands at the
+# far edge of the ice, and the sea ice runs to the viewer with drifts and cracks. The ice near the
+# penguin is in cool shade, darker than its white belly.
+PENGUIN = dict(
+    SCALE=10, GROUND_Y=600, HORIZON_Y=470,
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 뒤뚱뒤뚱 걷기', 48),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('slide', 'SLIDE · 배 썰매', 40),
+        ('slide_stop', 'SLIDE STOP · 멈추고 일어서기', 8),
+        ('flap', 'FLAP · 날개 파닥이기', 8),
+        ('fall', 'FALL · 넘어졌다 일어나기', 8),
+        ('eat', 'EAT · 물고기 먹기', 10),
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 30),
+    ],
+)
+ANTARCTICA = dict(
+    SKY=[(0, (70, 116, 186)), (240, (132, 170, 214)), (400, (222, 208, 214)), (470, (252, 220, 184))],
+    SEA=[(470, (34, 58, 96)), (500, (44, 74, 116))],
+    ICE_EDGE=500,
+    ICE=[(500, (214, 226, 242)), (560, (176, 194, 224)), (600, (160, 180, 216)), (720, (122, 144, 190))],
+    SUN=((250, 430), 26, (255, 244, 214)),
+    RANGE=(620, 1280, 392),          # far mountains beyond the sea: x from, x to, highest peak y
+)
+
+
+def antarctica_stage():
+    import numpy as np, math, random
+    P, A = SCALE, ANTARCTICA
+    ys = np.arange(VIDEO_H)
+    yy, xx = np.mgrid[0:VIDEO_H, 0:VIDEO_W]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    hor, edge = HORIZON_Y, A['ICE_EDGE']
+    img = np.where((yy < hor)[..., None], ramp(A['SKY'])[:, None, :],
+                   np.where((yy < edge)[..., None], ramp(A['SEA'])[:, None, :], ramp(A['ICE'])[:, None, :])).astype(float)
+    (sx, sy), r, sun_c = A['SUN']
+    glow = 0.45 * np.exp(-(((xx - sx) / 420) ** 2 + ((yy - sy) / 150) ** 2)) * (yy < hor)
+    img = img * (1 - glow[..., None]) + np.array((255, 226, 186.)) * glow[..., None]
+    cx, cy = (xx // P) * P + P / 2, (yy // P) * P + P / 2
+    disc = (((cx - sx) ** 2 + (cy - sy) ** 2) <= r * r) & (yy < hor)
+    img = np.where(disc[..., None], np.array(sun_c, float), img)
+    # far mountains of the ice sheet beyond the sea: pale, lit gold on the sunward (left) slopes
+    x0r, x1r, peak = A['RANGE']
+    prof = np.full(VIDEO_W // P + 1, hor, float)
+    for px_, py_, half in ((700, peak + 30, 90), (820, peak, 130), (960, peak + 22, 110), (1090, peak + 8, 120), (1220, peak + 34, 90)):
+        c_ = np.arange(VIDEO_W // P + 1) * P + P / 2
+        prof = np.minimum(prof, py_ + np.abs(c_ - px_) / half * (hor - py_))
+    prof = np.round(prof / P) * P                   # on the grid
+    ridge = prof[(xx // P)]
+    rising = np.append(prof[1:] < prof[:-1], False)[(xx // P)]     # left (sunward) slopes
+    far = (cy >= ridge) & (cy < hor) & (cx >= x0r) & (cx <= x1r)
+    cap = far & (cy < ridge + 2 * P)
+    img = np.where(far[..., None], np.array((168, 182, 216.)), img)
+    img = np.where(cap[..., None], np.array((222, 230, 246.)), img)
+    img = np.where((cap & rising)[..., None], np.array((244, 226, 222.)), img)
+    # the sun's road on the sea: short bright dashes that widen toward the ice
+    road = (yy >= hor) & (yy < edge) & (np.abs(cx - sx) < 30 + (cy - hor) * 1.2) & (((cx // P) + (cy // P)) % 3 == 0)
+    img = np.where(road[..., None], np.array((255, 226, 176.)), img)
+    rim = (yy >= edge) & (yy < edge + P)
+    img = np.where(rim[..., None], img * 0.5 + np.array((250, 240, 236.)) * 0.5, img)
+    img += np.random.default_rng(7).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+
+    rnd = random.Random(9)
+    cols = VIDEO_W // P
+    period = cols * 2
+    hor_c, edge_c = hor // P, edge // P
+    # tabular icebergs: flat tops, a lit face and a shaded face, sitting on the waterline
+    bergs = []
+    for x0, w, h in ((24, 14, 3), (48, 6, 2), (112, 16, 3), (140, 8, 2), (176, 18, 4), (212, 7, 2), (240, 12, 3)):
+        cells = []
+        for dx in range(w):
+            top = h - (1 if dx in (0, w - 1) else 0)
+            for dy in range(top):
+                cells.append((dx, -dy - 1, (248, 250, 255) if dy == top - 1 else (206, 224, 244) if dx < w * 0.6 else (150, 180, 222)))
+        bergs.append((x0, cells))
+    # the colony far away: little penguins (black back, white front) in loose groups
+    colony = []
+    for gx in (18, 26, 90, 97, 160, 170, 214):
+        for k in range(rnd.randint(3, 6)):
+            colony.append(gx + k * 2 + rnd.randint(0, 1))
+    # on the ice, scrolling with the ground: drifts and cracks
+    props = []
+    for _ in range(40):
+        y = rnd.randrange(edge_c + 2, VIDEO_H // P)
+        near = (y * P - edge) / (VIDEO_H - edge)
+        x, w = rnd.randrange(period), rnd.randint(2, 3) + int(near * 5)
+        props.append((x, [(i, 0) for i in range(w)], y, (236, 242, 252), 0.35 + 0.3 * near))
+        props.append((x + 1, [(i, 1) for i in range(w - 1)], y, (104, 124, 176), 0.2 + 0.25 * near))
+    for _ in range(14):                                   # cracks in the sea ice: thin zigzags
+        y = rnd.randrange(edge_c + 3, VIDEO_H // P - 1)
+        near = (y * P - edge) / (VIDEO_H - edge)
+        x = rnd.randrange(period)
+        cells, cy_ = [], 0
+        for i in range(3 + int(near * 5)):
+            cells.append((i, cy_))
+            if rnd.random() < 0.35:
+                cy_ += rnd.choice((-1, 1))
+        props.append((x, cells, y, (92, 116, 170), 0.35 + 0.3 * near))
+    props = (period, props)
+    sparkles = [(rnd.randrange(period), rnd.randrange(edge_c + 1, VIDEO_H // P), rnd.uniform(0.3, 0.6),
+                 rnd.uniform(0, 2 * math.pi), rnd.uniform(1.8, 3.6)) for _ in range(28)]
+
+    def draw_moving(canvas, t, travelled):
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        dr = ImageDraw.Draw(layer)
+        def cell(x, y, colour, a=1.0):
+            dr.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=colour + (int(255 * max(0, min(1, a))),))
+        bshift = round(travelled * 0.1 + t * 0.15)          # icebergs drift slowly on their own too
+        for x0, cells in bergs:
+            X = (x0 - bshift) % period - 20
+            for dx, dy, col in cells:
+                cell(X + dx, edge_c + dy, col)
+        cshift = round(travelled * HORIZON_SPEED)
+        for x0 in colony:
+            X = (x0 - cshift) % period - 10
+            cell(X, edge_c, (30, 34, 46))           # head and back
+            cell(X, edge_c + 1, (226, 230, 238))    # white front
+            cell(X, edge_c + 2, (226, 230, 238))
+        canvas.alpha_composite(layer)
+        draw_props(canvas, props, travelled)
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        dr = ImageDraw.Draw(layer)
+        for x, y, base_a, phase, per in sparkles:
+            s_ = 0.5 + 0.5 * math.sin(2 * math.pi * t / per + phase)
+            a = base_a * s_ ** 3
+            if a > 0.05:
+                X = (x - round(travelled * ground_speed(y * P + P / 2))) % period
+                if X < cols:
+                    cell(X, y, (255, 255, 255), a)
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
+          'antarctica': antarctica_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide'}
 
 
 def main():
-    if ANIMAL == 'hamster':
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN}.get(ANIMAL)
+    if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):
-            g[key] = HAMSTER[key]
+            g[key] = conf[key]
     s = load()
     frames = Frames(s)
     font = ImageFont.truetype(FONT[0], 32, index=FONT[1])
