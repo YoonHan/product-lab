@@ -53,7 +53,11 @@ function validateSprite(s, file, reactionNames) {
   }
   for (const ch of s.outline?.skip ?? []) if (!s.palette[ch]) errors.push(`${file}: outline skip colour "${ch}" is not in the palette`);
   if (s.blink) {
-    for (const k of ["eye", "closed"]) if (!s.palette[s.blink[k]]) errors.push(`${file}: blink ${k} colour "${s.blink[k]}" is not in the palette`);
+    if (s.blink.swap) {
+      for (const [from, to] of Object.entries(s.blink.swap)) for (const ch of [from, to]) if (!s.palette[ch]) errors.push(`${file}: blink swap colour "${ch}" is not in the palette`);
+    } else {
+      for (const k of ["eye", "closed"]) if (!s.palette[s.blink[k]]) errors.push(`${file}: blink ${k} colour "${s.blink[k]}" is not in the palette`);
+    }
     for (const a of s.blink.animations ?? []) if (!s.animations[a]) errors.push(`${file}: blink applies to unknown animation "${a}"`);
   }
   for (const [name, a] of Object.entries(s.animations)) {

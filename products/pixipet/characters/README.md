@@ -10,19 +10,23 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `style-guide.md` | 우리 에셋의 제작 규칙 (해상도, 색, 테두리, 애니메이션, 데이터 형식, 이벤트 연결) |
 | `docs/fox-design-log.md` | 여우 작업 기록: 원하는 느낌, 처음 구현한 내용, 수정 요청과 원인·조치. 다음 동물을 만들기 전에 먼저 읽습니다 |
 | `docs/prompts.md` | 여우 작업에 사용한 프롬프트 원문 |
+| `docs/hamster-design-log.md` | 햄스터 작업 기록: 햄스터에서 새로 알게 된 원하는 느낌, 수정 요청과 원인·조치, 확인을 기다리는 동작 |
+| `docs/hamster-prompts.md` | 햄스터 작업에 사용한 프롬프트 원문 |
 | `sprites/<동물>.json` | 스프라이트 원본 데이터. 직접 편집하는 파일입니다 |
 | `events.json` | OS 이벤트 → 반응(reaction) 연결. 동물과 무관합니다 |
 | `tools/build.mjs` | 데이터를 검증하고 `dist/`를 생성합니다 |
 | `tools/draft_fox.py`, `tools/fox_poses.py` | 여우 프레임 생성기와 손으로 그린 키 포즈 |
+| `tools/draft_hamster.py` | 햄스터 프레임 생성기. 핵심 자세와 머리는 손으로 그린 문자 격자이고, 나머지 프레임은 이 격자를 바꿔 만듭니다 |
+| `tools/assemble_hamster.py` | 생성한 프레임과 동작 정의로 `sprites/hamster.json`을 씁니다 |
 | `tools/assemble_fox.py` | 생성한 프레임과 동작 정의로 `sprites/fox.json`을 씁니다. 프레임을 손으로 고친 뒤에는 실행하지 않습니다 |
-| `tools/render_video.py` | 모든 동작을 한 번씩 이어 붙인 소개 영상을 `dist/fox-all-animations.mp4`로 만듭니다. Pillow와 ffmpeg가 필요합니다 |
+| `tools/render_video.py` | 모든 동작을 한 번씩 이어 붙인 소개 영상을 만듭니다. `python3 tools/render_video.py fox` 또는 `hamster`로 동물을 고르며, 결과는 `dist/<동물>-all-animations.mp4`입니다. 동물마다 무대가 다릅니다(여우: 해 질 녘 들판, 햄스터: 저녁의 사육장). 동물 뒤에 무대 이름을 붙이면 다른 무대로 만듭니다(`hamster beach` → `dist/hamster-all-animations-beach.mp4`, 파도치는 모래사장). 햄스터 영상은 모래사장 무대를 쓰고, 사육장 무대(`hamster`)는 코드에만 남아 있습니다. Pillow, numpy, ffmpeg가 필요합니다 |
 | `viewer.html` | 재생, 배율, 배경, 테두리, 격자, 어니언 스킨, 이벤트 시뮬레이터를 갖춘 뷰어 |
 | `dist/` | 생성 결과: 뷰어 번들(`pet-data.js`), PNG 시트(테두리 없음·있음), 앱용 `*.sheet.json` |
 
 ## 작업 흐름
 
 ```sh
-# sprites/*.json 또는 events.json을 고친 뒤
+# sprites/*.json 또는 events.json을 고친 뒤 (햄스터는 python3 tools/assemble_hamster.py 먼저)
 node tools/build.mjs
 open viewer.html
 ```
@@ -32,6 +36,7 @@ open viewer.html
 ## 진행 상황
 
 - 여우: **완성**(2026-09-28). 12개 동작 (`idle`, `walk`, `run`, `sit`, `lie_down`, `stretch`, `pounce`, `listen`, `curl_sleep`, `dig`, `lick`, `itch`)과 전환 동작 5개(`sit_up`, `lie_up`, `uncurl`, `dig_end`, `run_stop`). 돌아서기(`turn`). IDLE 마우스 추적(돌아서기 + 머리 5방향)과 눈 깜빡임. 50ms 틱, 119프레임. 달리기는 IK 다리의 8프레임 갤럽, 점프는 공중 구간 11프레임과 머리가 박힌 뒤 빼내는 동작, 기지개에는 하품이 있습니다. 소개 영상은 해 질 녘 배경과 패럴랙스 스크롤을 씁니다.
+- 햄스터(정글리안): **작업 중**(2026-09-29). 몸 13×10px, 프레임 26×28, 23개 동작, 157프레임. 소개 영상 `dist/hamster-all-animations-beach.mp4`(모래사장). 확인 완료: `idle`, `walk`, `sit`, `sit_up`, `sniff`, `rear_look`, `turn`, `lie_down`, `lie_up`, `run`, `run_stop`, `burrow_in`, `hide`, `peek`. 다시 확인 대기: IDLE 마우스 추적(위 방향), `curl_sleep`, `uncurl`, `eat_seed`, `dig`, `dig_end`, `emerge`, `groom`(고개 숙임), 톱밥 더미 모양. 첫 확인 대기: `stretch`, `wheel`.
 - 이벤트: 시스템 9개, 앱 3개(포모도로 타이머 2개, 클릭), 외부 2개(Claude Code 훅).
 
 ## 레퍼런스

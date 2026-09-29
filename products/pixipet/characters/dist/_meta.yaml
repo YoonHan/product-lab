@@ -6,8 +6,14 @@ derived:
   - files: [fox.png, fox-outlined.png, fox.sheet.json, pet-data.js]
     from: sprites/fox.json
     by: node tools/build.mjs
+  - files: [hamster.png, hamster-outlined.png, hamster.sheet.json]
+    from: sprites/hamster.json (written by tools/assemble_hamster.py)
+    by: node tools/build.mjs
   - files: [fox-all-animations.mp4]
     from: sprites/fox.json
-    by: tools/render_video.py (Pillow, numpy, ffmpeg)
+    by: tools/render_video.py fox (Pillow, numpy, ffmpeg)
+  - files: [hamster-all-animations-beach.mp4]
+    from: sprites/hamster.json
+    by: tools/render_video.py hamster beach (Pillow, numpy, ffmpeg)
 license: original work
 created: 2026-09-28

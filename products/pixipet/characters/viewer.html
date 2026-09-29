@@ -125,7 +125,7 @@
       <div class="panel">
         <h2 id="strip-title">프레임</h2>
         <div class="strip" id="strip"></div>
-        <p class="hint">프레임을 누르면 그 프레임에서 멈춥니다. 아래 숫자는 틱(100ms) 수입니다. <kbd>Space</kbd> 재생·정지, <kbd>←</kbd> <kbd>→</kbd> 프레임 이동</p>
+        <p class="hint">프레임을 누르면 그 프레임에서 멈춥니다. 아래 숫자는 틱(50ms) 수입니다. <kbd>Space</kbd> 재생·정지, <kbd>←</kbd> <kbd>→</kbd> 프레임 이동</p>
       </div>
       <div class="panel">
         <h2>팔레트</h2>
@@ -156,8 +156,16 @@
   if (!DATA) { document.body.innerHTML = "<p style='padding:24px'>dist/pet-data.js가 없습니다. <code>node tools/build.mjs</code>를 먼저 실행하세요.</p>"; return; }
 
   const TICK = DATA.tickMs;
+  // Which animal to show first: ?animal=<name> in the URL, else the one marked "inProgress"
+  // in its sprite file (the animal being drawn right now), else the first one.
+  function initialAnimal() {
+    const names = Object.keys(DATA.sprites);
+    const asked = new URLSearchParams(location.search).get("animal");
+    if (asked && DATA.sprites[asked]) return asked;
+    return names.find(n => DATA.sprites[n].inProgress) ?? names[0];
+  }
   const state = {
-    animal: Object.keys(DATA.sprites)[0], anim: "idle", step: 0, left: 1,
+    animal: initialAnimal(), anim: "idle", step: 0, left: 1,
     playing: true, speed: 1, scale: 2.5, outline: true, move: true, grid: false, onion: false, auto: true, track: true, queue: [], path: [], blinkIn: 40, blinkLeft: 0, doubleBlink: false, cursor: null, lookDir: "fwd",
     x: 0, dir: 1, queue: [], reaction: null, loopsLeft: 0,
   };
@@ -170,7 +178,8 @@
     const key = `${state.animal}/${name}/${outlined}/${blink}`;
     if (cache.has(key)) return cache.get(key);
     const s = sprite(), [w, h] = s.size, pad = outlined ? 1 : 0, rows = s.frames[name];
-    const swap = blink && s.blink ? { [s.blink.eye]: s.blink.closed } : {};
+    // blink.swap maps several eye colours at once (a 1x2 eye: top pixel to fur, bottom to a dark lid line)
+    const swap = blink && s.blink ? (s.blink.swap ?? { [s.blink.eye]: s.blink.closed }) : {};
     const c = document.createElement("canvas"); c.width = w + pad * 2; c.height = h + pad * 2;
     const g = c.getContext("2d");
     if (outlined) {

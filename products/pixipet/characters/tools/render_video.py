@@ -1,9 +1,12 @@
-"""Renders a showcase video that plays every fox animation once, with a label badge.
+"""Renders a showcase video that plays every animation of one animal once, with a label badge.
 
-Needs Pillow and ffmpeg. Frames are drawn from sprites/fox.json exactly as the app would
-draw them (white 1px outline, integer scale) and piped to ffmpeg; one tick = one video frame.
+Needs Pillow, numpy and ffmpeg. Frames are drawn from sprites/<animal>.json exactly as the app
+would draw them (white 1px outline, integer scale) and piped to ffmpeg; one tick = one video
+frame. Each animal has its own stage: the fox runs across a field at sunset, the hamster
+potters about its enclosure in the evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [out.mp4]
+Usage: python3 tools/render_video.py [fox|hamster] [stage] [out.mp4]
+       stages: fox (default for the fox), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -13,7 +16,10 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
-OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'dist', 'fox-all-animations.mp4')
+_args = sys.argv[1:]
+ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
+STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else ANIMAL     # e.g. "hamster beach"
+OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == ANIMAL else f'-{STAGE}') + '.mp4')
 
 VIDEO_W, VIDEO_H = 1280, 720
 SCALE = 8                      # sprite pixel -> video pixels
@@ -202,7 +208,7 @@ def hexrgb(h):
 
 
 def load():
-    with open(os.path.join(ROOT, 'sprites', 'fox.json')) as f:
+    with open(os.path.join(ROOT, 'sprites', f'{ANIMAL}.json')) as f:
         return json.load(f)
 
 
@@ -218,7 +224,8 @@ class Frames:
             return self.cache[key]
         s = self.s
         w, h = s['size']
-        swap = {s['blink']['eye']: s['blink']['closed']} if blink else {}
+        b = s['blink']
+        swap = (b.get('swap') or {b['eye']: b['closed']}) if blink else {}
         img = Image.new('RGBA', (w + 2, h + 2), (0, 0, 0, 0))
         px = img.load()
         rows = s['frames'][name]
@@ -280,8 +287,9 @@ def timeline(s):
         # the pause: breathe when standing, keep breathing when asleep, otherwise hold the pose
         if end_pose == 'stand':
             pause = [idle[t % len(idle)][0] for t in range(GAP)]
-        elif end_pose == 'curl':
-            body = play_once(anims['curl_sleep'])[sum(st[1] for st in anims['curl_sleep']['seq'][:2]):]
+        elif end_pose in LOOP_POSES:                      # asleep, hidden: keep the loop going
+            a = anims[LOOP_POSES[end_pose]]
+            body = play_once(a)[sum(st[1] for st in a['seq'][:a.get('loopFrom', 0)]):]
             pause = [body[t % len(body)][0] for t in range(GAP)]
         else:
             pause = [last] * GAP
@@ -373,7 +381,346 @@ def badge(layer, text, alpha, font, cx, bottom):
     d.text((cx, y0 + h / 2), text, font=font, fill=(255, 255, 255, int(255 * alpha)), anchor='mm')
 
 
+def fox_stage():
+    background, stars, props = make_background(), make_stars(), make_props()
+    def draw_moving(canvas, t, travelled):
+        draw_stars(canvas, stars, t, travelled)
+        draw_props(canvas, props, travelled)
+    return background, draw_moving
+
+
+# ---- hamster: an enclosure in the evening -----------------------------------------------------
+# A room wall behind the glass, warmed by a desk lamp on the left. On the far edge of the bedding stand the hamster's things: a wooden hideout, a wheel, a
+# food bowl with seeds, and a water bottle hanging from the lid. The floor is deep wood-shaving
+# bedding: pale, with slanted strands, loose curls and a few sunflower seeds lying about.
+HAMSTER = dict(
+    SCALE=12, GROUND_Y=600, HORIZON_Y=528,
+    WALL=[(0, (36, 30, 44)), (260, (62, 48, 58)), (528, (98, 74, 70))],
+    FLOOR=[(528, (206, 186, 150)), (600, (220, 201, 164)), (720, (188, 164, 124))],
+    LAMP=((170, 140), (255, 196, 128), 0.42, (560, 360)),      # centre, colour, strength, radii
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 걷기', 48),
+        ('run', 'RUN · 달리기', 48),
+        ('run_stop', 'RUN STOP · 멈추기', 6),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('sniff', 'SNIFF · 킁킁', 8),
+        ('rear_look', 'REAR LOOK · 일어서서 두리번', 6),
+        ('sit', 'SIT · 앉기', 20),
+        ('groom', 'GROOM · 세수', 6),
+        ('eat_seed', 'EAT SEED · 해바라기씨 먹기', 6),
+        ('sit_up', 'SIT UP · 일어서기', 6),
+        ('stretch', 'STRETCH · 기지개', 6),
+        ('wheel', 'WHEEL · 쳇바퀴 타기', 6),
+        ('lie_down', 'LIE DOWN · 엎드리기', 20),
+        ('curl_sleep', 'CURL SLEEP · 몸 말고 자기', 64),
+        ('uncurl', 'UNCURL · 몸 풀기', 4),
+        ('lie_up', 'LIE UP · 엎드렸다 일어서기', 6),
+        ('dig', 'DIG · 톱밥 파기', 6),
+        ('burrow_in', 'BURROW IN · 톱밥 속으로', 4),
+        ('hide', 'HIDE · 숨어서 얼굴 내밀기', 150),
+        ('emerge', 'EMERGE · 나오기', 6),
+        ('idle', 'IDLE · 숨쉬기', 30),
+    ],
+)
+
+
+def hamster_stage():
+    import numpy as np, random
+    P, H0 = SCALE, HORIZON_Y
+    ys = np.arange(VIDEO_H)
+    yy, xx = np.mgrid[0:VIDEO_H, 0:VIDEO_W]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    img = np.where((yy < H0)[..., None], ramp(HAMSTER['WALL'])[:, None, :], ramp(HAMSTER['FLOOR'])[:, None, :]).astype(float)
+    (lx, ly), col, k, (rx, ry) = HAMSTER['LAMP']
+    a = k * np.exp(-(((xx - lx) / rx) ** 2 + ((yy - ly) / ry) ** 2) * 2.0)
+    a = a * np.where(yy < H0, 1.0, 0.45)
+    img = img * (1 - a[..., None]) + np.array(col) * a[..., None]
+    def paint(mask, colour, alpha=1.0):
+        nonlocal img
+        m = mask[..., None] * alpha
+        img = img * (1 - m) + np.array(colour, float) * m
+    # where the bedding meets the back of the tank: a shaded seam and a lit lip of shavings
+    paint((yy >= H0) & (yy < H0 + P), (150, 122, 92), 0.55)
+    paint((yy >= H0 - P // 2) & (yy < H0), (40, 30, 34), 0.25)
+    # bedding strands: short slanted strokes on the grid, sparser and smaller far away
+    rnd = np.random.default_rng(3)
+    # (sparse: packed tightly they read as sand)
+    for _ in range(110):
+        y = int(rnd.integers(H0 // P + 1, VIDEO_H // P))
+        near = (y * P - H0) / (VIDEO_H - H0)
+        x = int(rnd.integers(0, VIDEO_W // P))
+        n = 2 + int(near * 1.5)
+        shade = (176, 152, 114) if rnd.random() < 0.65 else (238, 226, 198)
+        rise = rnd.random() < 0.5
+        for i in range(n):
+            X, Y = (x + i) * P, (y - (i // 2 if rise else 0)) * P
+            paint((xx >= X) & (xx < X + P) & (yy >= Y) & (yy < Y + P), shade, 0.30 + 0.25 * near)
+    img += np.random.default_rng(7).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+
+    # far things on the back edge of the bedding, drawn once on a strip twice the screen wide
+    cols, base = VIDEO_W // P * 2, H0 // P            # base: the row they stand on
+    far = Image.new('RGBA', (cols * P, VIDEO_H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(far)
+    def cell(x, y, colour, alpha=255):
+        d.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=colour + (alpha,))
+    haze = lambda c, t=0.28: tuple(int(v * (1 - t) + w * t) for v, w in zip(c, (98, 74, 70)))
+    def hideout(x0):                                   # a little wooden house with a round door
+        wood, dark, roof, door = haze((150, 104, 66)), haze((112, 76, 48)), haze((120, 70, 52)), haze((46, 32, 30))
+        for y in range(base - 7, base):
+            for x in range(x0, x0 + 10):
+                cell(x, y, wood if (y - base) % 2 else dark)
+        for i in range(6):                             # roof
+            for x in range(x0 - 1 + i, x0 + 11 - i):
+                cell(x, base - 8 - i, roof)
+        for y, xs in ((base - 1, range(x0 + 3, x0 + 7)), (base - 2, range(x0 + 3, x0 + 7)),
+                      (base - 3, range(x0 + 3, x0 + 7)), (base - 4, range(x0 + 4, x0 + 6))):
+            for x in xs:
+                cell(x, y, door)
+    def wheel(x0):                                     # a spare running wheel on its stand, like the sprite's
+        import math
+        rim, spoke, stand, disc = haze((85, 123, 149)), haze((122, 160, 182), 0.4), haze((104, 118, 130)), haze((195, 219, 230), 0.4)
+        r, cxw, cyw = 6.5, x0 + 7, base - 9
+        for x in range(x0, x0 + 15):
+            for y in range(cyw - 8, cyw + 8):
+                dd = math.hypot(x + 0.5 - cxw - 0.5, y + 0.5 - cyw - 0.5)
+                if r - 1 <= dd < r:
+                    cell(x, y, rim)
+                elif dd < r - 1 and (x == cxw or y == cyw or x - cxw == y - cyw or x - cxw == cyw - y):
+                    cell(x, y, spoke)
+                elif dd < r - 1:
+                    cell(x, y, disc, 200)
+        for i in range(9):                             # the stand
+            cell(cxw - i // 2 - 1, cyw + 1 + i, stand); cell(cxw + i // 2 + 1, cyw + 1 + i, stand)
+    def bowl(x0):                                      # a ceramic bowl heaped with seeds
+        clay, rim_c, seed, stripe = haze((214, 196, 172)), haze((236, 222, 200)), haze((58, 52, 48)), haze((150, 142, 132))
+        for x in range(x0, x0 + 9):
+            cell(x, base - 3, rim_c)
+        for y, (a, b) in ((base - 2, (0, 9)), (base - 1, (1, 8))):
+            for x in range(x0 + a, x0 + b):
+                cell(x, y, clay)
+        for x, c in zip(range(x0 + 1, x0 + 8), (seed, stripe, seed, seed, stripe, seed, seed)):
+            cell(x, base - 4, c)
+        for x, c in zip(range(x0 + 3, x0 + 6), (seed, stripe, seed)):
+            cell(x, base - 5, c)
+    def bottle(x0):                                    # a water bottle hanging from the lid
+        glass, water, metal = haze((190, 214, 226), 0.2), haze((120, 170, 204), 0.2), haze((170, 176, 180))
+        for y in range(0, 22):
+            for x in range(x0, x0 + 3):
+                cell(x, y, water if y > 7 else glass, 170)
+        for y in range(22, 27):
+            cell(x0 + 1, y, metal)
+        cell(x0 + 2, 27, metal)
+    # placed so the middle of the screen (the hamster and its badge) is open wall both at the
+    # start and after walking and running, when the strip has scrolled about 20 cells
+    for x in (12, 12 + cols // 2):
+        hideout(x)
+    for x in (30, 30 + cols // 2):
+        bowl(x)
+    for x in (92, 92 + cols // 2):
+        wheel(x)
+    for x in (104, 104 + cols // 2):
+        bottle(x)
+
+    # near things on the bedding that scroll by depth: loose curls of shaving and seeds
+    rnd = random.Random(5)
+    period = cols
+    props = []
+    for _ in range(70):
+        y = rnd.randrange(H0 // P + 1, VIDEO_H // P - 1)
+        near = (y * P - H0) / (VIDEO_H - H0)
+        x = rnd.randrange(period)
+        curl = [(0, 0), (1, 0), (1, -1)] if rnd.random() < 0.5 else [(0, 0), (1, -1)]
+        props.append((x, curl, y, (240, 228, 200), 0.55 + 0.35 * near))
+        props.append((x, [(1, 0)], y, (164, 138, 100), 0.4 + 0.3 * near))
+    for _ in range(9):                                 # a few sunflower seeds dropped on the bedding
+        y = rnd.randrange(H0 // P + 2, VIDEO_H // P - 1)
+        x = rnd.randrange(period)
+        props.append((x, [(0, 0), (1, 0)], y, (58, 52, 48), 0.95))       # a dark seed lying on its side
+        props.append((x, [(1, -1)], y, (140, 132, 122), 0.95))            # with a light stripe on top
+    props = (period, props)
+
+    def draw_moving(canvas, t, travelled):
+        shift = round(travelled * HORIZON_SPEED) * P % far.width
+        canvas.alpha_composite(far, (-shift, 0))
+        if shift > far.width - VIDEO_W:
+            canvas.alpha_composite(far, (far.width - shift, 0))
+        draw_props(canvas, props, travelled)
+    return background, draw_moving
+
+
+# ---- beach: a sandy shore on a bright day -----------------------------------------------------
+# Sky with the sun high on the right, a blue sea that glitters where the sunlight hits it,
+# waves running up the shore and drawing back over darker wet sand, and warm dry sand in front
+# (not too pale, or the white outline and the white belly would melt into it).
+BEACH = dict(
+    SKY=[(0, (104, 178, 226)), (200, (150, 205, 236)), (300, (214, 238, 247))],
+    HORIZON=300,                      # where the sea meets the sky
+    SEA=[(300, (46, 110, 170)), (420, (48, 142, 186)), (500, (72, 180, 196))],
+    SHORE=512,                        # the mean waterline; waves run a few cells up and down from it
+    SAND=[(512, (196, 168, 120)), (600, (214, 186, 136)), (720, (198, 168, 118))],
+    SUN=((1010, 104), 42, (255, 250, 228)),
+)
+
+
+def beach_stage():
+    import numpy as np, math, random
+    P, B = SCALE, BEACH
+    ys = np.arange(VIDEO_H)
+    yy, xx = np.mgrid[0:VIDEO_H, 0:VIDEO_W]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    sky, sea, sand = ramp(B['SKY']), ramp(B['SEA']), ramp(B['SAND'])
+    img = np.where((yy < B['HORIZON'])[..., None], sky[:, None, :],
+                   np.where((yy < B['SHORE'])[..., None], sea[:, None, :], sand[:, None, :])).astype(float)
+    (sx, sy), r, sun_c = B['SUN']
+    glow = 0.5 * np.exp(-(((xx - sx) / 380) ** 2 + ((yy - sy) / 260) ** 2) * 2.0) * (yy < B['HORIZON'])
+    img = img * (1 - glow[..., None]) + np.array((255, 246, 214.)) * glow[..., None]
+    cx, cy = (xx // P) * P + P / 2, (yy // P) * P + P / 2
+    disc = ((cx - sx) ** 2 + (cy - sy) ** 2) <= r * r
+    img = np.where(disc[..., None], np.array(sun_c, float), img)
+    # the sea is brighter along the sun's path, a soft band below the sun
+    path = 0.22 * np.exp(-((xx - sx) / 150) ** 2) * ((yy >= B['HORIZON']) & (yy < B['SHORE']))
+    img = img * (1 - path[..., None]) + np.array((200, 232, 240.)) * path[..., None]
+    def paint(mask, colour, alpha=1.0):
+        nonlocal img
+        m = mask[..., None] * alpha
+        img = img * (1 - m) + np.array(colour, float) * m
+    paint((yy >= B['HORIZON']) & (yy < B['HORIZON'] + P // 2), (230, 244, 250), 0.35)   # a hazy horizon line
+    # dry sand: fine grain and ripples, sparse so it reads as sand rather than noise
+    rnd = np.random.default_rng(9)
+    for _ in range(160):
+        y = int(rnd.integers(B['SHORE'] // P + 3, VIDEO_H // P))
+        near = (y * P - B['SHORE']) / (VIDEO_H - B['SHORE'])
+        x = int(rnd.integers(0, VIDEO_W // P))
+        n = 1 + int(near * 2.5) if rnd.random() < 0.5 else 1
+        shade = (176, 146, 100) if rnd.random() < 0.6 else (232, 208, 160)
+        for i in range(n):
+            X, Y = (x + i) * P, y * P
+            paint((xx >= X) & (xx < X + P) & (yy >= Y) & (yy < Y + P), shade, 0.35 + 0.3 * near)
+    img += np.random.default_rng(7).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+
+    rnd = random.Random(21)
+    cols = VIDEO_W // P
+    hor, shore = B['HORIZON'] // P, B['SHORE'] // P
+    # glints: dense in the column under the sun, sparse over the rest of the sea; each twinkles
+    # at its own quick pace and the brightest flash a small cross at their peak
+    glints = []
+    sun_col = sx // P
+    while len(glints) < 220:
+        y = rnd.randrange(hor + 2, shore - 1)                  # not on the horizon line itself
+        depth = (y - hor) / max(1, shore - hor)
+        if rnd.random() < 0.75:
+            x = sun_col + round(rnd.gauss(0, 2 + 5.5 * depth))      # the sun's path widens toward the shore
+        else:
+            x = rnd.randrange(cols * 2)
+        on_path = abs(x - sun_col) < 3 + 7 * depth
+        bright = on_path and rnd.random() < 0.4
+        glints.append((x, y, bright, on_path, rnd.uniform(0.6, 1.0) if on_path else rnd.uniform(0.3, 0.7),
+                       rnd.uniform(0, 2 * math.pi), rnd.uniform(1.0, 2.6),   # slow: quick glints pull the eye off the hamster
+                       2 if depth > 0.45 and rnd.random() < 0.5 else 1))
+    clouds = []
+    for cx0, cy0, w in ((10, 5, 9), (46, 8, 12), (78, 4, 8), (120, 7, 10), (160, 5, 9)):
+        cells = [(i, 0) for i in range(w)] + [(i, -1) for i in range(2, w - 2)] + [(i, -2) for i in range(4, w - 4)]
+        clouds.append((cx0, cy0, cells))
+    # sand props that scroll by depth: small shells (pink and white) and pebbles
+    period = cols * 2
+    props = []
+    for _ in range(26):
+        y = rnd.randrange(shore + 4, VIDEO_H // P - 1)
+        near = (y * P - B['SHORE']) / (VIDEO_H - B['SHORE'])
+        x = rnd.randrange(period)
+        kind = rnd.random()
+        if kind < 0.4:
+            props.append((x, [(0, 0), (1, 0), (0, -1)], y, (240, 200, 196), 0.9))      # a pink shell
+            props.append((x, [(1, -1)], y, (255, 238, 232), 0.9))
+        elif kind < 0.7:
+            props.append((x, [(0, 0), (1, 0)], y, (248, 244, 232), 0.85))               # a white shell
+            props.append((x, [(0, 1), (1, 1)], y, (170, 142, 100), 0.5))
+        else:
+            props.append((x, [(0, 0)] + ([(1, 0)] if near > 0.5 else []), y, (128, 120, 110), 0.85))   # a pebble
+            props.append((x, [(0, 1)], y, (160, 132, 92), 0.5))
+    props = (period, props)
+
+    def draw_moving(canvas, t, travelled):
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        d = ImageDraw.Draw(layer)
+        def cell(x, y, colour, a):
+            d.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=colour + (int(255 * max(0, min(1, a))),))
+        # clouds drift a little
+        cshift = round(travelled * 0.03)
+        for cx0, cy0, cells in clouds:
+            for dx, dy in cells:
+                cell((cx0 + dx - cshift) % (cols * 2) - 10, cy0 + dy, (250, 252, 255), 0.55)
+        # sun glints on the sea
+        sshift = round(travelled * 0.12)
+        wshift0 = round(travelled * 0.3)
+        for x, y, bright, on_path, base, phase, period_s, size in glints:
+            s_ = 0.5 + 0.5 * math.sin(2 * math.pi * t / period_s + phase)
+            a = base * s_ ** 2
+            if a < 0.05:
+                continue
+            # the sun's path stays under the sun (a reflection moves with the viewer, not the
+            # sea); only the scattered glints drift with the water
+            X = x if on_path else (x - sshift) % (cols * 2)
+            if X >= cols:
+                continue
+            colour = (255, 255, 250) if bright else (236, 248, 255)
+            for i in range(size):
+                cell(X + i, y, colour, a)
+            if bright and s_ > 0.6:
+                arm = a * (s_ - 0.6) / 0.4 * 0.85
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    if y + dy > hor:                           # never up into the sky
+                        cell(X + dx, y + dy, colour, arm)
+        # crests roll in from the open sea, three at a time, one every third of a wave: far ones
+        # are thin, faint and close together, and they brighten and spread apart as they near
+        # the shore (perspective), where the front one breaks into the foam on the sand
+        for k in range(3):
+            ph = (t / 4.0 + 0.55 + k / 3) % 1.0
+            crest = hor + 4 + round((shore - 2 - hor - 4) * ph ** 1.5)
+            gap = 3 if ph < 0.4 else 5                               # broken more when far away
+            for x in range(cols + 2):
+                if (x * 7 + k * 11 + round(t * 4)) % gap == 0:
+                    continue                                          # broken, not a ruled line
+                wob = round(0.7 * math.sin((x + wshift0) * 0.35 + t + k * 2.1))
+                cell(x, crest + wob, (235, 250, 252), 0.15 + 0.6 * ph)
+        # waves: the foam line runs up the shore and back every 4 seconds; the sand it leaves
+        # behind is darker and wet, and a thin line of foam follows each wave's edge
+        up = 0.5 - 0.5 * math.cos(2 * math.pi * t / 4.0)          # 0 = drawn back, 1 = furthest up
+        reach = shore + round(1 + 3 * up)
+        wshift = round(travelled * 0.5)
+        for x in range(cols + 2):
+            wob = round(0.8 * math.sin((x + wshift) * 0.5 + t * 1.3) + 0.6 * math.sin((x + wshift) * 0.23 - t))
+            edge = reach + wob
+            for y in range(shore, edge):
+                cell(x, y, (86, 186, 196), 0.85 - 0.18 * (y - shore))       # thin water over the sand
+            cell(x, edge, (255, 255, 255), 0.9)                              # foam
+            if (x + wshift) % 3 == 0:
+                cell(x, edge - 1, (255, 255, 255), 0.5)
+            # a lace of foam trailing behind the edge, left on the water as the wave draws back
+            lace = edge - 2 - round(1.5 * (1 - up))
+            if (x * 5 + wshift + round(t * 3)) % 4 < 2 and lace > shore - 3:
+                cell(x, lace, (255, 255, 255), 0.35 + 0.3 * (1 - up))
+            for y in range(edge + 1, shore + 5):
+                cell(x, y, (150, 122, 84), 0.45 * (1 - (y - edge) / 5))      # wet sand
+        canvas.alpha_composite(layer)
+        draw_props(canvas, props, travelled)
+    return background, draw_moving
+
+
+STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage}
+LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide'}
+
+
 def main():
+    if ANIMAL == 'hamster':
+        g = globals()
+        for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):
+            g[key] = HAMSTER[key]
     s = load()
     frames = Frames(s)
     font = ImageFont.truetype(FONT[0], 32, index=FONT[1])
@@ -389,9 +736,9 @@ def main():
     badge_bottom = {seg: sprite_top + min(top_row(s['frames'][ticks[i][0]]) for i in idx) * SCALE - BADGE_GAP
                     for seg, idx in seg_ticks.items()}
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    background = make_background()
-    stars = make_stars()
-    props = make_props()
+    if STAGE == 'beach':
+        globals()['HORIZON_Y'] = BEACH['SHORE']        # the sand starts at the waterline
+    background, draw_moving = STAGES[STAGE]()
     ff = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24',
                            '-s', f'{VIDEO_W}x{VIDEO_H}', '-r', str(fps), '-i', '-',
                            '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '14', '-preset', 'slow',
@@ -400,8 +747,7 @@ def main():
     for i, (name, flip, blink, seg, cursor, move) in enumerate(ticks):
         travelled += move
         canvas = background.copy()
-        draw_stars(canvas, stars, i / fps, travelled)
-        draw_props(canvas, props, travelled)
+        draw_moving(canvas, i / fps, travelled)
         sprite = frames.get(name, flip, blink)
         # the anchor (feet centre) sits at the middle of the ground line; +1 for the outline padding
         axs = (s['size'][0] - 1 - ax) if flip else ax
