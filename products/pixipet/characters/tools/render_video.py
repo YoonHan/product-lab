@@ -2,11 +2,11 @@
 
 Needs Pillow, numpy and ffmpeg. Frames are drawn from sprites/<animal>.json exactly as the app
 would draw them (white 1px outline, integer scale) and piped to ffmpeg; one tick = one video
-frame. Each animal has its own stage: the fox runs across a field at sunset, the hamster
-potters about its enclosure in the evening, on deep wood-shaving bedding.
+frame. Each animal has its own stage: the fox (and the arctic fox) runs across a field at
+sunset, the hamster potters about its enclosure in the evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|hamster] [stage] [out.mp4]
-       stages: fox (default for the fox), hamster (the enclosure), beach (a sandy beach by the sea)
+Usage: python3 tools/render_video.py [fox|arctic-fox|hamster] [stage] [out.mp4]
+       stages: fox (default for both foxes), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -18,8 +18,9 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else ANIMAL     # e.g. "hamster beach"
-OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == ANIMAL else f'-{STAGE}') + '.mp4')
+DEFAULT_STAGE = {'arctic-fox': 'fox'}.get(ANIMAL, ANIMAL)
+STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
+OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
 VIDEO_W, VIDEO_H = 1280, 720
 SCALE = 8                      # sprite pixel -> video pixels

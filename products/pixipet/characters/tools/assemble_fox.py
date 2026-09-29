@@ -115,8 +115,8 @@ REACTIONS = {
 }
 
 
-def main():
-    frames_all = D.frames()
+def write(animal, display_name, version, palette, frames_all):
+    """Writes sprites/<animal>.json from the frames and the fox's animation data above."""
     order = ['stand']
     for a in ANIMATIONS.values():
         for step in a['seq']:
@@ -125,9 +125,9 @@ def main():
     for d in LOOK_DIRS:
         order += [f'idle_{i}_{d}' for i in range(4)]
     J = lambda v: json.dumps(v, ensure_ascii=False)
-    out = ['{', '  "name": "fox",', '  "displayName": "여우",', '  "version": 7,',
+    out = ['{', f'  "name": {J(animal)},', f'  "displayName": {J(display_name)},', f'  "version": {version},',
            f'  "tickMs": {TICK_MS},', f'  "size": {J([D.W, D.H])},', f'  "anchor": {J([17 + D.OX, 21 + D.OY])},', '  "palette": {']
-    items = list(PALETTE.items())
+    items = list(palette.items())
     out += [f'    {J(k)}: {J({"hex": h, "role": r})}' + (',' if i < len(items) - 1 else '') for i, (k, (h, r)) in enumerate(items)]
     out += ['  },', '  "frames": {']
     for i, name in enumerate(order):
@@ -150,9 +150,13 @@ def main():
     out += ['  }', '}']
     text = '\n'.join(out) + '\n'
     json.loads(text)
-    with open(os.path.join(ROOT, 'sprites', 'fox.json'), 'w') as f:
+    with open(os.path.join(ROOT, 'sprites', f'{animal}.json'), 'w') as f:
         f.write(text)
-    print(f'wrote sprites/fox.json: {len(order)} frames, {len(ANIMATIONS)} animations')
+    print(f'wrote sprites/{animal}.json: {len(order)} frames, {len(ANIMATIONS)} animations')
+
+
+def main():
+    write('fox', '여우', 7, PALETTE, D.frames())
 
 
 if __name__ == '__main__':

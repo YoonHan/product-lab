@@ -6,12 +6,18 @@ derived:
   - files: [fox.png, fox-outlined.png, fox.sheet.json, pet-data.js]
     from: sprites/fox.json
     by: node tools/build.mjs
+  - files: [arctic-fox.png, arctic-fox-outlined.png, arctic-fox.sheet.json]
+    from: sprites/arctic-fox.json (written by tools/assemble_arctic_fox.py from the fox generator)
+    by: node tools/build.mjs
   - files: [hamster.png, hamster-outlined.png, hamster.sheet.json]
     from: sprites/hamster.json (written by tools/assemble_hamster.py)
     by: node tools/build.mjs
   - files: [fox-all-animations.mp4]
     from: sprites/fox.json
     by: tools/render_video.py fox (Pillow, numpy, ffmpeg)
+  - files: [arctic-fox-all-animations.mp4]
+    from: sprites/arctic-fox.json
+    by: tools/render_video.py arctic-fox (Pillow, numpy, ffmpeg)
   - files: [hamster-all-animations-beach.mp4]
     from: sprites/hamster.json
     by: tools/render_video.py hamster beach (Pillow, numpy, ffmpeg)
