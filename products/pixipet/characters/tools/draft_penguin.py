@@ -57,11 +57,14 @@ LOOK_HEADS = {
         "...KKKKKKKY..",
         "...KKKKyyYw..",
     ],
+    # about 45 degrees up: the whole head tips back on the neck (the crown moves back, the chin
+    # comes forward) and the bill is a straight 45-degree bar, 2px thick with the orange stripe
+    # underneath. Raising only the bill, in 2px and 1px steps, made it look bent.
     'up_fwd': [
-        ".....kkk.....",
-        "....kkkkk..BB",
-        "...kKKKKKBBj.",
-        "...KKKKKoKj..",
+        "....kkk....B.",
+        "...kkkkkk.Bj.",
+        "...kKKKKoBj..",
+        "...KKKKKKKK..",
         "...KKKKyyYw..",
     ],
     'down_fwd': [
