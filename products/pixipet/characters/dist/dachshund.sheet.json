@@ -1,0 +1,1171 @@
+{
+  "name": "dachshund",
+  "tickMs": 50,
+  "frameSize": [
+    50,
+    28
+  ],
+  "anchor": [
+    21,
+    27
+  ],
+  "images": {
+    "plain": {
+      "file": "dachshund.png",
+      "size": [
+        500,
+        364
+      ],
+      "frames": {
+        "idle_0": {
+          "x": 100,
+          "y": 112,
+          "w": 50,
+          "h": 28
+        },
+        "idle_1": {
+          "x": 50,
+          "y": 0,
+          "w": 50,
+          "h": 28
+        },
+        "walk_0": {
+          "x": 100,
+          "y": 84,
+          "w": 50,
+          "h": 28
+        },
+        "walk_1": {
+          "x": 50,
+          "y": 28,
+          "w": 50,
+          "h": 28
+        },
+        "walk_2": {
+          "x": 0,
+          "y": 84,
+          "w": 50,
+          "h": 28
+        },
+        "walk_3": {
+          "x": 50,
+          "y": 84,
+          "w": 50,
+          "h": 28
+        },
+        "run_0": {
+          "x": 0,
+          "y": 56,
+          "w": 50,
+          "h": 28
+        },
+        "run_1": {
+          "x": 50,
+          "y": 56,
+          "w": 50,
+          "h": 28
+        },
+        "run_2": {
+          "x": 100,
+          "y": 56,
+          "w": 50,
+          "h": 28
+        },
+        "run_3": {
+          "x": 150,
+          "y": 56,
+          "w": 50,
+          "h": 28
+        },
+        "stand": {
+          "x": 200,
+          "y": 280,
+          "w": 50,
+          "h": 28
+        },
+        "turn_a": {
+          "x": 0,
+          "y": 112,
+          "w": 50,
+          "h": 28
+        },
+        "turn_b": {
+          "x": 50,
+          "y": 112,
+          "w": 50,
+          "h": 28
+        },
+        "sit_a": {
+          "x": 0,
+          "y": 168,
+          "w": 50,
+          "h": 28
+        },
+        "sit_0": {
+          "x": 50,
+          "y": 140,
+          "w": 50,
+          "h": 28
+        },
+        "sit_1": {
+          "x": 100,
+          "y": 140,
+          "w": 50,
+          "h": 28
+        },
+        "lie_a": {
+          "x": 0,
+          "y": 224,
+          "w": 50,
+          "h": 28
+        },
+        "lie_0": {
+          "x": 50,
+          "y": 196,
+          "w": 50,
+          "h": 28
+        },
+        "lie_1": {
+          "x": 100,
+          "y": 196,
+          "w": 50,
+          "h": 28
+        },
+        "dig_0": {
+          "x": 0,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "dig_1": {
+          "x": 50,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "dig_2": {
+          "x": 100,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "dig_3": {
+          "x": 150,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_0": {
+          "x": 200,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_1": {
+          "x": 250,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_2": {
+          "x": 300,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_3": {
+          "x": 350,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_out": {
+          "x": 400,
+          "y": 252,
+          "w": 50,
+          "h": 28
+        },
+        "wag_0": {
+          "x": 0,
+          "y": 280,
+          "w": 50,
+          "h": 28
+        },
+        "wag_1": {
+          "x": 50,
+          "y": 280,
+          "w": 50,
+          "h": 28
+        },
+        "wag_2": {
+          "x": 100,
+          "y": 280,
+          "w": 50,
+          "h": 28
+        },
+        "wag_3": {
+          "x": 150,
+          "y": 280,
+          "w": 50,
+          "h": 28
+        },
+        "idle_0_up_fwd": {
+          "x": 0,
+          "y": 308,
+          "w": 50,
+          "h": 28
+        },
+        "idle_1_up_fwd": {
+          "x": 50,
+          "y": 308,
+          "w": 50,
+          "h": 28
+        },
+        "idle_0_down_fwd": {
+          "x": 0,
+          "y": 336,
+          "w": 50,
+          "h": 28
+        },
+        "idle_1_down_fwd": {
+          "x": 50,
+          "y": 336,
+          "w": 50,
+          "h": 28
+        }
+      }
+    },
+    "outlined": {
+      "file": "dachshund-outlined.png",
+      "size": [
+        520,
+        390
+      ],
+      "padding": 1,
+      "frames": {
+        "idle_0": {
+          "x": 105,
+          "y": 121,
+          "w": 50,
+          "h": 28
+        },
+        "idle_1": {
+          "x": 53,
+          "y": 1,
+          "w": 50,
+          "h": 28
+        },
+        "walk_0": {
+          "x": 105,
+          "y": 91,
+          "w": 50,
+          "h": 28
+        },
+        "walk_1": {
+          "x": 53,
+          "y": 31,
+          "w": 50,
+          "h": 28
+        },
+        "walk_2": {
+          "x": 1,
+          "y": 91,
+          "w": 50,
+          "h": 28
+        },
+        "walk_3": {
+          "x": 53,
+          "y": 91,
+          "w": 50,
+          "h": 28
+        },
+        "run_0": {
+          "x": 1,
+          "y": 61,
+          "w": 50,
+          "h": 28
+        },
+        "run_1": {
+          "x": 53,
+          "y": 61,
+          "w": 50,
+          "h": 28
+        },
+        "run_2": {
+          "x": 105,
+          "y": 61,
+          "w": 50,
+          "h": 28
+        },
+        "run_3": {
+          "x": 157,
+          "y": 61,
+          "w": 50,
+          "h": 28
+        },
+        "stand": {
+          "x": 209,
+          "y": 301,
+          "w": 50,
+          "h": 28
+        },
+        "turn_a": {
+          "x": 1,
+          "y": 121,
+          "w": 50,
+          "h": 28
+        },
+        "turn_b": {
+          "x": 53,
+          "y": 121,
+          "w": 50,
+          "h": 28
+        },
+        "sit_a": {
+          "x": 1,
+          "y": 181,
+          "w": 50,
+          "h": 28
+        },
+        "sit_0": {
+          "x": 53,
+          "y": 151,
+          "w": 50,
+          "h": 28
+        },
+        "sit_1": {
+          "x": 105,
+          "y": 151,
+          "w": 50,
+          "h": 28
+        },
+        "lie_a": {
+          "x": 1,
+          "y": 241,
+          "w": 50,
+          "h": 28
+        },
+        "lie_0": {
+          "x": 53,
+          "y": 211,
+          "w": 50,
+          "h": 28
+        },
+        "lie_1": {
+          "x": 105,
+          "y": 211,
+          "w": 50,
+          "h": 28
+        },
+        "dig_0": {
+          "x": 1,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "dig_1": {
+          "x": 53,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "dig_2": {
+          "x": 105,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "dig_3": {
+          "x": 157,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_0": {
+          "x": 209,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_1": {
+          "x": 261,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_2": {
+          "x": 313,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_3": {
+          "x": 365,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "burrow_out": {
+          "x": 417,
+          "y": 271,
+          "w": 50,
+          "h": 28
+        },
+        "wag_0": {
+          "x": 1,
+          "y": 301,
+          "w": 50,
+          "h": 28
+        },
+        "wag_1": {
+          "x": 53,
+          "y": 301,
+          "w": 50,
+          "h": 28
+        },
+        "wag_2": {
+          "x": 105,
+          "y": 301,
+          "w": 50,
+          "h": 28
+        },
+        "wag_3": {
+          "x": 157,
+          "y": 301,
+          "w": 50,
+          "h": 28
+        },
+        "idle_0_up_fwd": {
+          "x": 1,
+          "y": 331,
+          "w": 50,
+          "h": 28
+        },
+        "idle_1_up_fwd": {
+          "x": 53,
+          "y": 331,
+          "w": 50,
+          "h": 28
+        },
+        "idle_0_down_fwd": {
+          "x": 1,
+          "y": 361,
+          "w": 50,
+          "h": 28
+        },
+        "idle_1_down_fwd": {
+          "x": 53,
+          "y": 361,
+          "w": 50,
+          "h": 28
+        }
+      }
+    }
+  },
+  "animations": {
+    "idle": {
+      "loop": true,
+      "steps": [
+        {
+          "frame": "idle_0",
+          "ms": 600
+        },
+        {
+          "frame": "idle_1",
+          "ms": 600
+        }
+      ]
+    },
+    "walk": {
+      "loop": true,
+      "moveXPerTick": 0.5,
+      "steps": [
+        {
+          "frame": "walk_0",
+          "ms": 100
+        },
+        {
+          "frame": "walk_1",
+          "ms": 100
+        },
+        {
+          "frame": "walk_2",
+          "ms": 100
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100
+        }
+      ]
+    },
+    "run": {
+      "loop": true,
+      "pose": [
+        "stand",
+        "running"
+      ],
+      "moveXPerTick": 2,
+      "steps": [
+        {
+          "frame": "run_0",
+          "ms": 100
+        },
+        {
+          "frame": "run_1",
+          "ms": 100
+        },
+        {
+          "frame": "run_2",
+          "ms": 100
+        },
+        {
+          "frame": "run_3",
+          "ms": 100
+        }
+      ]
+    },
+    "run_stop": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "running",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "walk_2",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "turn": {
+      "loop": false,
+      "holdMs": 0,
+      "flipAt": 2,
+      "steps": [
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "turn_b",
+          "ms": 100
+        },
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "idle_0",
+          "ms": 50
+        }
+      ]
+    },
+    "sit": {
+      "loop": false,
+      "holdMs": 2000,
+      "pose": [
+        "stand",
+        "sit"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "sit_0",
+          "ms": 600
+        },
+        {
+          "frame": "sit_1",
+          "ms": 600
+        },
+        {
+          "frame": "sit_0",
+          "ms": 100
+        }
+      ]
+    },
+    "sit_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "sit",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_down": {
+      "loop": false,
+      "holdMs": 3000,
+      "pose": [
+        "stand",
+        "lie"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "lie_0",
+          "ms": 700
+        },
+        {
+          "frame": "lie_1",
+          "ms": 700
+        },
+        {
+          "frame": "lie_0",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "lie",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "burrow": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "dig_0",
+          "ms": 100
+        },
+        {
+          "frame": "dig_1",
+          "ms": 100
+        },
+        {
+          "frame": "dig_2",
+          "ms": 100
+        },
+        {
+          "frame": "dig_3",
+          "ms": 100
+        },
+        {
+          "frame": "dig_0",
+          "ms": 100
+        },
+        {
+          "frame": "dig_1",
+          "ms": 100
+        },
+        {
+          "frame": "dig_2",
+          "ms": 100
+        },
+        {
+          "frame": "dig_3",
+          "ms": 100
+        },
+        {
+          "frame": "dig_0",
+          "ms": 100
+        },
+        {
+          "frame": "dig_1",
+          "ms": 100
+        },
+        {
+          "frame": "dig_2",
+          "ms": 100
+        },
+        {
+          "frame": "dig_3",
+          "ms": 100
+        },
+        {
+          "frame": "dig_0",
+          "ms": 100
+        },
+        {
+          "frame": "dig_1",
+          "ms": 100
+        },
+        {
+          "frame": "dig_2",
+          "ms": 100
+        },
+        {
+          "frame": "dig_3",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_0",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_1",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_2",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_3",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_0",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_1",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_2",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_3",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_0",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_1",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_2",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_3",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_0",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_1",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_2",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_3",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_0",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_1",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_2",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_3",
+          "ms": 100
+        },
+        {
+          "frame": "burrow_out",
+          "ms": 500
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "wag": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    }
+  },
+  "outline": {
+    "skip": [
+      "f",
+      "F"
+    ]
+  },
+  "blink": {
+    "animations": [
+      "idle"
+    ],
+    "swap": {
+      "o": "B",
+      "v": "n"
+    },
+    "everyTicks": [
+      50,
+      120
+    ],
+    "forTicks": 2,
+    "doubleChance": 0.25
+  },
+  "transitions": {
+    "running": {
+      "stand": [
+        "run_stop"
+      ]
+    },
+    "sit": {
+      "stand": [
+        "sit_up"
+      ]
+    },
+    "lie": {
+      "stand": [
+        "lie_up"
+      ]
+    },
+    "stand": {
+      "sit": [
+        "sit"
+      ],
+      "lie": [
+        "lie_down"
+      ]
+    }
+  },
+  "idleVariants": [
+    "wag",
+    "sit"
+  ],
+  "look": {
+    "animations": [
+      "idle"
+    ],
+    "headCenter": [
+      33,
+      15
+    ],
+    "sectors": [
+      {
+        "dir": "up_fwd",
+        "min": 25
+      },
+      {
+        "dir": "fwd",
+        "min": -25
+      },
+      {
+        "dir": "down_fwd",
+        "min": -90
+      }
+    ],
+    "deadZone": 5,
+    "turnMargin": 4,
+    "frames": {
+      "up_fwd": {
+        "idle_0": "idle_0_up_fwd",
+        "idle_1": "idle_1_up_fwd"
+      },
+      "down_fwd": {
+        "idle_0": "idle_0_down_fwd",
+        "idle_1": "idle_1_down_fwd"
+      }
+    }
+  },
+  "reactions": {
+    "alert": [
+      "wag"
+    ],
+    "curious": [
+      "burrow"
+    ],
+    "greet": [
+      "wag"
+    ],
+    "wake": [
+      "wag"
+    ],
+    "sleepy": [
+      "lie_down"
+    ],
+    "celebrate": [
+      "run",
+      "wag"
+    ],
+    "busy": [
+      "burrow"
+    ],
+    "wander": [
+      "walk"
+    ]
+  }
+}

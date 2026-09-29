@@ -2,7 +2,6 @@
   "name": "corgi",
   "displayName": "웰시코기",
   "version": 1,
-  "inProgress": true,
   "tickMs": 50,
   "size": [44, 26],
   "anchor": [16, 25],

@@ -9,6 +9,9 @@ derived:
   - files: [arctic-fox.png, arctic-fox-outlined.png, arctic-fox.sheet.json]
     from: sprites/arctic-fox.json (written by tools/assemble_arctic_fox.py from the fox generator)
     by: node tools/build.mjs
+  - files: [dachshund.png, dachshund-outlined.png, dachshund.sheet.json]
+    from: sprites/dachshund.json (written by tools/assemble_dachshund.py)
+    by: node tools/build.mjs
   - files: [corgi.png, corgi-outlined.png, corgi.sheet.json]
     from: sprites/corgi.json (written by tools/assemble_corgi.py)
     by: node tools/build.mjs

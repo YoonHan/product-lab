@@ -12,6 +12,8 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `docs/prompts.md` | 여우 작업에 사용한 프롬프트 원문 |
 | `docs/hamster-design-log.md` | 햄스터 작업 기록: 햄스터에서 새로 알게 된 원하는 느낌, 수정 요청과 원인·조치, 확인을 기다리는 동작 |
 | `docs/hamster-prompts.md` | 햄스터 작업에 사용한 프롬프트 원문 |
+| `docs/dachshund-design-log.md` | 닥스훈트 작업 기록: 코기와 구분되게 살린 특징, 수정 요청과 원인·조치 |
+| `docs/dachshund-prompts.md` | 닥스훈트 작업에 사용한 프롬프트 원문 |
 | `docs/corgi-design-log.md` | 웰시코기 작업 기록: 귀여운 비율로 다시 그린 과정, 수정 요청과 원인·조치 |
 | `docs/corgi-prompts.md` | 웰시코기 작업에 사용한 프롬프트 원문 |
 | `docs/penguin-design-log.md` | 펭귄 작업 기록: 황제펭귄과 새끼 디자인, 수정 요청과 원인·조치, 다음에 정할 동작 |
@@ -23,6 +25,8 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `tools/build.mjs` | 데이터를 검증하고 `dist/`를 생성합니다 |
 | `tools/draft_fox.py`, `tools/fox_poses.py` | 여우 프레임 생성기와 손으로 그린 키 포즈 |
 | `tools/draft_hamster.py` | 햄스터 프레임 생성기. 핵심 자세와 머리는 손으로 그린 문자 격자이고, 나머지 프레임은 이 격자를 바꿔 만듭니다 |
+| `tools/draft_dachshund.py` | 닥스훈트 프레임 생성기. 코기와 같은 방식(손으로 그린 몸과 머리, 코드로 그린 다리) |
+| `tools/assemble_dachshund.py` | 생성한 프레임과 동작 정의로 `sprites/dachshund.json`을 씁니다 |
 | `tools/draft_corgi.py` | 웰시코기 프레임 생성기. 몸, 머리 방향, 돌아서기, 앉기는 손으로 그린 문자 격자이고, 다리는 코드로 그립니다 |
 | `tools/assemble_corgi.py` | 생성한 프레임과 동작 정의로 `sprites/corgi.json`을 씁니다 |
 | `tools/draft_penguin.py` | 황제펭귄(과 새끼) 프레임 생성기. 기본 자세와 머리 방향, 돌아서기, 썰매, 날개는 손으로 그린 문자 격자입니다 |
@@ -37,7 +41,7 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 ## 작업 흐름
 
 ```sh
-# sprites/*.json 또는 events.json을 고친 뒤 (햄스터는 python3 tools/assemble_hamster.py, 펭귄은 assemble_penguin.py, 코기는 assemble_corgi.py,
+# sprites/*.json 또는 events.json을 고친 뒤 (햄스터는 python3 tools/assemble_hamster.py, 펭귄은 assemble_penguin.py, 코기는 assemble_corgi.py, 닥스훈트는 assemble_dachshund.py,
 # 여우를 고쳤으면 python3 tools/assemble_arctic_fox.py 먼저)
 node tools/build.mjs
 open viewer.html
@@ -49,7 +53,8 @@ open viewer.html
 
 - 여우: **완성**(2026-09-28). 12개 동작 (`idle`, `walk`, `run`, `sit`, `lie_down`, `stretch`, `pounce`, `listen`, `curl_sleep`, `dig`, `lick`, `itch`)과 전환 동작 5개(`sit_up`, `lie_up`, `uncurl`, `dig_end`, `run_stop`). 돌아서기(`turn`). IDLE 마우스 추적(돌아서기 + 머리 5방향)과 눈 깜빡임. 50ms 틱, 119프레임. 달리기는 IK 다리의 8프레임 갤럽, 점프는 공중 구간 11프레임과 머리가 박힌 뒤 빼내는 동작, 기지개에는 하품이 있습니다. 소개 영상은 해 질 녘 배경과 패럴랙스 스크롤을 씁니다.
 - 북극여우: **완성**(2026-09-29). 여우의 프레임 119개와 동작을 그대로 쓰고, 겨울털(흰색), 짧고 둥근 귀, 한 칸 짧은 주둥이로 바꿨습니다. 소개 영상 `dist/arctic-fox-all-animations.mp4`(눈 내린 홋카이도: 요테이산, 가문비나무와 자작나무, 도리이와 석등).
-- 웰시코기: **작업 중**(2026-09-29). 몸 약 28×20px(머리와 귀를 크게 키운 귀여운 비율), 프레임 44×26, 13개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`(스플루트)/`lie_up`, `bark`, `roll`, `spin`, `fetch`), 45프레임. 소개 영상 `dist/corgi-all-animations.mp4`(공원 잔디밭).
+- 닥스훈트(블랙탄): **작업 중**(2026-09-29). 늘어진 귀, 가는 주둥이, 긴 꼬리, 긴 소시지 몸, 프레임 50×28, 11개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`/`lie_up`, `burrow`, `wag`), 36프레임. 소개 영상은 견종에 맞는 무대를 정한 뒤 만듭니다.
+- 웰시코기: **완성**(2026-09-29). 몸 약 28×20px(머리와 귀를 크게 키운 귀여운 비율), 프레임 44×26, 13개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`(스플루트)/`lie_up`, `bark`, `roll`, `spin`, `fetch`), 45프레임. 소개 영상 `dist/corgi-all-animations.mp4`(공원 잔디밭).
 - 황제펭귄: **완성**(2026-09-29). 몸 13×19px(부리와 발 포함), 프레임 38×32, 17개 동작, 68프레임. 부모: `idle`, `walk`, `turn`, `slide`/`slide_stop`, `fall`, `flap`, `eat`, `preen`, `shake`, `sleep`/`wake`. 새끼(회색 솜털)가 나오는 동작: `brood`, `feed`, `walk_chick`, `sleep_chick`/`wake_chick`. 소개 영상 `dist/penguin-all-animations.mp4`(백야의 남극 해빙, 73초).
 - 햄스터(정글리안): **완성**(2026-09-29). 몸 13×10px, 프레임 26×28, 23개 동작, 157프레임. 소개 영상 `dist/hamster-all-animations-beach.mp4`(모래사장). 모든 동작을 확인했습니다.
 - 이벤트: 시스템 9개, 앱 3개(포모도로 타이머 2개, 클릭), 외부 2개(Claude Code 훅).
