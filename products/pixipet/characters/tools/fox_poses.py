@@ -178,15 +178,17 @@ THREE_QUARTER = [
     (37, 15, 'ck'), (38, 15, 'kk'), (39, 15, 'kk'), (40, 15, 'kk'), (41, 15, 'ppp'),
     (37, 21, 'dl'), (38, 21, 'll'), (39, 21, 'll'), (40, 21, 'll'), (41, 21, 'qqq'),
     (37, 24, 'ck'), (38, 24, 'kk'), (39, 24, 'kk'), (40, 24, 'kk'), (41, 24, 'ppp'),
-    # head turned toward the viewer: both eyes show, the snout points forward-right
+    # head turned toward the viewer: both eyes show, 4px apart (6px face-on), and the nose sits
+    # below between them, nearer the far eye, with the muzzle 1px out on the right. A nose
+    # beyond both eyes mixes a side-view nose with face-on eyes.
     (22, 22, 'd'), (22, 27, 'k'),
     (23, 21, 'dd'), (23, 26, 'kk'),
     (24, 21, 'dcd'), (24, 26, 'kbk'),
     (25, 21, 'dcbbbbab'),
     (26, 20, 'cbbaaaaabb'),
     (27, 20, 'cbbaaaaabbb'),
-    (28, 20, 'cbobbbbobbbb'),
-    (29, 20, 'cwwwbbbbbbe'),
-    (30, 21, 'xwwwwwwwx'),
+    (28, 20, 'cbbobbbobbb'),
+    (29, 20, 'cwwwbbbwwwwc'),
+    (30, 21, 'xwwwwwewx'),
     (31, 22, 'xwwwwx'),
 ]

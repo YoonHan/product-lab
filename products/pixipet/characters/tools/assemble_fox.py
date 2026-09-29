@@ -125,7 +125,7 @@ def main():
     for d in LOOK_DIRS:
         order += [f'idle_{i}_{d}' for i in range(4)]
     J = lambda v: json.dumps(v, ensure_ascii=False)
-    out = ['{', '  "name": "fox",', '  "displayName": "여우",', '  "version": 6,',
+    out = ['{', '  "name": "fox",', '  "displayName": "여우",', '  "version": 7,',
            f'  "tickMs": {TICK_MS},', f'  "size": {J([D.W, D.H])},', f'  "anchor": {J([17 + D.OX, 21 + D.OY])},', '  "palette": {']
     items = list(PALETTE.items())
     out += [f'    {J(k)}: {J({"hex": h, "role": r})}' + (',' if i < len(items) - 1 else '') for i, (k, (h, r)) in enumerate(items)]
