@@ -3,12 +3,13 @@
 Needs Pillow, numpy and ffmpeg. Frames are drawn from sprites/<animal>.json exactly as the app
 would draw them (white 1px outline, integer scale) and piped to ffmpeg; one tick = one video
 frame. Each animal has its own stage: the fox runs across a field at sunset, the arctic fox
-across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midnight sun, and
-the hamster potters about its enclosure in the evening, on deep wood-shaving bedding.
+across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midnight sun, the
+corgi plays on a park lawn on a sunny day, and the hamster potters about its enclosure in the
+evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|hamster] [stage] [out.mp4]
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|hamster] [stage] [out.mp4]
        stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
-               hamster (the enclosure), beach (a sandy beach by the sea)
+               park (the corgi's), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -20,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -356,7 +357,7 @@ def look_segment(s, ticks, seg_i, facing):
 # The LOOK cursor is something the animal would watch: a sunflower seed that bobs 1px for the
 # hamster, a butterfly that flaps for the fox, for the arctic fox in the snow a shima-enaga
 # (Hokkaido's white long-tailed tit) that flaps and faces the way it flies, and a fish for the
-# penguin. Pixel art with the
+# penguin, and a tennis ball for the corgi. Pixel art with the
 # sprites' white 1px outline, CURSOR_PX video pixels per pixel, centred on the cursor point.
 CURSOR_PX = 4
 CURSOR_COLOURS = {
@@ -365,6 +366,7 @@ CURSOR_COLOURS = {
     'Y': (255, 170, 60, 255), 'y': (214, 110, 40, 255), 'B': (40, 30, 34, 255),   # butterfly
     'E': (246, 244, 240, 255), 'N': (92, 88, 96, 255), 'P': (214, 170, 164, 255),  # shima-enaga (and K)
     'U': (79, 106, 134, 255), 'u': (196, 210, 222, 255),                             # fish (and K for its eye)
+    'T': (200, 220, 60, 255), 'W': (245, 247, 232, 255),                             # tennis ball
 }
 SEED = """
 ...OOOO...
@@ -447,6 +449,22 @@ OUOOOuuOO.
 """]
 
 
+# the corgi's tennis ball (as in its fetch animation), its seam turning
+TENNIS = ["""
+.OOO.
+OWTTO
+OTWTO
+OTTWO
+.OOO.
+""", """
+.OOO.
+OTTWO
+OTWTO
+OWTTO
+.OOO.
+"""]
+
+
 def pixel_art(art):
     rows = art.strip('\n').split('\n')
     img = Image.new('RGBA', (max(map(len, rows)) * CURSOR_PX, len(rows) * CURSOR_PX), (0, 0, 0, 0))
@@ -463,6 +481,8 @@ def draw_cursor(canvas, x, y, t):
     """The LOOK cursor centred on (x, y) at LOOK tick t."""
     if ANIMAL == 'hamster':
         img, y = pixel_art(SEED), y + (CURSOR_PX if (t // 6) % 2 else 0)
+    elif ANIMAL == 'corgi':                      # a tennis ball, bouncing gently
+        img, y = pixel_art(TENNIS[(t // 4) % 2]), y - (CURSOR_PX if (t // 6) % 2 else 0)
     elif ANIMAL in ('arctic-fox', 'penguin'):
         if ANIMAL == 'arctic-fox':
             img, y = pixel_art(ENAGA[(t // 2) % 2]), y + (CURSOR_PX if (t // 6) % 2 else 0)
@@ -1154,13 +1174,114 @@ def antarctica_stage():
     return background, draw_moving
 
 
+# ---- corgi: a park lawn on a sunny day ------------------------------------------------------------
+# A clear spring day: soft clouds drift over a line of round trees, a white picket fence runs along
+# the far edge of the lawn, and the grass is dotted with tufts and little white and yellow flowers.
+CORGI = dict(
+    SCALE=8, GROUND_Y=600, HORIZON_Y=500,
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 걷기', 48),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('run', 'RUN · 달리기', 48),
+        ('run_stop', 'RUN STOP · 멈추기', 6),
+        ('sit', 'SIT · 앉기', 10),
+        ('sit_up', 'SIT UP · 일어서기', 6),
+        ('lie_down', 'LIE DOWN · 엎드리기 (스플루트)', 10),
+        ('lie_up', 'LIE UP · 일어서기', 6),
+        ('bark', 'BARK · 짖기', 8),
+        ('roll', 'ROLL · 배 보이며 구르기', 8),
+        ('spin', 'SPIN · 신나서 빙글빙글', 8),
+        ('fetch', 'FETCH · 공 물어오기', 10),
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 30),
+    ],
+)
+PARK = dict(
+    SKY=[(0, (96, 164, 226)), (300, (150, 200, 238)), (500, (206, 232, 246))],
+    LAWN=[(500, (132, 186, 96)), (600, (112, 170, 80)), (720, (88, 146, 64))],
+)
+
+
+def park_stage():
+    import numpy as np, math, random
+    P, K = SCALE, PARK
+    ys = np.arange(VIDEO_H)
+    yy, xx = np.mgrid[0:VIDEO_H, 0:VIDEO_W]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    img = np.where((yy < HORIZON_Y)[..., None], ramp(K['SKY'])[:, None, :], ramp(K['LAWN'])[:, None, :]).astype(float)
+    img = np.where(((yy >= HORIZON_Y) & (yy < HORIZON_Y + P))[..., None], img * 0.6 + np.array((170, 210, 120.)) * 0.4, img)
+    img += np.random.default_rng(7).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+    rnd = random.Random(21)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+    clouds = []
+    for _ in range(6):
+        cx0, cy0, w = rnd.randrange(period), rnd.randrange(4, 26), rnd.randint(6, 12)
+        cells = [(dx, 0) for dx in range(w)] + [(dx, -1) for dx in range(1, w - 1)] + [(dx, -2) for dx in range(2, w // 2 + 2)]
+        clouds.append((cx0, cy0, cells))
+    trees = []                                            # round trees along the far edge
+    x = 0
+    while x < period:
+        r = rnd.randint(3, 5)
+        trees.append((x, r, rnd.random() < 0.5))
+        x += r * 2 + rnd.randint(-1, 3)
+    props = []
+    for _ in range(40):                                   # grass tufts, taller nearer the viewer
+        y = rnd.randrange(HORIZON_Y // P + 2, VIDEO_H // P)
+        near = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
+        h = 1 + int(near * 2)
+        cells = [(0, -i) for i in range(h)] + ([(1, -h + 1)] if h > 1 else [])
+        props.append((rnd.randrange(period), cells, y, (70, 128, 52), 0.6 + 0.3 * near))
+    for _ in range(26):                                   # little flowers
+        y = rnd.randrange(HORIZON_Y // P + 2, VIDEO_H // P)
+        near = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
+        col = (250, 250, 240) if rnd.random() < 0.6 else (250, 214, 80)
+        x = rnd.randrange(period)
+        props.append((x, [(0, 0)], y, col, 0.85))
+        props.append((x, [(0, 1)], y, (70, 128, 52), 0.7))
+    props = (period, props)
+
+    def draw_moving(canvas, t, travelled):
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        dr = ImageDraw.Draw(layer)
+        def cell(x, y, colour, a=1.0):
+            dr.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=colour + (int(255 * a),))
+        cshift = round(travelled * 0.03 + t * 0.3)
+        for cx0, cy0, cells in clouds:
+            for dx, dy in cells:
+                cell((cx0 + dx - cshift) % period - 12, cy0 + dy, (252, 253, 255), 0.85)
+        tshift = round(travelled * HORIZON_SPEED)
+        for x0, r, dark in trees:                          # a trunk and a round crown, lit on top
+            X = (x0 - tshift) % period - 10
+            for dx in range(-r, r + 1):
+                for dy in range(-r, r + 1):
+                    if dx * dx + dy * dy <= r * r + 1:
+                        top = dy < -r // 2
+                        col = (58, 118, 58) if dark else (74, 138, 64)
+                        cell(X + dx, base - r - 1 + dy, (96, 160, 80) if top else col)
+            cell(X, base, (110, 80, 56)); cell(X, base - 1, (110, 80, 56))
+        fshift = round(travelled * 0.35)
+        for x in range(cols + 2):                          # the picket fence
+            X = (x + fshift) % 3
+            fx = x
+            cell(fx, base - 2, (246, 244, 236), 0.95)      # the rail
+            if X == 0:
+                cell(fx, base - 3, (246, 244, 236), 0.95); cell(fx, base - 1, (246, 244, 236), 0.95); cell(fx, base, (246, 244, 236), 0.95)
+        canvas.alpha_composite(layer)
+        draw_props(canvas, props, travelled)
+    return background, draw_moving
+
+
 STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
-          'antarctica': antarctica_stage}
+          'antarctica': antarctica_stage, 'park': park_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_chick': 'sleep_chick'}
 
 
 def main():
-    conf = {'hamster': HAMSTER, 'penguin': PENGUIN}.get(ANIMAL)
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI}.get(ANIMAL)
     if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):

@@ -9,6 +9,9 @@ derived:
   - files: [arctic-fox.png, arctic-fox-outlined.png, arctic-fox.sheet.json]
     from: sprites/arctic-fox.json (written by tools/assemble_arctic_fox.py from the fox generator)
     by: node tools/build.mjs
+  - files: [corgi.png, corgi-outlined.png, corgi.sheet.json]
+    from: sprites/corgi.json (written by tools/assemble_corgi.py)
+    by: node tools/build.mjs
   - files: [penguin.png, penguin-outlined.png, penguin.sheet.json]
     from: sprites/penguin.json (written by tools/assemble_penguin.py)
     by: node tools/build.mjs
@@ -21,6 +24,9 @@ derived:
   - files: [arctic-fox-all-animations.mp4]
     from: sprites/arctic-fox.json
     by: tools/render_video.py arctic-fox (Pillow, numpy, ffmpeg)
+  - files: [corgi-all-animations.mp4]
+    from: sprites/corgi.json
+    by: tools/render_video.py corgi (Pillow, numpy, ffmpeg)
   - files: [penguin-all-animations.mp4]
     from: sprites/penguin.json
     by: tools/render_video.py penguin (Pillow, numpy, ffmpeg)

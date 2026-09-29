@@ -2,7 +2,6 @@
   "name": "penguin",
   "displayName": "황제펭귄",
   "version": 1,
-  "inProgress": true,
   "tickMs": 50,
   "size": [38, 32],
   "anchor": [20, 31],
