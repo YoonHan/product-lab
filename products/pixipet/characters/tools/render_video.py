@@ -1024,6 +1024,15 @@ PENGUIN = dict(
         ('flap', 'FLAP · 날개 파닥이기', 8),
         ('fall', 'FALL · 넘어졌다 일어나기', 8),
         ('eat', 'EAT · 물고기 먹기', 10),
+        ('preen', 'PREEN · 깃털 다듬기', 8),
+        ('shake', 'SHAKE · 몸 털기', 8),
+        ('brood', 'BROOD · 새끼 품기', 8),
+        ('feed', 'FEED · 새끼에게 먹이 주기', 8),
+        ('walk_chick', 'WALK CHICK · 새끼와 걷기', 48),
+        ('sleep', 'SLEEP · 서서 자기', 64),
+        ('wake', 'WAKE · 깨기', 6),
+        ('sleep_chick', 'SLEEP CHICK · 새끼와 같이 자기', 64),
+        ('wake_chick', 'WAKE · 깨기', 6),
         ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 30),
     ],
 )
@@ -1147,7 +1156,7 @@ def antarctica_stage():
 
 STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
           'antarctica': antarctica_stage}
-LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide'}
+LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_chick': 'sleep_chick'}
 
 
 def main():

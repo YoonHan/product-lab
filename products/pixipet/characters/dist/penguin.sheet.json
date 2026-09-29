@@ -14,12 +14,12 @@
       "file": "penguin.png",
       "size": [
         532,
-        384
+        672
       ],
       "frames": {
         "idle_0": {
-          "x": 342,
-          "y": 224,
+          "x": 0,
+          "y": 512,
           "w": 38,
           "h": 32
         },
@@ -108,8 +108,8 @@
           "h": 32
         },
         "stand": {
-          "x": 494,
-          "y": 224,
+          "x": 114,
+          "y": 512,
           "w": 38,
           "h": 32
         },
@@ -139,7 +139,7 @@
         },
         "idle_0_up": {
           "x": 0,
-          "y": 256,
+          "y": 544,
           "w": 38,
           "h": 32
         },
@@ -191,45 +191,237 @@
           "w": 38,
           "h": 32
         },
-        "idle_1_up": {
+        "brood_0": {
+          "x": 152,
+          "y": 448,
+          "w": 38,
+          "h": 32
+        },
+        "brood_1": {
+          "x": 114,
+          "y": 448,
+          "w": 38,
+          "h": 32
+        },
+        "brood_2": {
+          "x": 76,
+          "y": 448,
+          "w": 38,
+          "h": 32
+        },
+        "brood_3": {
           "x": 38,
+          "y": 448,
+          "w": 38,
+          "h": 32
+        },
+        "brood_up": {
+          "x": 152,
           "y": 256,
           "w": 38,
           "h": 32
         },
-        "idle_0_up_fwd": {
-          "x": 0,
+        "brood_look": {
+          "x": 190,
+          "y": 256,
+          "w": 38,
+          "h": 32
+        },
+        "feed_hop": {
+          "x": 152,
           "y": 288,
           "w": 38,
           "h": 32
         },
-        "idle_1_up_fwd": {
-          "x": 38,
+        "feed_stand": {
+          "x": 190,
           "y": 288,
           "w": 38,
           "h": 32
         },
-        "idle_0_down_fwd": {
+        "feed_beg_0": {
+          "x": 228,
+          "y": 288,
+          "w": 38,
+          "h": 32
+        },
+        "feed_beg_1": {
+          "x": 266,
+          "y": 288,
+          "w": 38,
+          "h": 32
+        },
+        "feed_give": {
+          "x": 304,
+          "y": 288,
+          "w": 38,
+          "h": 32
+        },
+        "feed_gulp": {
+          "x": 342,
+          "y": 288,
+          "w": 38,
+          "h": 32
+        },
+        "follow_0": {
           "x": 0,
           "y": 320,
           "w": 38,
           "h": 32
         },
-        "idle_1_down_fwd": {
+        "follow_1": {
           "x": 38,
           "y": 320,
+          "w": 38,
+          "h": 32
+        },
+        "follow_2": {
+          "x": 76,
+          "y": 320,
+          "w": 38,
+          "h": 32
+        },
+        "follow_3": {
+          "x": 114,
+          "y": 320,
+          "w": 38,
+          "h": 32
+        },
+        "doze": {
+          "x": 0,
+          "y": 384,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_0": {
+          "x": 38,
+          "y": 352,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_1": {
+          "x": 76,
+          "y": 352,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_2": {
+          "x": 114,
+          "y": 352,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_3": {
+          "x": 152,
+          "y": 352,
+          "w": 38,
+          "h": 32
+        },
+        "doze_chick": {
+          "x": 0,
+          "y": 448,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_0": {
+          "x": 190,
+          "y": 416,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_1": {
+          "x": 228,
+          "y": 416,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_2": {
+          "x": 266,
+          "y": 416,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_3": {
+          "x": 304,
+          "y": 416,
           "w": 38,
           "h": 32
         },
         "idle_0_down": {
           "x": 0,
-          "y": 352,
+          "y": 640,
+          "w": 38,
+          "h": 32
+        },
+        "preen_0": {
+          "x": 38,
+          "y": 480,
+          "w": 38,
+          "h": 32
+        },
+        "preen_1": {
+          "x": 76,
+          "y": 480,
+          "w": 38,
+          "h": 32
+        },
+        "preen_wing_0": {
+          "x": 114,
+          "y": 480,
+          "w": 38,
+          "h": 32
+        },
+        "preen_wing_1": {
+          "x": 152,
+          "y": 480,
+          "w": 38,
+          "h": 32
+        },
+        "shake_0": {
+          "x": 38,
+          "y": 512,
+          "w": 38,
+          "h": 32
+        },
+        "shake_1": {
+          "x": 76,
+          "y": 512,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up": {
+          "x": 38,
+          "y": 544,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_up_fwd": {
+          "x": 0,
+          "y": 576,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up_fwd": {
+          "x": 38,
+          "y": 576,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_down_fwd": {
+          "x": 0,
+          "y": 608,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_down_fwd": {
+          "x": 38,
+          "y": 608,
           "w": 38,
           "h": 32
         },
         "idle_1_down": {
           "x": 38,
-          "y": 352,
+          "y": 640,
           "w": 38,
           "h": 32
         }
@@ -239,13 +431,13 @@
       "file": "penguin-outlined.png",
       "size": [
         560,
-        408
+        714
       ],
       "padding": 1,
       "frames": {
         "idle_0": {
-          "x": 361,
-          "y": 239,
+          "x": 1,
+          "y": 545,
           "w": 38,
           "h": 32
         },
@@ -334,8 +526,8 @@
           "h": 32
         },
         "stand": {
-          "x": 521,
-          "y": 239,
+          "x": 121,
+          "y": 545,
           "w": 38,
           "h": 32
         },
@@ -365,7 +557,7 @@
         },
         "idle_0_up": {
           "x": 1,
-          "y": 273,
+          "y": 579,
           "w": 38,
           "h": 32
         },
@@ -417,45 +609,237 @@
           "w": 38,
           "h": 32
         },
-        "idle_1_up": {
+        "brood_0": {
+          "x": 161,
+          "y": 477,
+          "w": 38,
+          "h": 32
+        },
+        "brood_1": {
+          "x": 121,
+          "y": 477,
+          "w": 38,
+          "h": 32
+        },
+        "brood_2": {
+          "x": 81,
+          "y": 477,
+          "w": 38,
+          "h": 32
+        },
+        "brood_3": {
           "x": 41,
+          "y": 477,
+          "w": 38,
+          "h": 32
+        },
+        "brood_up": {
+          "x": 161,
           "y": 273,
           "w": 38,
           "h": 32
         },
-        "idle_0_up_fwd": {
-          "x": 1,
+        "brood_look": {
+          "x": 201,
+          "y": 273,
+          "w": 38,
+          "h": 32
+        },
+        "feed_hop": {
+          "x": 161,
           "y": 307,
           "w": 38,
           "h": 32
         },
-        "idle_1_up_fwd": {
-          "x": 41,
+        "feed_stand": {
+          "x": 201,
           "y": 307,
           "w": 38,
           "h": 32
         },
-        "idle_0_down_fwd": {
+        "feed_beg_0": {
+          "x": 241,
+          "y": 307,
+          "w": 38,
+          "h": 32
+        },
+        "feed_beg_1": {
+          "x": 281,
+          "y": 307,
+          "w": 38,
+          "h": 32
+        },
+        "feed_give": {
+          "x": 321,
+          "y": 307,
+          "w": 38,
+          "h": 32
+        },
+        "feed_gulp": {
+          "x": 361,
+          "y": 307,
+          "w": 38,
+          "h": 32
+        },
+        "follow_0": {
           "x": 1,
           "y": 341,
           "w": 38,
           "h": 32
         },
-        "idle_1_down_fwd": {
+        "follow_1": {
           "x": 41,
           "y": 341,
+          "w": 38,
+          "h": 32
+        },
+        "follow_2": {
+          "x": 81,
+          "y": 341,
+          "w": 38,
+          "h": 32
+        },
+        "follow_3": {
+          "x": 121,
+          "y": 341,
+          "w": 38,
+          "h": 32
+        },
+        "doze": {
+          "x": 1,
+          "y": 409,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_0": {
+          "x": 41,
+          "y": 375,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_1": {
+          "x": 81,
+          "y": 375,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_2": {
+          "x": 121,
+          "y": 375,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_3": {
+          "x": 161,
+          "y": 375,
+          "w": 38,
+          "h": 32
+        },
+        "doze_chick": {
+          "x": 1,
+          "y": 477,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_0": {
+          "x": 201,
+          "y": 443,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_1": {
+          "x": 241,
+          "y": 443,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_2": {
+          "x": 281,
+          "y": 443,
+          "w": 38,
+          "h": 32
+        },
+        "sleep_chick_3": {
+          "x": 321,
+          "y": 443,
           "w": 38,
           "h": 32
         },
         "idle_0_down": {
           "x": 1,
-          "y": 375,
+          "y": 681,
+          "w": 38,
+          "h": 32
+        },
+        "preen_0": {
+          "x": 41,
+          "y": 511,
+          "w": 38,
+          "h": 32
+        },
+        "preen_1": {
+          "x": 81,
+          "y": 511,
+          "w": 38,
+          "h": 32
+        },
+        "preen_wing_0": {
+          "x": 121,
+          "y": 511,
+          "w": 38,
+          "h": 32
+        },
+        "preen_wing_1": {
+          "x": 161,
+          "y": 511,
+          "w": 38,
+          "h": 32
+        },
+        "shake_0": {
+          "x": 41,
+          "y": 545,
+          "w": 38,
+          "h": 32
+        },
+        "shake_1": {
+          "x": 81,
+          "y": 545,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up": {
+          "x": 41,
+          "y": 579,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_up_fwd": {
+          "x": 1,
+          "y": 613,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_up_fwd": {
+          "x": 41,
+          "y": 613,
+          "w": 38,
+          "h": 32
+        },
+        "idle_0_down_fwd": {
+          "x": 1,
+          "y": 647,
+          "w": 38,
+          "h": 32
+        },
+        "idle_1_down_fwd": {
+          "x": 41,
+          "y": 647,
           "w": 38,
           "h": 32
         },
         "idle_1_down": {
           "x": 41,
-          "y": 375,
+          "y": 681,
           "w": 38,
           "h": 32
         }
@@ -833,12 +1217,484 @@
           "ms": 100
         }
       ]
+    },
+    "brood": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "brood_0",
+          "ms": 200
+        },
+        {
+          "frame": "brood_1",
+          "ms": 100
+        },
+        {
+          "frame": "brood_2",
+          "ms": 100
+        },
+        {
+          "frame": "brood_3",
+          "ms": 800
+        },
+        {
+          "frame": "brood_up",
+          "ms": 500
+        },
+        {
+          "frame": "brood_3",
+          "ms": 300
+        },
+        {
+          "frame": "brood_look",
+          "ms": 800
+        },
+        {
+          "frame": "brood_3",
+          "ms": 300
+        },
+        {
+          "frame": "brood_2",
+          "ms": 100
+        },
+        {
+          "frame": "brood_1",
+          "ms": 100
+        },
+        {
+          "frame": "brood_0",
+          "ms": 200
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "feed": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "brood_0",
+          "ms": 200
+        },
+        {
+          "frame": "brood_1",
+          "ms": 100
+        },
+        {
+          "frame": "brood_2",
+          "ms": 100
+        },
+        {
+          "frame": "brood_3",
+          "ms": 300
+        },
+        {
+          "frame": "feed_hop",
+          "ms": 150
+        },
+        {
+          "frame": "feed_stand",
+          "ms": 300
+        },
+        {
+          "frame": "feed_beg_0",
+          "ms": 150
+        },
+        {
+          "frame": "feed_beg_1",
+          "ms": 150
+        },
+        {
+          "frame": "feed_beg_0",
+          "ms": 150
+        },
+        {
+          "frame": "feed_beg_1",
+          "ms": 150
+        },
+        {
+          "frame": "feed_give",
+          "ms": 400
+        },
+        {
+          "frame": "feed_gulp",
+          "ms": 300
+        },
+        {
+          "frame": "feed_beg_0",
+          "ms": 150
+        },
+        {
+          "frame": "feed_beg_1",
+          "ms": 150
+        },
+        {
+          "frame": "feed_give",
+          "ms": 400
+        },
+        {
+          "frame": "feed_gulp",
+          "ms": 400
+        },
+        {
+          "frame": "feed_stand",
+          "ms": 300
+        },
+        {
+          "frame": "feed_hop",
+          "ms": 150
+        },
+        {
+          "frame": "brood_3",
+          "ms": 300
+        },
+        {
+          "frame": "brood_2",
+          "ms": 100
+        },
+        {
+          "frame": "brood_1",
+          "ms": 100
+        },
+        {
+          "frame": "brood_0",
+          "ms": 200
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "walk_chick": {
+      "loop": true,
+      "steps": [
+        {
+          "frame": "follow_0",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "follow_1",
+          "ms": 100
+        },
+        {
+          "frame": "follow_2",
+          "ms": 100
+        },
+        {
+          "frame": "follow_3",
+          "ms": 100
+        }
+      ]
+    },
+    "sleep": {
+      "loop": true,
+      "loopFrom": 1,
+      "pose": [
+        "stand",
+        "sleep"
+      ],
+      "steps": [
+        {
+          "frame": "doze",
+          "ms": 400
+        },
+        {
+          "frame": "sleep_0",
+          "ms": 800
+        },
+        {
+          "frame": "sleep_1",
+          "ms": 800
+        },
+        {
+          "frame": "sleep_2",
+          "ms": 800
+        },
+        {
+          "frame": "sleep_3",
+          "ms": 800
+        }
+      ]
+    },
+    "wake": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "sleep",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "doze",
+          "ms": 300
+        },
+        {
+          "frame": "stand",
+          "ms": 200
+        }
+      ]
+    },
+    "sleep_chick": {
+      "loop": true,
+      "loopFrom": 5,
+      "pose": [
+        "stand",
+        "sleep_chick"
+      ],
+      "steps": [
+        {
+          "frame": "brood_0",
+          "ms": 200
+        },
+        {
+          "frame": "brood_1",
+          "ms": 100
+        },
+        {
+          "frame": "brood_2",
+          "ms": 100
+        },
+        {
+          "frame": "brood_3",
+          "ms": 400
+        },
+        {
+          "frame": "doze_chick",
+          "ms": 500
+        },
+        {
+          "frame": "sleep_chick_0",
+          "ms": 800
+        },
+        {
+          "frame": "sleep_chick_1",
+          "ms": 800
+        },
+        {
+          "frame": "sleep_chick_2",
+          "ms": 800
+        },
+        {
+          "frame": "sleep_chick_3",
+          "ms": 800
+        }
+      ]
+    },
+    "wake_chick": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "sleep_chick",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "doze_chick",
+          "ms": 300
+        },
+        {
+          "frame": "brood_3",
+          "ms": 400
+        },
+        {
+          "frame": "brood_2",
+          "ms": 100
+        },
+        {
+          "frame": "brood_1",
+          "ms": 100
+        },
+        {
+          "frame": "brood_0",
+          "ms": 200
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "preen": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "idle_0_down",
+          "ms": 150
+        },
+        {
+          "frame": "preen_0",
+          "ms": 200
+        },
+        {
+          "frame": "preen_1",
+          "ms": 100
+        },
+        {
+          "frame": "preen_0",
+          "ms": 100
+        },
+        {
+          "frame": "preen_1",
+          "ms": 100
+        },
+        {
+          "frame": "preen_0",
+          "ms": 100
+        },
+        {
+          "frame": "preen_1",
+          "ms": 100
+        },
+        {
+          "frame": "preen_0",
+          "ms": 100
+        },
+        {
+          "frame": "preen_1",
+          "ms": 100
+        },
+        {
+          "frame": "preen_0",
+          "ms": 100
+        },
+        {
+          "frame": "preen_0",
+          "ms": 150
+        },
+        {
+          "frame": "preen_wing_0",
+          "ms": 200
+        },
+        {
+          "frame": "preen_wing_1",
+          "ms": 100
+        },
+        {
+          "frame": "preen_wing_0",
+          "ms": 100
+        },
+        {
+          "frame": "preen_wing_1",
+          "ms": 100
+        },
+        {
+          "frame": "preen_wing_0",
+          "ms": 100
+        },
+        {
+          "frame": "preen_wing_1",
+          "ms": 100
+        },
+        {
+          "frame": "preen_wing_0",
+          "ms": 100
+        },
+        {
+          "frame": "preen_0",
+          "ms": 150
+        },
+        {
+          "frame": "idle_0_down",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "shake": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "idle_0",
+          "ms": 200
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "shake_0",
+          "ms": 50
+        },
+        {
+          "frame": "shake_1",
+          "ms": 50
+        },
+        {
+          "frame": "stand",
+          "ms": 150
+        }
+      ]
     }
   },
   "outline": {
     "skip": [
       "e",
-      "E"
+      "E",
+      "z",
+      "D"
     ]
   },
   "blink": {
@@ -859,10 +1715,22 @@
       "stand": [
         "slide_stop"
       ]
+    },
+    "sleep": {
+      "stand": [
+        "wake"
+      ]
+    },
+    "sleep_chick": {
+      "stand": [
+        "wake_chick"
+      ]
     }
   },
   "idleVariants": [
-    "flap",
+    "preen",
+    "brood",
+    "shake",
     "fall"
   ],
   "look": {
@@ -921,24 +1789,29 @@
       "flap"
     ],
     "curious": [
-      "walk"
+      "brood"
     ],
     "greet": [
+      "brood",
       "flap"
     ],
     "wake": [
+      "shake",
       "flap"
     ],
-    "sleepy": [],
+    "sleepy": [
+      "sleep_chick"
+    ],
     "celebrate": [
       "slide",
       "flap"
     ],
     "busy": [
-      "eat"
+      "eat",
+      "feed"
     ],
     "wander": [
-      "walk"
+      "walk_chick"
     ]
   }
 }

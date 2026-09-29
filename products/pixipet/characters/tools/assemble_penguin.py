@@ -25,6 +25,10 @@ PALETTE = {
     'p': ('#34343c', '가까운 발'), 'q': ('#202026', '먼 발'),
     'N': ('#4f6a86', '물고기 등'), 'n': ('#c4d2de', '물고기 배'), 'i': ('#07070a', '물고기 눈'),
     'e': ('#e8eef6', '튀는 눈가루, 테두리 없음'), 'E': ('#aebbd0', '멀어진 눈가루, 테두리 없음'),
+    'z': ('#6f9bd1', '잠결 표시 (zzz), 테두리 없음'), 'D': ('#9fd0f0', '털어 낸 물방울, 테두리 없음'),
+    # the chick
+    'M': ('#26282f', '새끼 검은 모자'), 'W': ('#eceff3', '새끼 흰 얼굴'), 'c': ('#07070a', '새끼 눈'), 'b': ('#26282f', '새끼 부리'),
+    'G': ('#9aa0aa', '새끼 회색 솜털'), 'H': ('#7c828d', '새끼 솜털 그림자, 감은 눈'), 'r': ('#4a4d56', '새끼 가까운 발'), 's': ('#373a42', '새끼 먼 발'),
 }
 
 
@@ -38,6 +42,9 @@ TICK_MS = 50   # must match the other animals: all share one tick
 # comes down (the dx on walk_0), so neither foot slides.
 WADDLE = [S('walk_0', 2, 1), S('walk_1', 2), S('walk_2', 2), S('walk_3', 2)]
 FLAP = [S('flap_down', 1), S('flap_out', 1), S('flap_up', 2), S('flap_out', 1)]
+PEEK_OUT = [S('brood_0', 4), S('brood_1', 2), S('brood_2', 2)]     # the chick's head comes out of the pouch
+PEEK_IN = [S('brood_2', 2), S('brood_1', 2), S('brood_0', 4), S('stand', 2)]
+BEG = [S('feed_beg_0', 3), S('feed_beg_1', 3)]
 
 ANIMATIONS = {
     # breathing: the body swells 1px and settles
@@ -59,10 +66,37 @@ ANIMATIONS = {
         S('idle_0_up', 6), S('eat_fall_0', 2), S('eat_fall_1', 2), S('eat_fall_2', 2),
         S('eat_gulp_0', 4), S('eat_gulp_1', 4), S('eat_gulp_2', 4), S('idle_0_up', 4),
         S('eat_swallow_0', 4), S('eat_swallow_1', 4), S('idle_0', 6)] + FLAP * 2 + [S('stand', 2)]},
+    # the chick peeks out of the brood pouch on its parent's feet, looks up at it, looks around, ducks back
+    'brood': {'loop': False, 'hold': 4, 'seq': PEEK_OUT + [S('brood_3', 16), S('brood_up', 10), S('brood_3', 6), S('brood_look', 16),
+                                                           S('brood_3', 6)] + PEEK_IN},
+    # the chick hops out, begs with its neck stretched up, and is fed bill to bill, twice
+    'feed': {'loop': False, 'hold': 4, 'seq': PEEK_OUT + [S('brood_3', 6), S('feed_hop', 3), S('feed_stand', 6)] + BEG * 2
+             + [S('feed_give', 8), S('feed_gulp', 6)] + BEG + [S('feed_give', 8), S('feed_gulp', 8), S('feed_stand', 6), S('feed_hop', 3),
+                S('brood_3', 6)] + PEEK_IN},
+    # waddling with the chick toddling behind
+    'walk_chick': {'loop': True, 'seq': [S('follow_0', 2, 1), S('follow_1', 2), S('follow_2', 2), S('follow_3', 2)]},
+    # asleep on its feet: the head sinks, the bill rests on the breast, z's rise
+    'sleep': {'pose': ['stand', 'sleep'], 'loop': True, 'loopFrom': 1,
+              'seq': [S('doze', 8)] + [S(f'sleep_{k}', 16) for k in range(4)]},
+    'wake': {'pose': ['sleep', 'stand'], 'loop': False, 'hold': 4, 'seq': [S('doze', 6), S('stand', 4)]},
+    # asleep with the chick asleep in the pouch
+    'sleep_chick': {'pose': ['stand', 'sleep_chick'], 'loop': True, 'loopFrom': 5,
+                    'seq': PEEK_OUT + [S('brood_3', 8), S('doze_chick', 10)] + [S(f'sleep_chick_{k}', 16) for k in range(4)]},
+    'wake_chick': {'pose': ['sleep_chick', 'stand'], 'loop': False, 'hold': 4,
+                   'seq': [S('doze_chick', 6), S('brood_3', 8)] + PEEK_IN},
+    # preening: the head bows deep with the bill in the breast feathers and nibbles (the bowed head
+    # bobs 1px), then nibbles under the lifted flipper, and straightens up
+    'preen': {'loop': False, 'hold': 4, 'seq': [S('idle_0_down', 3), S('preen_0', 4)] + [S('preen_1', 2), S('preen_0', 2)] * 4
+              + [S('preen_0', 3), S('preen_wing_0', 4)] + [S('preen_wing_1', 2), S('preen_wing_0', 2)] * 3
+              + [S('preen_0', 3), S('idle_0_down', 3), S('stand', 2)]},
+    # shaking off: a fast shiver with the flippers out, drops flying
+    'shake': {'loop': False, 'hold': 4, 'seq': [S('idle_0', 4)] + [S('shake_0', 1), S('shake_1', 1)] * 8 + [S('stand', 3)]},
 }
 
 TRANSITIONS = {
     'sliding': {'stand': ['slide_stop']},
+    'sleep': {'stand': ['wake']},
+    'sleep_chick': {'stand': ['wake_chick']},
 }
 
 LOOK = {
@@ -80,15 +114,14 @@ LOOK = {
 # on the black head a closed eye shows as a sheen-grey line
 BLINK = {'animations': ['idle'], 'eye': 'o', 'closed': 'k', 'everyTicks': [50, 120], 'forTicks': 2, 'doubleChance': 0.25}
 
-# Still to draw (to be discussed): the chick, which only appears in some of these.
 PLANNED = []
 
 REACTIONS = {
-    'alert': ['flap'], 'curious': ['walk'], 'greet': ['flap'], 'wake': ['flap'],
-    'sleepy': [], 'celebrate': ['slide', 'flap'], 'busy': ['eat'], 'wander': ['walk'],
+    'alert': ['flap'], 'curious': ['brood'], 'greet': ['brood', 'flap'], 'wake': ['shake', 'flap'],
+    'sleepy': ['sleep_chick'], 'celebrate': ['slide', 'flap'], 'busy': ['eat', 'feed'], 'wander': ['walk_chick'],
 }
-IDLE_VARIANTS = ['flap', 'fall']
-CHICK_FRAMES = ('chick_',)    # drawn already, but no animation uses the chick yet
+IDLE_VARIANTS = ['preen', 'brood', 'shake', 'fall']
+CHICK_FRAMES = ('chick_',)    # the chick on its own (stand, waddle): used to build the chick scenes
 
 
 def main():
@@ -113,7 +146,7 @@ def main():
     out += ['  },', '  "animations": {']
     items = list(ANIMATIONS.items())
     out += [f'    {J(k)}: {J(v)}' + (',' if i < len(items) - 1 else '') for i, (k, v) in enumerate(items)]
-    out += ['  },', f'  "transitions": {J(TRANSITIONS)},', f'  "look": {J(LOOK)},', '  "outline": {"skip": ["e", "E"]},',
+    out += ['  },', f'  "transitions": {J(TRANSITIONS)},', f'  "look": {J(LOOK)},', '  "outline": {"skip": ["e", "E", "z", "D"]},',
             f'  "blink": {J(BLINK)},', f'  "planned": {J(PLANNED)},', f'  "idleVariants": {J(IDLE_VARIANTS)},', '  "reactions": {']
     items = list(REACTIONS.items())
     out += [f'    {J(k)}: {J(v)}' + (',' if i < len(items) - 1 else '') for i, (k, v) in enumerate(items)]

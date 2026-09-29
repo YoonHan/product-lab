@@ -45,7 +45,7 @@ open viewer.html
 
 - 여우: **완성**(2026-09-28). 12개 동작 (`idle`, `walk`, `run`, `sit`, `lie_down`, `stretch`, `pounce`, `listen`, `curl_sleep`, `dig`, `lick`, `itch`)과 전환 동작 5개(`sit_up`, `lie_up`, `uncurl`, `dig_end`, `run_stop`). 돌아서기(`turn`). IDLE 마우스 추적(돌아서기 + 머리 5방향)과 눈 깜빡임. 50ms 틱, 119프레임. 달리기는 IK 다리의 8프레임 갤럽, 점프는 공중 구간 11프레임과 머리가 박힌 뒤 빼내는 동작, 기지개에는 하품이 있습니다. 소개 영상은 해 질 녘 배경과 패럴랙스 스크롤을 씁니다.
 - 북극여우: **완성**(2026-09-29). 여우의 프레임 119개와 동작을 그대로 쓰고, 겨울털(흰색), 짧고 둥근 귀, 한 칸 짧은 주둥이로 바꿨습니다. 소개 영상 `dist/arctic-fox-all-animations.mp4`(눈 내린 홋카이도: 요테이산, 가문비나무와 자작나무, 도리이와 석등).
-- 황제펭귄: **작업 중**(2026-09-29). 몸 13×19px(부리와 발 포함), 프레임 38×32, 8개 동작(`idle`, `walk`, `turn`, `slide`, `slide_stop`, `fall`, `flap`, `eat`), 36프레임. 소개 영상 `dist/penguin-all-animations.mp4`(백야의 남극 해빙). 새끼(회색 솜털)는 그려 두었고, 새끼가 나오는 동작과 추가 동작은 다음에 정합니다.
+- 황제펭귄: **작업 중**(2026-09-29). 몸 13×19px(부리와 발 포함), 프레임 38×32, 17개 동작, 68프레임. 부모: `idle`, `walk`, `turn`, `slide`/`slide_stop`, `fall`, `flap`, `eat`, `preen`, `shake`, `sleep`/`wake`. 새끼(회색 솜털)가 나오는 동작: `brood`, `feed`, `walk_chick`, `sleep_chick`/`wake_chick`. 소개 영상 `dist/penguin-all-animations.mp4`(백야의 남극 해빙, 73초).
 - 햄스터(정글리안): **작업 중**(2026-09-29). 몸 13×10px, 프레임 26×28, 23개 동작, 157프레임. 소개 영상 `dist/hamster-all-animations-beach.mp4`(모래사장). 확인 완료: `idle`, `walk`, `sit`, `sit_up`, `sniff`, `rear_look`, `turn`, `lie_down`, `lie_up`, `run`, `run_stop`, `burrow_in`, `hide`, `peek`. 다시 확인 대기: IDLE 마우스 추적(위 방향), `curl_sleep`, `uncurl`, `eat_seed`, `dig`, `dig_end`, `emerge`, `groom`(고개 숙임), 톱밥 더미 모양. 첫 확인 대기: `stretch`, `wheel`.
 - 이벤트: 시스템 9개, 앱 3개(포모도로 타이머 2개, 클릭), 외부 2개(Claude Code 훅).
 

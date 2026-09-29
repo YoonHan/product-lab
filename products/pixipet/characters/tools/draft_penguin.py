@@ -19,6 +19,7 @@ PX = 14                  # x of the stand pose's left edge: room behind it for t
 # w/x: white belly, its shadow; Y/y: pale yellow breast, orange-yellow ear patch
 # B/j: bill, the orange stripe on the lower bill; o: eye (blinking turns it into sheen)
 # p/q: near/far foot; N/n/i: fish back, belly and eye; e/E: snow flake, faded (no outline)
+# z: sleep z's, D: water drops (no outline)
 # chick: G/H grey down and its shadow, W white face mask, M black cap, c eye, b bill, r/s feet
 
 # ---- key poses (facing right) ------------------------------------------------------------------
@@ -456,6 +457,241 @@ def eat_frames():
     return out
 
 
+# ---- the chick on the parent's feet, under the brood pouch --------------------------------------
+# An emperor chick stands on its parent's feet under a fold of belly skin. With the chick in it the
+# lower belly bulges forward over the feet; the chick's head peeks out in front of the bulge.
+POUCH = {  # STAND rows replaced while brooding
+    14: "..KKKKwwwwx..",
+    15: "..KKKKwwwwx..",
+    16: "..KKKKxwwwx..",
+    17: ".KKKK.xxxx...",
+}
+CHICK_HEADS = {   # 8x4, facing right (like CHICK_BODY's top rows)
+    'fwd': ["..MMMM..", ".MMMMMM.", ".MWWcWMb", ".MWWWWM."],
+    # looking up (and begging): the mask, eye and bill all move up a row, the bill still short and
+    # straight on the face; a 2px bill standing up beside the cap read as a bill curling upward
+    'up': ["..MMMM..", ".MMWWcMb", ".MWWWWM.", ".MWWWWM."],
+    'sleep': ["..MMMM..", ".MMMMMM.", ".MWWHWM.", ".MWWWWMb"],  # eye shut, bill drooping
+}
+CHICK_PEEK_X = 8          # the peeking head, in STAND columns (in front of the pouch)
+# the parent asleep on its feet: the head sinks 1px and droops so the bill hangs straight down
+# against the breast, the eye shut (a bill still pointing forward read as awake)
+SLEEP_HEAD = [
+    ".............",
+    ".....kkk.....",
+    "....kkkkk....",
+    "...kKKKKkK...",
+    "...KKKKyyKB..",
+]
+SLEEP_ROWS = {5: "...KKKyyYjB..", 6: "..KKKKyYwjB.."}
+Z = ["zzzz", "..z.", ".z..", "zzzz"]   # a small z with a readable diagonal, no outline
+
+
+def stand_rows(head=None, pouch=False, breath=False):
+    rows = body(head=head)
+    if head is SLEEP_HEAD:
+        for y, r in SLEEP_ROWS.items():
+            rows[y] = r
+    if pouch:
+        for y, r in POUCH.items():
+            rows[y] = r
+    if breath:
+        rows.insert(13, rows[13])
+    return rows
+
+
+def overlay(g, rows, x0, y0):
+    for y, r in enumerate(rows):
+        for x, ch in enumerate(r):
+            if ch != '.' and 0 <= y0 + y < H and 0 <= x0 + x < W:
+                g[y0 + y][x0 + x] = ch
+    return g
+
+
+def flipped(rows):
+    return [r[::-1] for r in rows]
+
+
+def parent(head=None, pouch=False, breath=False):
+    rows = stand_rows(head, pouch, breath)
+    return place(rows, PX), GROUND - len(rows) + 1      # grid and the parent's top row
+
+
+def peek(g, top, head='fwd', rows_out=4):
+    """The chick's head out of the pouch, showing its top `rows_out` rows."""
+    h = CHICK_HEADS[head][:rows_out]
+    return overlay(g, h, PX + CHICK_PEEK_X, top + 18 - rows_out)
+
+
+def zs(g, top, k):
+    """Two z's rising from the head, k = 0..3."""
+    for i, (dx, dy) in enumerate(((10, -2 - k), (14, -7 - k))):
+        if (k + i) % 4 < 3:
+            overlay(g, Z, PX + dx, top + dy - 2)
+    return g
+
+
+def brood_frames():
+    out = {}
+    g, top = parent(LOOK_HEADS['down_fwd'], pouch=True)
+    out['brood_0'] = rows_of(g)
+    for i, n in enumerate((2, 3, 4)):                    # the chick's head comes up out of the pouch
+        g, top = parent(LOOK_HEADS['down_fwd'], pouch=True)
+        out[f'brood_{i + 1}'] = rows_of(peek(g, top, 'fwd', n))
+    g, top = parent(LOOK_HEADS['down_fwd'], pouch=True)
+    out['brood_up'] = rows_of(peek(g, top, 'up'))        # it looks up at the parent
+    g, top = parent(None, pouch=True)
+    out['brood_look'] = rows_of(peek(g, top, 'fwd'))     # both look ahead
+    return out
+
+
+def chick_rows(head='fwd', bob=False, lift=None, stretch=0):
+    """The chick; bob lifts the head 1px, stretch n more (a neck stretched up to beg)."""
+    rows = CHICK_HEADS[head] + CHICK_BODY[4:] + CHICK_FEET
+    n = int(bob) + stretch
+    if n:
+        rows = rows[:CHICK_BOB_ROW] + [rows[CHICK_BOB_ROW]] * n + rows[CHICK_BOB_ROW:]
+    if lift:
+        rows[-1] = rows[-1].replace(lift, '.')
+    return rows
+
+
+def feed_frames():
+    """The chick hops out of the pouch, turns to its parent and begs with its neck stretched up;
+    the parent bows its head (standing: tipping the whole body over read as falling on the chick)
+    and the chick hops up to meet its bill, then gulps and hops back in."""
+    out = {}
+    cx = PX + 12                                          # where the chick stands, facing the parent
+    down = stand_rows(LOOK_HEADS['down_fwd'])
+    bow = stand_rows(LOOK_HEADS['down'])
+    for name, prow, crow, x, dy in (
+        ('feed_hop', down, chick_rows('fwd'), PX + 10, 2),
+        ('feed_stand', down, flipped(chick_rows('fwd')), cx, 0),
+        ('feed_beg_0', down, flipped(chick_rows('up', stretch=1)), cx, 0),
+        ('feed_beg_1', down, flipped(chick_rows('up', stretch=2)), cx, 0),
+        ('feed_give', bow, flipped(chick_rows('up', stretch=2)), cx, 2),    # hop up: the bills meet
+        ('feed_gulp', bow, flipped(chick_rows('fwd', bob=True)), cx, 0),
+    ):
+        g = place(prow, PX)
+        out[name] = rows_of(place(crow, x, dy, g))
+    return out
+
+
+def follow_frames():
+    """Walking with the chick toddling behind, one step out of phase."""
+    out = {}
+    lifts = [None, 's', None, 'r']
+    for i, (b, f, breath, fl) in enumerate(WADDLE):
+        g = place(feet(body(breath, flipper=fl), b, f), PX)
+        j = (i + 2) % 4
+        out[f'follow_{i}'] = rows_of(place(chick_rows('fwd', bob=j % 2 == 1, lift=lifts[j]), PX - 9, 0, g))
+    return out
+
+
+def sleep_frames():
+    out = {}
+    g, top = parent(LOOK_HEADS['down_fwd'])
+    out['doze'] = rows_of(g)                                        # nodding off
+    for k in range(4):
+        g, top = parent(SLEEP_HEAD, breath=k % 2 == 1)
+        out[f'sleep_{k}'] = rows_of(zs(g, top, k))
+        g, top = parent(SLEEP_HEAD, pouch=True, breath=k % 2 == 1)  # with the chick asleep in the pouch
+        out[f'sleep_chick_{k}'] = rows_of(zs(peek(g, top, 'sleep'), top, k))
+    g, top = parent(LOOK_HEADS['down_fwd'], pouch=True)
+    out['doze_chick'] = rows_of(peek(g, top, 'sleep'))
+    return out
+
+
+# Preening: the head bows deep, forward over the chest, and the bill goes down into the breast
+# feathers (tip around the middle of the chest); nibbling bobs the whole bowed head 1px. Only
+# tipping the forward-looking head a little, with a 1px peck at the top of the breast, did not
+# read as preening. These replace STAND rows 0-10.
+PREEN_HEADS = {
+    'up': [
+        ".............",
+        ".............",
+        "....kkkk.....",
+        "...kKKKKkk...",
+        "...KKKKKKKK..",
+        "...KKKKKKoK..",
+        "..KKKKKyyKB..",
+        "..KKKKyyYjB..",
+        "..KKKKYwjB...",
+        "..KKKKFwBw...",
+        "..KKKKFfww...",
+    ],
+    'down': [
+        ".............",
+        ".............",
+        ".............",
+        "....kkkk.....",
+        "...kKKKKkk...",
+        "...KKKKKKKK..",
+        "...KKKKKKoK..",
+        "..KKKKKyyKB..",
+        "..KKKKyyYjB..",
+        "..KKKKYwjB...",
+        "..KKKKFBww...",
+    ],
+}
+
+
+def preening(bob, wing=False):
+    rows = list(STAND)
+    rows[:11] = PREEN_HEADS['down' if bob else 'up']
+    if not wing:
+        return rows, PX
+    # the flipper lifted out, and the bill turned in under its root
+    lifted = flapping('out')
+    out = []
+    for y, r in enumerate(lifted):
+        base = '.' * FLAP_PAD + rows[y] if y < 11 else r
+        if y < 11:
+            base = list(base)
+            for x, ch in enumerate(r):
+                if ch in 'Ffx' and base[x] in '.Kw':
+                    base[x] = ch
+            base = ''.join(base)
+        out.append(base)
+    # the bill tip moves back under the flipper
+    y = 9 if not bob else 10
+    r = list(out[y]); r[FLAP_PAD + 8] = 'w'; r[FLAP_PAD + 7] = 'B'; out[y] = ''.join(r)
+    return out, PX - FLAP_PAD
+
+
+def preen_frames():
+    out = {}
+    for name, bob, wing in (('preen_0', False, False), ('preen_1', True, False),
+                            ('preen_wing_0', False, True), ('preen_wing_1', True, True)):
+        rows, x = preening(bob, wing)
+        out[name] = rows_of(place(rows, x))
+    return out
+
+
+# shaking off: the whole body shivers 1px side to side over its planted feet, with the flippers
+# held out, and drops fly off (no outline). Shaking only the upper rows split the body in two.
+DROPS = [
+    [(-2, 3), (14, 2), (-1, 9), (15, 8)],
+    [(-3, 1), (15, 0), (-3, 7), (16, 6), (13, -1)],
+]
+
+
+def shake_frames():
+    out = {}
+    for i, dx in enumerate((1, -1)):
+        rows = flapping('out' if i == 0 else 'down', head=LOOK_HEADS['up_fwd'])
+        last = len(rows) - 1                                   # the feet stay where they are
+        rows = [('.' + r[:-1]) if (dx > 0 and y < last) else (r[1:] + '.') if (dx < 0 and y < last) else r
+                for y, r in enumerate(rows)]
+        g = place(rows, PX - FLAP_PAD)
+        top = GROUND - len(rows) + 1
+        for x, y in DROPS[i]:
+            if 0 <= PX + x < W and 0 <= top + y < H and g[top + y][PX + x] == '.':
+                g[top + y][PX + x] = 'D'
+        out[f'shake_{i}'] = rows_of(g)
+    return out
+
+
 def frames():
     out = {}
     out.update(stand_frames())
@@ -465,6 +701,12 @@ def frames():
     out.update(belly_frames())
     out.update(flap_frames())
     out.update(eat_frames())
+    out.update(brood_frames())
+    out.update(feed_frames())
+    out.update(follow_frames())
+    out.update(sleep_frames())
+    out.update(preen_frames())
+    out.update(shake_frames())
     return out
 
 
