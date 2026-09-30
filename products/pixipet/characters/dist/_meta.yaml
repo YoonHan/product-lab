@@ -30,6 +30,9 @@ derived:
   - files: [corgi-all-animations.mp4]
     from: sprites/corgi.json
     by: tools/render_video.py corgi (Pillow, numpy, ffmpeg)
+  - files: [dachshund-all-animations.mp4]
+    from: sprites/dachshund.json
+    by: tools/render_video.py dachshund (Pillow, numpy, ffmpeg)
   - files: [penguin-all-animations.mp4]
     from: sprites/penguin.json
     by: tools/render_video.py penguin (Pillow, numpy, ffmpeg)

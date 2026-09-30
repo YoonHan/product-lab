@@ -34,7 +34,7 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `tools/assemble_hamster.py` | 생성한 프레임과 동작 정의로 `sprites/hamster.json`을 씁니다 |
 | `tools/assemble_fox.py` | 생성한 프레임과 동작 정의로 `sprites/fox.json`을 씁니다. 프레임을 손으로 고친 뒤에는 실행하지 않습니다 |
 | `tools/assemble_arctic_fox.py` | 여우 생성기의 머리 그림 몇 군데를 바꿔 실행하고, 여우의 동작 정의로 `sprites/arctic-fox.json`을 씁니다. 여우를 고친 뒤에도 다시 실행합니다 |
-| `tools/render_video.py` | 모든 동작을 한 번씩 이어 붙인 소개 영상을 만듭니다. `python3 tools/render_video.py fox`, `arctic-fox`, `penguin`, `corgi`, `hamster`로 동물을 고르며, 결과는 `dist/<동물>-all-animations.mp4`입니다. 동물마다 무대가 다릅니다(여우: 해 질 녘 들판, 북극여우: 눈 내린 홋카이도, 펭귄: 백야의 남극 해빙, 웰시코기: 소가 풀을 뜯는 목장 가장자리 잔디밭, 햄스터: 저녁의 사육장). 동물 뒤에 무대 이름을 붙이면 다른 무대로 만듭니다(`hamster beach` → `dist/hamster-all-animations-beach.mp4`, 파도치는 모래사장). 햄스터 영상은 모래사장 무대를 쓰고, 사육장 무대(`hamster`)는 코드에만 남아 있습니다. Pillow, numpy, ffmpeg가 필요합니다 |
+| `tools/render_video.py` | 모든 동작을 한 번씩 이어 붙인 소개 영상을 만듭니다. `python3 tools/render_video.py fox`, `arctic-fox`, `penguin`, `corgi`, `dachshund`, `hamster`로 동물을 고르며, 결과는 `dist/<동물>-all-animations.mp4`입니다. 동물마다 무대가 다릅니다(여우: 해 질 녘 들판, 북극여우: 눈 내린 홋카이도, 펭귄: 백야의 남극 해빙, 웰시코기: 소가 풀을 뜯는 목장 가장자리 잔디밭, 닥스훈트: 단풍잎이 떨어지는 가을 숲 가장자리, 햄스터: 저녁의 사육장). 동물 뒤에 무대 이름을 붙이면 다른 무대로 만듭니다(`hamster beach` → `dist/hamster-all-animations-beach.mp4`, 파도치는 모래사장). 햄스터 영상은 모래사장 무대를 쓰고, 사육장 무대(`hamster`)는 코드에만 남아 있습니다. Pillow, numpy, ffmpeg가 필요합니다 |
 | `viewer.html` | 재생, 배율, 배경, 테두리, 격자, 어니언 스킨, 이벤트 시뮬레이터를 갖춘 뷰어 |
 | `dist/` | 생성 결과: 뷰어 번들(`pet-data.js`), PNG 시트(테두리 없음·있음), 앱용 `*.sheet.json` |
 
@@ -53,7 +53,7 @@ open viewer.html
 
 - 여우: **완성**(2026-09-28). 12개 동작 (`idle`, `walk`, `run`, `sit`, `lie_down`, `stretch`, `pounce`, `listen`, `curl_sleep`, `dig`, `lick`, `itch`)과 전환 동작 5개(`sit_up`, `lie_up`, `uncurl`, `dig_end`, `run_stop`). 돌아서기(`turn`). IDLE 마우스 추적(돌아서기 + 머리 5방향)과 눈 깜빡임. 50ms 틱, 119프레임. 달리기는 IK 다리의 8프레임 갤럽, 점프는 공중 구간 11프레임과 머리가 박힌 뒤 빼내는 동작, 기지개에는 하품이 있습니다. 소개 영상은 해 질 녘 배경과 패럴랙스 스크롤을 씁니다.
 - 북극여우: **완성**(2026-09-29). 여우의 프레임 119개와 동작을 그대로 쓰고, 겨울털(흰색), 짧고 둥근 귀, 한 칸 짧은 주둥이로 바꿨습니다. 소개 영상 `dist/arctic-fox-all-animations.mp4`(눈 내린 홋카이도: 요테이산, 가문비나무와 자작나무, 도리이와 석등).
-- 닥스훈트(블랙탄): **작업 중**(2026-09-29). 늘어진 귀, 가는 주둥이, 긴 꼬리, 긴 소시지 몸, 프레임 50×28, 11개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`/`lie_up`, `burrow`, `wag`), 36프레임. 소개 영상은 견종에 맞는 무대를 정한 뒤 만듭니다.
+- 닥스훈트(블랙탄): **작업 중**(2026-09-29). 늘어진 귀, 가는 주둥이, 긴 꼬리, 긴 소시지 몸, 프레임 50×28, 11개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`/`lie_up`, `burrow`, `wag`), 36프레임. 소개 영상 `dist/dachshund-all-animations.mp4`(가을 숲 가장자리, 45초).
 - 웰시코기: **완성**(2026-09-29). 몸 약 28×20px(머리와 귀를 크게 키운 귀여운 비율), 프레임 44×26, 13개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`(스플루트)/`lie_up`, `bark`, `roll`, `spin`, `fetch`), 45프레임. 소개 영상 `dist/corgi-all-animations.mp4`(목장 가장자리 잔디밭).
 - 황제펭귄: **완성**(2026-09-29). 몸 13×19px(부리와 발 포함), 프레임 38×32, 17개 동작, 68프레임. 부모: `idle`, `walk`, `turn`, `slide`/`slide_stop`, `fall`, `flap`, `eat`, `preen`, `shake`, `sleep`/`wake`. 새끼(회색 솜털)가 나오는 동작: `brood`, `feed`, `walk_chick`, `sleep_chick`/`wake_chick`. 소개 영상 `dist/penguin-all-animations.mp4`(백야의 남극 해빙, 73초).
 - 햄스터(정글리안): **완성**(2026-09-29). 몸 13×10px, 프레임 26×28, 23개 동작, 157프레임. 소개 영상 `dist/hamster-all-animations-beach.mp4`(모래사장). 모든 동작을 확인했습니다.

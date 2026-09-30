@@ -7,9 +7,9 @@ across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midn
 corgi plays on a park lawn on a sunny day, and the hamster potters about its enclosure in the
 evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|hamster] [stage] [out.mp4]
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|hamster] [stage] [out.mp4]
        stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
-               park (the corgi's), hamster (the enclosure), beach (a sandy beach by the sea)
+               park (the corgi's), forest (the dachshund's), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -21,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -367,6 +367,8 @@ CURSOR_COLOURS = {
     'E': (246, 244, 240, 255), 'N': (92, 88, 96, 255), 'P': (214, 170, 164, 255),  # shima-enaga (and K)
     'U': (79, 106, 134, 255), 'u': (196, 210, 222, 255),                             # fish (and K for its eye)
     'T': (200, 220, 60, 255), 'W': (245, 247, 232, 255),                             # tennis ball
+    'R': (220, 62, 42, 255), 'r': (160, 40, 30, 255),                                # red dragonfly (and K)
+    'V': (196, 216, 232, 255), 'v': (150, 172, 196, 255),                            # its wings
 }
 SEED = """
 ...OOOO...
@@ -465,6 +467,39 @@ OWTTO
 """]
 
 
+def outlined(art):
+    """Pads the art by one pixel and draws the white 1px outline (4 directions) around it."""
+    rows = art.strip('\n').split('\n')
+    w = max(map(len, rows)) + 2
+    grid = ['.' * w] + ['.' + r.ljust(w - 2, '.') + '.' for r in rows] + ['.' * w]
+    fill = lambda x, y: 0 <= y < len(grid) and 0 <= x < w and grid[y][x] != '.'
+    return '\n'.join(''.join('O' if c == '.' and any(fill(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+                              else c for x, c in enumerate(r)) for y, r in enumerate(grid))
+
+
+# the dachshund's red dragonfly (an autumn akatombo) seen from above, head to the right: a long red
+# tail, big dark eyes, and two pairs of pale wings that beat
+_DRAGONFLY_WINGS_OUT = """
+..........vv.vv...
+..........VV.VV...
+..........VV.VV...
+..........VV.VV...
+"""
+_DRAGONFLY_WINGS_BEAT = """
+..................
+..................
+..........vv.vv...
+..........VV.VV...
+"""
+_DRAGONFLY_BODY = """
+...........rRRrKK.
+rRRrRRrRRRRRRRRRRR
+...........rRRrKK.
+"""
+DRAGONFLY = [outlined(w.strip('\n') + '\n' + _DRAGONFLY_BODY.strip('\n') + '\n' + '\n'.join(w.strip('\n').split('\n')[::-1]))
+             for w in (_DRAGONFLY_WINGS_OUT, _DRAGONFLY_WINGS_BEAT)]
+
+
 def pixel_art(art):
     rows = art.strip('\n').split('\n')
     img = Image.new('RGBA', (max(map(len, rows)) * CURSOR_PX, len(rows) * CURSOR_PX), (0, 0, 0, 0))
@@ -483,8 +518,10 @@ def draw_cursor(canvas, x, y, t):
         img, y = pixel_art(SEED), y + (CURSOR_PX if (t // 6) % 2 else 0)
     elif ANIMAL == 'corgi':                      # a tennis ball, bouncing gently
         img, y = pixel_art(TENNIS[(t // 4) % 2]), y - (CURSOR_PX if (t // 6) % 2 else 0)
-    elif ANIMAL in ('arctic-fox', 'penguin'):
-        if ANIMAL == 'arctic-fox':
+    elif ANIMAL in ('arctic-fox', 'penguin', 'dachshund'):
+        if ANIMAL == 'dachshund':               # a red dragonfly darting about
+            img, y = pixel_art(DRAGONFLY[t % 2]), y + (CURSOR_PX if (t // 5) % 2 else 0)
+        elif ANIMAL == 'arctic-fox':
             img, y = pixel_art(ENAGA[(t // 2) % 2]), y + (CURSOR_PX if (t // 6) % 2 else 0)
         else:                                    # a fish swimming through the air, its tail beating
             img, y = pixel_art(FISH[(t // 3) % 2]), y + (CURSOR_PX if (t // 8) % 2 else 0)
@@ -1174,9 +1211,9 @@ def antarctica_stage():
     return background, draw_moving
 
 
-# ---- corgi: a park lawn on a sunny day ------------------------------------------------------------
-# A clear spring day: soft clouds drift over a line of round trees, a white picket fence runs along
-# the far edge of the lawn, and the grass is dotted with tufts and little white and yellow flowers.
+# ---- corgi: a lawn at the edge of a farm on a sunny day --------------------------------------------
+# A clear spring day: puffy clouds drift by, cows graze on a far pasture behind a wooden ranch fence
+# with round trees beyond, and the lawn is dotted with tufts and little flowers.
 CORGI = dict(
     SCALE=8, GROUND_Y=600, HORIZON_Y=500,
     SEGMENTS=[
@@ -1322,13 +1359,155 @@ def park_stage():
     return background, draw_moving
 
 
+# ---- dachshund: the edge of an autumn forest ----------------------------------------------------
+# A clear autumn afternoon: a hazy far wood and, nearer, the forest edge in orange, red and yellow
+# with a few dark firs; leaves drift down, and the dry meadow in front is strewn with fallen leaves,
+# tufts and a few red toadstools.
+DACHSHUND = dict(
+    SCALE=8, GROUND_Y=600, HORIZON_Y=500,
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 꼬리', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 걷기', 48),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('run', 'RUN · 달리기', 48),
+        ('run_stop', 'RUN STOP · 멈추기', 6),
+        ('sit', 'SIT · 앉기', 10),
+        ('sit_up', 'SIT UP · 일어서기', 6),
+        ('lie_down', 'LIE DOWN · 엎드리기', 10),
+        ('lie_up', 'LIE UP · 엎드렸다 일어서기', 6),
+        ('wag', 'WAG · 꼬리 흔들기', 8),
+        ('burrow', 'BURROW · 굴 파고 들어가기', 10),
+        ('idle', 'IDLE · 숨쉬기와 꼬리', 30),
+    ],
+)
+FOREST = dict(
+    SKY=[(0, (112, 162, 214)), (280, (178, 202, 222)), (500, (246, 224, 182))],
+    GROUND=[(500, (178, 158, 84)), (600, (150, 128, 62)), (720, (110, 90, 46))],
+    HAZE=(226, 214, 190),
+    FAR=[(196, 126, 72), (206, 164, 84), (160, 112, 70), (124, 126, 76)],
+    NEAR=[((228, 122, 44), (246, 162, 70), (184, 88, 34)), ((198, 64, 42), (226, 104, 64), (150, 44, 34)),
+          ((236, 186, 62), (250, 214, 110), (196, 142, 44)), ((214, 150, 52), (238, 186, 90), (170, 110, 40))],
+    FIR=((56, 88, 62), (78, 112, 76)),
+    TRUNK=(86, 60, 44),
+    LEAVES=[(230, 124, 44), (204, 70, 44), (238, 188, 64), (190, 110, 52)],
+)
+
+
+def forest_stage():
+    import numpy as np, math, random
+    P, K = SCALE, FOREST
+    ys = np.arange(VIDEO_H)
+    yy = np.mgrid[0:VIDEO_H, 0:VIDEO_W][0]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    split = (HORIZON_Y // P) * P                           # the meadow starts right under the trees' foot
+    img = np.where((yy < split)[..., None], ramp(K['SKY'])[:, None, :], ramp(K['GROUND'])[:, None, :]).astype(float)
+    img += np.random.default_rng(5).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+    rnd = random.Random(33)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def strip(draw_trees):
+        """A layer of trees one period wide, drawn once and scrolled."""
+        im = Image.new('RGBA', (period * P, VIDEO_H), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        def cell(x, y, col):
+            for X in (x % period, x % period - period):
+                d.rectangle([X * P, y * P, X * P + P - 1, y * P + P - 1], fill=col + (255,))
+        draw_trees(cell)
+        return im
+
+    haze = lambda c, f: tuple(int(a + (b - a) * f) for a, b in zip(c, K['HAZE']))
+
+    def far_wood(cell):                                  # a dense, hazy wood: overlapping crowns down to the ground
+        x = 0
+        while x < period:
+            r = rnd.randint(4, 7); top = base - 10 - rnd.randint(0, 6); col = haze(rnd.choice(K['FAR']), 0.45)
+            for dx in range(-r, r + 1):
+                for y in range(top - r, base + 1):
+                    if y > top or dx * dx + (y - top) ** 2 <= r * r + 1:
+                        cell(x + dx, y, col)
+            x += r + rnd.randint(1, 4)
+
+    def forest_edge(cell):                               # the nearer edge: round autumn crowns on trunks, a few firs
+        x = 0
+        while x < period:
+            if rnd.random() < 0.2:                       # a dark fir
+                h = rnd.randint(14, 20)
+                for i in range(h):
+                    w = (i * 5) // h // 1 + (i % 3 == 2)
+                    for dx in range(-w, w + 1):
+                        cell(x + dx, base - 2 - h + i, K['FIR'][1] if dx < 0 and i % 3 == 0 else K['FIR'][0])
+                cell(x, base - 1, K['TRUNK']); cell(x, base, K['TRUNK'])
+                x += 6 + rnd.randint(0, 3)
+                continue
+            r = rnd.randint(4, 7); trunk = rnd.randint(4, 7); cy = base - trunk - r
+            mid, lit, shade = rnd.choice(K['NEAR'])
+            for y in range(cy + r - 1, base + 1):
+                cell(x, y, K['TRUNK']); cell(x + 1, y, K['TRUNK'])
+            for dx in range(-r, r + 2):
+                for dy in range(-r, r + 1):
+                    if (dx - 0.5) ** 2 + dy * dy <= r * r + 1:
+                        col = lit if dy < -r // 2 and dx <= r // 2 else (shade if dy > r // 2 or dx > r * 2 // 3 else mid)
+                        cell(x + dx, cy + dy, col)
+            for _ in range(3):                           # a few leaves showing the crown's texture
+                cell(x + rnd.randint(-r + 2, r - 1), cy + rnd.randint(-r + 2, r - 2), shade)
+            x += r * 2 + rnd.randint(-2, 2)
+        for x in range(period):                          # undergrowth along the foot of the trees
+            h = 1 + (x * 7 + x // 5) % 3
+            for y in range(base - h + 1, base + 1):
+                cell(x, y, (132, 110, 52) if (x + y) % 4 else (150, 92, 44))
+
+    far, edge = strip(far_wood), strip(forest_edge)
+    props = []
+    for _ in range(90):                                  # fallen leaves, thicker near the trees
+        y = rnd.randrange(HORIZON_Y // P + 1, VIDEO_H // P)
+        near = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
+        if rnd.random() < near * 0.6:
+            continue
+        cells = [(0, 0)] if near < 0.3 or rnd.random() < 0.4 else rnd.choice(([(0, 0), (1, 0)], [(0, 0), (1, -1)], [(0, 0), (0, -1)]))
+        props.append((rnd.randrange(period), cells, y, rnd.choice(K['LEAVES']), 0.9))
+    for _ in range(36):                                  # dry grass tufts
+        y = rnd.randrange(HORIZON_Y // P + 2, VIDEO_H // P)
+        near = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
+        h = 1 + int(near * 2)
+        cells = [(0, -i) for i in range(h)] + ([(1, -h + 1)] if h > 1 else [])
+        props.append((rnd.randrange(period), cells, y, (120, 104, 44), 0.7 + 0.2 * near))
+    for _ in range(5):                                   # red toadstools with white spots
+        y = rnd.randrange(HORIZON_Y // P + 3, VIDEO_H // P - 1); x = rnd.randrange(period)
+        props.append((x, [(0, 0), (0, -1)], y, (240, 228, 206), 1.0))
+        props.append((x, [(-1, -2), (0, -2), (1, -2), (0, -3)], y, (206, 52, 40), 1.0))
+        props.append((x, [(1, -2)], y, (250, 244, 236), 1.0))
+    props = (period, props)
+    falling = [(rnd.uniform(0, VIDEO_W), rnd.uniform(0, VIDEO_H), rnd.uniform(0, 6.3), rnd.choice(K['LEAVES']),
+                rnd.uniform(34, 60)) for _ in range(16)]
+
+    def draw_moving(canvas, t, travelled):
+        for layer, speed in ((far, 0.1), (edge, HORIZON_SPEED)):
+            sx = round(travelled * speed) % period * P
+            canvas.alpha_composite(layer.crop((sx, 0, sx + VIDEO_W, VIDEO_H)) if sx + VIDEO_W <= layer.width
+                                   else Image.fromarray(np.concatenate([np.asarray(layer)[:, sx:], np.asarray(layer)[:, :sx + VIDEO_W - layer.width]], 1)))
+        draw_props(canvas, props, travelled)
+        dr = ImageDraw.Draw(canvas)
+        for x0, y0, ph, col, speed in falling:           # leaves drifting down, swaying and tumbling
+            y = (y0 + speed * t) % (VIDEO_H + 40) - 20
+            x = (x0 + 30 * math.sin(t * 1.1 + ph) - travelled * SCALE * 0.5) % VIDEO_W
+            X, Y = int(x // P) * P, int(y // P) * P
+            cells = ((0, 0), (P, 0)) if int(t * 3 + ph) % 2 else ((0, 0), (P, P))
+            for dx, dy in cells:
+                dr.rectangle([X + dx, Y + dy, X + dx + P - 1, Y + dy + P - 1], fill=col + (255,))
+    return background, draw_moving
+
+
 STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
-          'antarctica': antarctica_stage, 'park': park_stage}
+          'antarctica': antarctica_stage, 'park': park_stage, 'forest': forest_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_chick': 'sleep_chick'}
 
 
 def main():
-    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI}.get(ANIMAL)
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND}.get(ANIMAL)
     if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):
