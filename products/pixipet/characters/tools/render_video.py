@@ -7,9 +7,9 @@ across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midn
 corgi plays on a park lawn on a sunny day, and the hamster potters about its enclosure in the
 evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|hamster] [stage] [out.mp4]
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|shiba-black|hamster] [stage] [out.mp4]
        stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
-               park (the corgi's), forest (the dachshund's), sakura (the shiba's), hamster (the enclosure), beach (a sandy beach by the sea)
+               park (the corgi's), forest (the dachshund's), sakura (both shibas'), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -21,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura', 'shiba-black': 'sakura'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -1662,7 +1662,7 @@ LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_c
 
 
 def main():
-    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA}.get(ANIMAL)
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA, 'shiba-black': SHIBA}.get(ANIMAL)
     if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):

@@ -94,8 +94,11 @@ REACTIONS = {
 IDLE_VARIANTS = ['mikaeri', 'shake', 'smile']
 
 
-def main():
-    frames_all = D.frames()
+def main(animal='shiba', display='시바견', palette=None, frames_all=None, in_progress=False):
+    """Writes sprites/<name>.json; the black and tan shiba (assemble_shiba_black.py) passes its own
+    name, palette and recoloured frames and shares everything else."""
+    palette = palette or PALETTE
+    frames_all = frames_all or D.frames()
     order = ['stand']
     for a in ANIMATIONS.values():
         for step in a['seq']:
@@ -103,9 +106,9 @@ def main():
                 order.append(step[0])
     order += [n for n in frames_all if n not in order]
     J = lambda v: json.dumps(v, ensure_ascii=False)
-    out = ['{', '  "name": "shiba",', '  "displayName": "시바견",', '  "version": 1,',
+    out = ['{', f'  "name": {J(animal)},', f'  "displayName": {J(display)},', '  "version": 1,'] + (['  "inProgress": true,'] if in_progress else []) + [
            f'  "tickMs": {TICK_MS},', f'  "size": {J([D.W, D.H])},', f'  "anchor": {J(list(D.ANCHOR))},', '  "palette": {']
-    items = list(PALETTE.items())
+    items = list(palette.items())
     out += [f'    {J(k)}: {J({"hex": h, "role": r})}' + (',' if i < len(items) - 1 else '') for i, (k, (h, r)) in enumerate(items)]
     out += ['  },', '  "frames": {']
     for i, name in enumerate(order):
@@ -123,9 +126,9 @@ def main():
     out += ['  }', '}']
     text = '\n'.join(out) + '\n'
     json.loads(text)
-    with open(os.path.join(ROOT, 'sprites', 'shiba.json'), 'w') as f:
+    with open(os.path.join(ROOT, 'sprites', f'{animal}.json'), 'w') as f:
         f.write(text)
-    print(f'wrote sprites/shiba.json: {len(order)} frames, {len(ANIMATIONS)} animations')
+    print(f'wrote sprites/{animal}.json: {len(order)} frames, {len(ANIMATIONS)} animations')
 
 
 if __name__ == '__main__':
