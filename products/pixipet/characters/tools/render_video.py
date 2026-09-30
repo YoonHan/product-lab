@@ -7,9 +7,9 @@ across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midn
 corgi plays on a park lawn on a sunny day, and the hamster potters about its enclosure in the
 evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|hamster] [stage] [out.mp4]
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|hamster] [stage] [out.mp4]
        stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
-               park (the corgi's), forest (the dachshund's), hamster (the enclosure), beach (a sandy beach by the sea)
+               park (the corgi's), forest (the dachshund's), sakura (the shiba's), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -21,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -1501,13 +1501,168 @@ def forest_stage():
     return background, draw_moving
 
 
+# ---- shiba: a riverside path under cherry blossom in spring ------------------------------------------
+# A warm spring afternoon: a peach-tinted sky with a soft sun glow, hazy far hills, the river glinting
+# behind a bank of yellow rapeseed, cherry trees in full bloom along the path, and petals blowing
+# across the whole scene on the breeze, gusting now and then; the warm earth path is strewn with them.
+SHIBA = dict(
+    SCALE=8, GROUND_Y=600, HORIZON_Y=500,
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 걷기', 48),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('run', 'RUN · 달리기', 48),
+        ('run_stop', 'RUN STOP · 멈추기', 6),
+        ('sit', 'SIT · 앉기', 10),
+        ('sit_up', 'SIT UP · 일어서기', 6),
+        ('lie_down', 'LIE DOWN · 엎드리기', 10),
+        ('lie_up', 'LIE UP · 엎드렸다 일어서기', 6),
+        ('mikaeri', 'MIKAERI · 뒤돌아보기', 8),
+        ('smile', 'SMILE · 시바 스마일', 8),
+        ('shake', 'SHAKE · 몸 털기', 8),
+        ('refuse', 'REFUSE · 산책 거부', 10),
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 30),
+    ],
+)
+SAKURA = dict(
+    SKY=[(0, (138, 186, 230)), (220, (206, 212, 230)), (400, (248, 218, 214)), (500, (254, 232, 204))],
+    GROUND=[(500, (240, 214, 170)), (600, (228, 196, 150)), (720, (206, 170, 124))],
+    HILLS=(214, 196, 204), HILLS_NEAR=(196, 190, 170),
+    RIVER=(150, 200, 214), GLINT=(250, 250, 240),
+    BANK=(176, 196, 106), RAPE=(250, 218, 70),
+    BLOSSOM=((255, 230, 236), (248, 196, 212), (234, 164, 190)),     # lit, mid, shade
+    TRUNK=(112, 78, 66),
+    PETALS=[(255, 214, 226), (250, 190, 210), (255, 236, 240), (240, 170, 196)],
+)
+
+
+def sakura_stage():
+    import numpy as np, math, random
+    P, K = SCALE, SAKURA
+    ys = np.arange(VIDEO_H)
+    yy, xx = np.mgrid[0:VIDEO_H, 0:VIDEO_W]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    split = (HORIZON_Y // P) * P
+    img = np.where((yy < split)[..., None], ramp(K['SKY'])[:, None, :], ramp(K['GROUND'])[:, None, :]).astype(float)
+    glow = 0.35 * np.exp(-(((xx - 1010) / 380) ** 2 + ((yy - 120) / 220) ** 2))        # the spring sun, soft
+    img = img * (1 - glow[..., None]) + np.array((255, 244, 214.)) * glow[..., None]
+    img += np.random.default_rng(11).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+    rnd = random.Random(41)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def strip(draw):
+        im = Image.new('RGBA', (period * P, VIDEO_H), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        def cell(x, y, col):
+            for X in (x % period, x % period - period):
+                d.rectangle([X * P, y * P, X * P + P - 1, y * P + P - 1], fill=col + (255,))
+        draw(cell)
+        return im
+
+    def hills(cell):                                     # two hazy ridges far off, a few pink trees on them
+        for x in range(period):
+            t1 = int(base - 16 - 5 * (0.5 + 0.5 * math.sin(x / 19)) - 2 * math.sin(x / 7))
+            t2 = int(base - 11 - 3 * (0.5 + 0.5 * math.sin(x / 13 + 2)))
+            for y in range(t1, base - 7):
+                cell(x, y, K['HILLS'])
+            for y in range(t2, base - 7):
+                cell(x, y, K['HILLS_NEAR'])
+            if x % 11 == 0:
+                cell(x, t2 - 1, (236, 200, 212)); cell(x + 1, t2 - 1, (236, 200, 212))
+
+    def bank_and_trees(cell):                            # the river, a rapeseed bank, the cherry trees
+        for x in range(period):
+            for y in range(base - 7, base - 4):
+                cell(x, y, K['RIVER'])
+            for y in range(base - 4, base + 1):
+                cell(x, y, K['BANK'])
+            if (x * 5) % 3 == 0:
+                cell(x, base - 4, K['RAPE'])
+            if (x * 7) % 4 == 0:
+                cell(x, base - 3, K['RAPE'])
+        x = 2
+        lit, mid, shade = K['BLOSSOM']
+        while x < period:
+            r = rnd.randint(7, 9); cy = base - 9 - r
+            for y in range(cy, base + 1):                # the trunk, branching into the crown
+                cell(x, y, K['TRUNK']); cell(x + 1, y, K['TRUNK'])
+            for bx, by in ((-3, 2), (-2, 3), (3, 2), (4, 3), (-1, 4), (2, 4)):
+                cell(x + bx, cy + r - by + 2, K['TRUNK'])
+            for dx in range(-r - 4, r + 6):
+                for dy in range(-r, r + 2):                  # a round crown with a ragged, drooping underside
+                    if (dx / 1.35) ** 2 + dy * dy <= r * r - 1 + rnd.random() * 3 and (dy < r - 2 or rnd.random() < 0.35):
+                        col = lit if dy < -r // 2 + (dx < 0) else (shade if dy > r // 3 else mid)
+                        if rnd.random() < 0.08:
+                            col = shade if col != shade else mid
+                        cell(x + dx, cy + dy, col)
+            x += r * 2 + rnd.randint(2, 6)
+
+    far, near = strip(hills), strip(bank_and_trees)
+    glints = [(rnd.randrange(period), base - 7 + rnd.randrange(3), rnd.uniform(0, 6.3)) for _ in range(30)]
+    props = []
+    for _ in range(160):                                 # petals lying on the path, thicker under the trees
+        y = rnd.randrange(HORIZON_Y // P + 1, VIDEO_H // P)
+        near_ = (y * P - HORIZON_Y) / (VIDEO_H - HORIZON_Y)
+        if rnd.random() < near_ * 0.5:
+            continue
+        cells = [(0, 0)] if near_ < 0.5 or rnd.random() < 0.6 else [(0, 0), (1, 0)]
+        props.append((rnd.randrange(period), cells, y, rnd.choice(K['PETALS']), 0.95))
+    for _ in range(26):                                  # little grass tufts along the path's edge
+        y = rnd.choice((HORIZON_Y // P + 1, VIDEO_H // P - 1, VIDEO_H // P - 2))
+        props.append((rnd.randrange(period), [(0, 0), (0, -1)], y, (150, 176, 92), 0.9))
+    props = (period, props)
+    # petals in the air: each drifts left on the breeze (faster in gusts), sways, and flutters between
+    # three shapes; nearer petals are bigger, faster and more opaque
+    flying = []
+    for _ in range(80):
+        depth = rnd.random() ** 0.7
+        flying.append((rnd.uniform(0, VIDEO_W), rnd.uniform(0, VIDEO_H), rnd.uniform(0, 6.3), rnd.choice(K['PETALS']), depth))
+    SHAPES = [((0, 0), (1, 0)), ((0, 0), (1, 1)), ((0, 0),)]
+
+    def draw_moving(canvas, t, travelled):
+        for layer, speed in ((far, 0.08), (near, HORIZON_SPEED)):
+            sx = round(travelled * speed) % period * P
+            if sx + VIDEO_W <= layer.width:
+                canvas.alpha_composite(layer.crop((sx, 0, sx + VIDEO_W, VIDEO_H)))
+            else:
+                a = np.asarray(layer)
+                canvas.alpha_composite(Image.fromarray(np.concatenate([a[:, sx:], a[:, :sx + VIDEO_W - layer.width]], 1)))
+        dr = ImageDraw.Draw(canvas)
+        gshift = round(travelled * HORIZON_SPEED)
+        for gx, gy, ph in glints:                        # the river glinting
+            if math.sin(t * 2.2 + ph) > 0.6:
+                X = (gx - gshift) % period
+                if X < cols:
+                    dr.rectangle([X * P, gy * P, X * P + P - 1, gy * P + P - 1], fill=K['GLINT'] + (255,))
+        draw_props(canvas, props, travelled)
+        gust = 1 + 1.6 * max(0.0, math.sin(t * 0.45)) ** 3   # the breeze picks up now and then
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0))
+        d = ImageDraw.Draw(layer)
+        for x0, y0, ph, col, depth in flying:
+            size = P if depth > 0.35 else P // 2
+            fall, wind = 22 + 30 * depth, (40 + 60 * depth) * gust
+            y = (y0 + fall * t + 10 * math.sin(t * 1.7 + ph)) % (VIDEO_H + 40) - 20
+            x = (x0 - wind * t + 16 * math.sin(t * 1.3 + ph * 2) - travelled * SCALE * (0.2 + 0.6 * depth)) % (VIDEO_W + 40) - 20
+            X, Y = int(x // size) * size, int(y // size) * size
+            a = int(255 * (0.55 + 0.45 * depth))
+            for dx, dy in SHAPES[int(t * 4 + ph * 3) % 3]:
+                d.rectangle([X + dx * size, Y + dy * size, X + dx * size + size - 1, Y + dy * size + size - 1], fill=col + (a,))
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
 STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
-          'antarctica': antarctica_stage, 'park': park_stage, 'forest': forest_stage}
+          'antarctica': antarctica_stage, 'park': park_stage, 'forest': forest_stage,
+          'sakura': sakura_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_chick': 'sleep_chick'}
 
 
 def main():
-    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND}.get(ANIMAL)
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA}.get(ANIMAL)
     if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):

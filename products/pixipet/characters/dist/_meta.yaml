@@ -12,6 +12,9 @@ derived:
   - files: [dachshund.png, dachshund-outlined.png, dachshund.sheet.json]
     from: sprites/dachshund.json (written by tools/assemble_dachshund.py)
     by: node tools/build.mjs
+  - files: [shiba.png, shiba-outlined.png, shiba.sheet.json]
+    from: sprites/shiba.json (written by tools/assemble_shiba.py)
+    by: node tools/build.mjs
   - files: [corgi.png, corgi-outlined.png, corgi.sheet.json]
     from: sprites/corgi.json (written by tools/assemble_corgi.py)
     by: node tools/build.mjs
@@ -33,6 +36,9 @@ derived:
   - files: [dachshund-all-animations.mp4]
     from: sprites/dachshund.json
     by: tools/render_video.py dachshund (Pillow, numpy, ffmpeg)
+  - files: [shiba-all-animations.mp4]
+    from: sprites/shiba.json
+    by: tools/render_video.py shiba (Pillow, numpy, ffmpeg)
   - files: [penguin-all-animations.mp4]
     from: sprites/penguin.json
     by: tools/render_video.py penguin (Pillow, numpy, ffmpeg)
