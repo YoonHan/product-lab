@@ -92,7 +92,7 @@ def main():
                 order.append(step[0])
     order += [n for n in frames_all if n not in order]
     J = lambda v: json.dumps(v, ensure_ascii=False)
-    out = ['{', '  "name": "dachshund",', '  "displayName": "닥스훈트",', '  "version": 1,', '  "inProgress": true,',
+    out = ['{', '  "name": "dachshund",', '  "displayName": "닥스훈트",', '  "version": 1,',
            f'  "tickMs": {TICK_MS},', f'  "size": {J([D.W, D.H])},', f'  "anchor": {J(list(D.ANCHOR))},', '  "palette": {']
     items = list(PALETTE.items())
     out += [f'    {J(k)}: {J({"hex": h, "role": r})}' + (',' if i < len(items) - 1 else '') for i, (k, (h, r)) in enumerate(items)]

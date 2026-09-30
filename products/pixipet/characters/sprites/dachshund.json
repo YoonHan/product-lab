@@ -2,7 +2,6 @@
   "name": "dachshund",
   "displayName": "닥스훈트",
   "version": 1,
-  "inProgress": true,
   "tickMs": 50,
   "size": [50, 28],
   "anchor": [21, 27],
