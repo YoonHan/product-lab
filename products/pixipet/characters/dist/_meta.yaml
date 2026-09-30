@@ -18,6 +18,9 @@ derived:
   - files: [shiba-black.png, shiba-black-outlined.png, shiba-black.sheet.json]
     from: sprites/shiba-black.json (written by tools/assemble_shiba_black.py from the red shiba's frames)
     by: node tools/build.mjs
+  - files: [lab.png, lab-outlined.png, lab.sheet.json]
+    from: sprites/lab.json (written by tools/assemble_lab.py)
+    by: node tools/build.mjs
   - files: [corgi.png, corgi-outlined.png, corgi.sheet.json]
     from: sprites/corgi.json (written by tools/assemble_corgi.py)
     by: node tools/build.mjs
@@ -45,6 +48,9 @@ derived:
   - files: [shiba-black-all-animations.mp4]
     from: sprites/shiba-black.json
     by: tools/render_video.py shiba-black (Pillow, numpy, ffmpeg)
+  - files: [lab-all-animations.mp4]
+    from: sprites/lab.json
+    by: tools/render_video.py lab (Pillow, numpy, ffmpeg)
   - files: [penguin-all-animations.mp4]
     from: sprites/penguin.json
     by: tools/render_video.py penguin (Pillow, numpy, ffmpeg)

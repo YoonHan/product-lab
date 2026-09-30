@@ -7,9 +7,10 @@ across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midn
 corgi plays on a park lawn on a sunny day, and the hamster potters about its enclosure in the
 evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|shiba-black|hamster] [stage] [out.mp4]
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|shiba-black|lab|hamster] [stage] [out.mp4]
        stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
-               park (the corgi's), forest (the dachshund's), sakura (both shibas'), hamster (the enclosure), beach (a sandy beach by the sea)
+               park (the corgi's), forest (the dachshund's), sakura (both shibas'), dock and backyard
+               (the Labrador's candidates), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -21,7 +22,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura', 'shiba-black': 'sakura'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura', 'shiba-black': 'sakura', 'lab': 'backyard'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -1655,14 +1656,359 @@ def sakura_stage():
     return background, draw_moving
 
 
+# ---- Labrador: two stage candidates ---------------------------------------------------------------
+LAB = dict(
+    SCALE=8, GROUND_Y=600, HORIZON_Y=500,
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 걷기', 48),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('run', 'RUN · 달리기', 48),
+        ('run_stop', 'RUN STOP · 멈추기', 6),
+        ('sit', 'SIT · 앉기', 10),
+        ('sit_up', 'SIT UP · 일어서기', 6),
+        ('lie_down', 'LIE DOWN · 엎드리기', 10),
+        ('lie_up', 'LIE UP · 엎드렸다 일어서기', 6),
+        ('wag', 'WAG · 온몸 꼬리 흔들기', 8),
+        ('show', 'SHOW · 오리 장난감 자랑', 8),
+        ('splash', 'SPLASH · 물웅덩이 첨벙첨벙', 8),
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 30),
+    ],
+)
+
+
+def _strip(P, period, draw):
+    im = Image.new('RGBA', (period * P, VIDEO_H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    def cell(x, y, col, a=255):
+        for X in (x % period, x % period - period):
+            d.rectangle([X * P, y * P, X * P + P - 1, y * P + P - 1], fill=tuple(col) + (a,))
+    draw(cell)
+    return im
+
+
+def _scroll(canvas, layer, shift_cells, P, period):
+    import numpy as np
+    sx = shift_cells % period * P
+    if sx + VIDEO_W <= layer.width:
+        canvas.alpha_composite(layer.crop((sx, 0, sx + VIDEO_W, VIDEO_H)))
+    else:
+        a = np.asarray(layer)
+        canvas.alpha_composite(Image.fromarray(np.concatenate([a[:, sx:], a[:, :sx + VIDEO_W - layer.width]], 1)))
+
+
+def _clouds(rnd, period, n):
+    clouds = []
+    for i in range(n):
+        cx0, cy0, w = i * period // n + rnd.randrange(16), rnd.randrange(6, 24), rnd.randint(12, 20)
+        bumps = [(rnd.randint(3, w // 2), rnd.randint(3, 4)), (rnd.randint(w // 2, w - 4), rnd.randint(2, 3))]
+        cells = set((dx, dy) for dx in range(w) for dy in (0, -1))
+        for bx, r in bumps:
+            cells |= {(dx, dy) for dx in range(bx - r, bx + r + 1) for dy in range(-r - 1, 1)
+                      if (dx - bx) ** 2 + (dy + 1) ** 2 <= r * r + 1 and 0 <= dx < w}
+        clouds.append((cx0, cy0, [(dx, dy, dy == 0) for dx, dy in sorted(cells)]))
+    return clouds
+
+
+def _draw_clouds(dr, clouds, shift, period, P):
+    for cx0, cy0, cells in clouds:
+        X = (cx0 - shift) % period - 20
+        for dx, dy, belly in cells:
+            x, y = X + dx, cy0 + dy
+            dr.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=((222, 234, 246) if belly else (252, 253, 255)) + (240,))
+
+
+def dock_stage():
+    """A summer morning on a wooden dock: a wooded far shore, a lake glinting with little ripples and
+    ducks paddling, the dock's boards running across with posts along its edge, a life ring on one."""
+    import numpy as np, math, random
+    P = SCALE
+    ys = np.arange(VIDEO_H)
+    yy = np.mgrid[0:VIDEO_H, 0:VIDEO_W][0]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    split = (HORIZON_Y // P) * P
+    img = np.where((yy < split)[..., None], ramp([(0, (112, 178, 232)), (300, (178, 214, 238)), (420, (212, 232, 244))])[:, None, :],
+                   ramp([(500, (178, 136, 90)), (720, (150, 112, 72))])[:, None, :]).astype(float)
+    lake_top, lake_bottom = 380 // P, split // P
+    for y in range(lake_top, lake_bottom):                   # the lake, darker toward the dock
+        t = (y - lake_top) / (lake_bottom - lake_top)
+        img[y * P:(y + 1) * P] = [150 - 60 * t, 196 - 44 * t, 226 - 26 * t]
+    img += np.random.default_rng(3).uniform(-1.2, 1.2, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+    rnd = random.Random(8)
+    cols = VIDEO_W // P
+    period = cols * 2
+
+    def shore(cell):                                          # a wooded far shore and its reflection
+        for x in range(period):
+            top = int(lake_top - 5 - 4 * (0.5 + 0.5 * math.sin(x / 9)) - 2 * math.sin(x / 4))
+            for y in range(top, lake_top):
+                cell(x, y, (86, 134, 96) if rnd.random() > 0.15 else (104, 152, 108))
+            for y in range(lake_top, lake_top + 2):
+                cell(x, y, (100, 150, 150), 150)
+    far = _strip(P, period, shore)
+
+    def dock_edge(cell):                                      # posts along the dock's edge, a life ring on one
+        for x in range(0, period, 22):
+            for y in range(lake_bottom - 4, lake_bottom + 1):
+                cell(x, y, (110, 80, 52)); cell(x + 1, y, (96, 70, 46))
+        for dx in range(-3, 4):
+            for dy in range(-3, 4):
+                d = dx * dx + dy * dy
+                if 4 <= d <= 11:
+                    cell(66 + 1 + dx, lake_bottom - 4 + dy, (236, 84, 64) if dx * dy > 0 else (250, 248, 244))
+    edge = _strip(P, period, dock_edge)
+    glints = [(rnd.randrange(period), rnd.randrange(lake_top + 2, lake_bottom), rnd.uniform(0, 6.3)) for _ in range(70)]
+    ripples = [(rnd.randrange(period), rnd.randrange(lake_top + 3, lake_bottom - 1), rnd.randint(3, 6)) for _ in range(18)]
+    ducks = [(rnd.randrange(period), rnd.randrange(lake_top + 3, lake_bottom - 3), rnd.uniform(0, 6.3)) for _ in range(4)]
+    clouds = _clouds(rnd, period, 6)
+    grain = [(rnd.randrange(period), rnd.randrange(lake_bottom + 1, VIDEO_H // P)) for _ in range(120)]
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.3), period, P)
+        _scroll(canvas, far, round(travelled * 0.08), P, period)
+        wshift = round(travelled * 0.14 + t * 0.6)            # the water drifts slowly on its own
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0)); d = ImageDraw.Draw(layer)
+        cell = lambda x, y, col, a=255: d.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=col + (a,))
+        for gx, gy, ph in glints:
+            if math.sin(t * 2.4 + ph) > 0.55:
+                X = (gx - wshift) % period
+                if X < cols:
+                    cell(X, gy, (236, 246, 252))
+        for rx, ry, w in ripples:
+            X = (rx - wshift) % period
+            for k in range(w):
+                if (X + k) < cols:
+                    cell(X + k, ry, (200, 226, 240), 150)
+        dshift = round(travelled * 0.12)
+        for dx0, dy0, ph in ducks:                            # ducks paddling, bobbing a pixel
+            X = int((dx0 - dshift - t * 0.8) % period)
+            Y = dy0 + (1 if math.sin(t * 3 + ph) > 0.6 else 0)
+            if X < cols:
+                for ddx, ddy, col in ((0, 0, (120, 94, 70)), (1, 0, (120, 94, 70)), (2, 0, (120, 94, 70)), (3, -1, (60, 110, 80)), (3, 0, (120, 94, 70)), (4, -1, (230, 170, 60))):
+                    cell(X + ddx, Y + ddy, col)
+        canvas.alpha_composite(layer)
+        _scroll(canvas, edge, round(travelled * 0.35), P, period)
+        # the deck: boards running across, narrow seams moving with the ground, the lit front edge
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0)); d = ImageDraw.Draw(layer)
+        sh = round(travelled)                                 # one speed for the whole deck: with a speed per
+        for y in range(lake_bottom, VIDEO_H // P):           # row the seams sheared into zigzags
+            for x in range(cols + 1):
+                X = x + sh
+                if X % 4 == 0:
+                    cell(x, y, (132, 96, 60))
+                elif (X // 4) % 2:
+                    cell(x, y, (176, 134, 90), 90)
+        for gx, gy in grain:
+            X = (gx - sh) % period
+            if X < cols and (X + sh) % 4:
+                cell(X, gy, (150, 110, 70), 160)
+        for x in range(cols):
+            cell(x, lake_bottom, (196, 156, 108))
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+def _saturated(v, k):
+    """A colour (or a nested structure of colours and gradient stops) with its saturation times k."""
+    import colorsys
+    if isinstance(v, tuple) and len(v) == 3 and all(isinstance(c, (int, float)) for c in v) and max(v) > 1:
+        h, l, s_ = colorsys.rgb_to_hls(*(c / 255 for c in v))
+        return tuple(round(c * 255) for c in colorsys.hls_to_rgb(h, l, min(1.0, s_ * k)))
+    if isinstance(v, tuple):
+        return tuple(_saturated(x, k) for x in v)
+    if isinstance(v, list):
+        return [_saturated(x, k) for x in v]
+    return v
+
+
+BACKYARD_SATURATION = 1.6                                 # the pastels, more saturated (asked for richer colour)
+BACKYARD = dict(                                          # a pastel palette
+    SKY=[(0, (160, 204, 240)), (260, (206, 226, 244)), (430, (248, 226, 222)), (500, (252, 236, 220))],
+    LAWN=[(500, (170, 214, 150)), (600, (150, 202, 132)), (720, (124, 186, 114))],
+    STRIPE=(190, 228, 168),
+    FAR_TREES=((190, 216, 184), (176, 206, 172)),
+    WALLS=((200, 232, 216), (246, 208, 214), (250, 234, 190), (216, 208, 240)),
+    ROOFS=((214, 150, 150), (150, 170, 200), (190, 150, 184)),
+    TRIM=(252, 250, 246), WINDOW=(184, 216, 238), DOOR=(170, 130, 120),
+    TREE=((126, 186, 132), (156, 206, 150), (104, 164, 116)), TRUNK=(160, 124, 104),
+    FENCE=(252, 250, 244), FENCE_SHADE=(222, 224, 222), SHADOW=(146, 190, 132),
+    HYDRANGEA=((198, 186, 238), (246, 184, 214), (176, 206, 246)),
+    STONE=((232, 226, 216), (212, 206, 196)),
+    FLOWERS=((255, 250, 240), (250, 214, 226), (252, 236, 160)),
+    DOGHOUSE=((246, 176, 160), (252, 250, 246), (130, 104, 104)),
+)
+BACKYARD = {k: _saturated(v, BACKYARD_SATURATION) for k, v in BACKYARD.items()}
+
+
+def backyard_stage():
+    """A suburban backyard in soft pastels: a pale far tree line, neighbours' houses with chimneys,
+    doors and white trim, a white picket fence with hydrangeas along its foot and its shadow on the
+    lawn, big trees with a swaying tyre swing, a doghouse, stepping stones, clover flowers and a
+    sprinkler throwing arcs of water over the mint lawn."""
+    import numpy as np, math, random
+    P, K = SCALE, BACKYARD
+    ys = np.arange(VIDEO_H)
+    yy = np.mgrid[0:VIDEO_H, 0:VIDEO_W][0]
+    ramp = lambda stops: np.stack([np.interp(ys, [y for y, _ in stops], [c[k] for _, c in stops]) for k in range(3)], -1)
+    split = (HORIZON_Y // P) * P
+    img = np.where((yy < split)[..., None], ramp(K['SKY'])[:, None, :], ramp(K['LAWN'])[:, None, :]).astype(float)
+    img += np.random.default_rng(4).uniform(-1.0, 1.0, img.shape)
+    background = Image.fromarray(np.clip(img, 0, 255).astype('uint8')).convert('RGBA')
+    rnd = random.Random(15)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def far_trees(cell):                                      # a pale tree line far off
+        for x in range(period):
+            top = int(base - 20 - 3 * (0.5 + 0.5 * math.sin(x / 5)) - 2 * math.sin(x / 13))
+            for y in range(top, base - 6):
+                cell(x, y, K['FAR_TREES'][0] if rnd.random() > 0.2 else K['FAR_TREES'][1])
+    far = _strip(P, period, far_trees)
+
+    def neighbours(cell):                                     # pastel houses and round trees over the fence
+        x = 2
+        while x < period:
+            if rnd.random() < 0.6:
+                w = rnd.randint(16, 22); top = base - 16
+                wall, roof = rnd.choice(K['WALLS']), rnd.choice(K['ROOFS'])
+                for X in range(x, x + w):
+                    for y in range(top + 5, base - 3):
+                        cell(X, y, wall)
+                for i in range(7):                            # a gable roof with a white eave
+                    for X in range(x - 1 + i, x + w + 1 - i):
+                        cell(X, top + 5 - i, roof)
+                for X in range(x - 1, x + w + 1):
+                    cell(X, top + 5, K['TRIM'])
+                cx = x + w - 5                                # a chimney
+                for y in range(top - 3, top + 1):
+                    cell(cx, y, roof); cell(cx + 1, y, roof)
+                for wx in range(x + 3, x + w - 4, 7):         # windows with white frames
+                    for y in range(top + 7, top + 11):
+                        for X in (wx, wx + 1, wx + 2):
+                            cell(X, y, K['TRIM'] if y in (top + 7, top + 10) or X in (wx, wx + 2) else K['WINDOW'])
+                for y in range(base - 8, base - 3):           # a door
+                    cell(x + w // 2, y, K['DOOR']); cell(x + w // 2 + 1, y, K['DOOR'])
+                x += w + rnd.randint(4, 9)
+            else:
+                r = rnd.randint(5, 8); cy = base - 7 - r
+                for dx in range(-r, r + 1):
+                    for dy in range(-r, r + 1):
+                        if dx * dx + dy * dy <= r * r:
+                            cell(x + dx, cy + dy, K['TREE'][1] if dy < -r // 2 or rnd.random() < 0.15 else K['TREE'][0])
+                x += r * 2 + rnd.randint(2, 6)
+    houses = _strip(P, period, neighbours)
+
+    def fence(cell):                                          # the picket fence, hydrangeas at its foot
+        for x in range(period):
+            cell(x, base - 5, K['FENCE']); cell(x, base - 2, K['FENCE'])
+            if x % 3 == 0:
+                for y in range(base - 7, base + 1):
+                    cell(x, y, K['FENCE'])
+                cell(x, base - 8, K['FENCE_SHADE'])
+            cell(x, base + 1, K['SHADOW'])                    # its shadow on the lawn
+        x = 3
+        while x < period:
+            col = rnd.choice(K['HYDRANGEA'])
+            for dx in range(-2, 3):
+                for dy in range(-2, 1):
+                    if dx * dx + dy * dy * 2 <= 5:
+                        cell(x + dx, base + dy, col if rnd.random() > 0.25 else K['TRIM'])
+            cell(x - 3, base, K['TREE'][2]); cell(x + 3, base, K['TREE'][2])
+            x += rnd.randint(9, 16)
+    fence_layer = _strip(P, period, fence)
+    props_x = [(40, 'tree'), (142, 'sprinkler'), (175, 'doghouse'), (240, 'tree')]   # the sprinkler starts off to the right, clear of the dog
+    crown = [((dx, dy), 1 if dy < -5 else (2 if dy > 5 and rnd.random() < 0.5 else (1 if rnd.random() < 0.15 else 0)))
+             for dx in range(-13, 16) for dy in range(-10, 9) if dx * dx / 1.8 + dy * dy <= 80]
+    flowers = [(rnd.randrange(period), rnd.randrange(base + 3, VIDEO_H // P), rnd.choice(K['FLOWERS'])) for _ in range(60)]
+    stones, x = [], 6                                         # stepping stones, uneven in size and spacing
+    while x < period:
+        stones.append((x, rnd.randint(4, 7), rnd.choice(K['STONE']), rnd.choice((0, 1))))
+        x += rnd.randint(10, 22)
+    clouds = _clouds(rnd, period, 6)
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.3), period, P)
+        _scroll(canvas, far, round(travelled * 0.05), P, period)
+        _scroll(canvas, houses, round(travelled * 0.1), P, period)
+        _scroll(canvas, fence_layer, round(travelled * HORIZON_SPEED), P, period)
+        layer = Image.new('RGBA', canvas.size, (0, 0, 0, 0)); d = ImageDraw.Draw(layer)
+        cell = lambda x, y, col, a=255: d.rectangle([x * P, y * P, x * P + P - 1, y * P + P - 1], fill=col + (a,))
+        y, band, k = base + 2, 1, 0                           # soft mowing stripes, wider nearer
+        while y < VIDEO_H // P:
+            if k % 2:
+                for yy_ in range(y, min(y + band, VIDEO_H // P)):
+                    for x in range(cols):
+                        cell(x, yy_, K['STRIPE'], 70)
+            y += band; band += 1; k += 1
+        gsh = round(travelled)
+        sy = VIDEO_H // P - 9                                 # stepping stones across the near lawn
+        for sx, w, col, dy0 in stones:
+            X = (sx - gsh) % period - 8
+            if -8 < X < cols:
+                for dx in range(w):
+                    for dy in range(2):
+                        if not (dy == 1 and dx in (0, w - 1)):
+                            cell(X + dx, sy + dy0 + dy, col if dy == 0 else K['STONE'][1])
+        for fx, fy, col in flowers:                           # clover flowers, moving with the ground
+            X = (fx - round(travelled * ground_speed(fy * P + P / 2))) % period
+            if X < cols:
+                cell(X, fy, col); cell(X, fy + 1, K['TREE'][2])
+        tshift = round(travelled * 0.3)
+        for x0, kind in props_x:
+            X = (x0 - tshift) % period - 20
+            if kind == 'tree':                                # a big tree and its swaying tyre swing
+                for y in range(base - 22, base + 2):
+                    cell(X, y, K['TRUNK']); cell(X + 1, y, K['TRUNK']); cell(X + 2, y, tuple(c - 20 for c in K['TRUNK']))
+                for (dx, dy), tone in crown:
+                    cell(X + 1 + dx, base - 26 + dy, K['TREE'][tone])
+                sway = round(1.5 * math.sin(t * 2.2 + x0))
+                for y in range(base - 20, base - 8):
+                    cell(X + 9 + round(sway * (y - base + 20) / 12), y, (150, 140, 136))
+                for dx in range(-3, 4):
+                    for dy in range(-2, 3):
+                        q = (dx / 3) ** 2 + (dy / 2.2) ** 2
+                        if 0.35 <= q <= 1.05:
+                            cell(X + 9 + sway + dx, base - 6 + dy, (134, 146, 170))
+            elif kind == 'doghouse':
+                wall, trim, door = K['DOGHOUSE']
+                for dx in range(10):
+                    for y in range(base - 5, base + 2):
+                        cell(X + dx, y, wall)
+                for i in range(4):
+                    for dx in range(-1 + i, 11 - i):
+                        cell(X + dx, base - 6 - i, trim if i == 0 else (214, 150, 150))
+                for y in range(base - 3, base + 2):
+                    for dx in (4, 5):
+                        cell(X + dx, y, door)
+            else:                                             # a sprinkler on the lawn throwing arcs of water
+                gx = (x0 - round(travelled * ground_speed((base + 9) * P)) ) % period - 20
+                gy = base + 9
+                for dx, dy, col in ((0, 0, (150, 150, 164)), (1, 0, (150, 150, 164)), (0, -1, (190, 190, 204)), (1, -1, (190, 190, 204))):
+                    cell(gx + dx, gy + dy, col)
+                for k2 in range(3):
+                    ph = (t * 1.4 + k2 / 3) % 1
+                    for side in (-1, 1):
+                        for i in range(1, 15):
+                            u = i / 15
+                            if abs(u - ph) < 0.14:
+                                cell(gx + (1 if side > 0 else 0) + side * i, gy - 1 - round(24 * u * (1 - u)), (214, 236, 252), 220)
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
 STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
           'antarctica': antarctica_stage, 'park': park_stage, 'forest': forest_stage,
-          'sakura': sakura_stage}
+          'sakura': sakura_stage, 'dock': dock_stage, 'backyard': backyard_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_chick': 'sleep_chick'}
 
 
 def main():
-    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA, 'shiba-black': SHIBA}.get(ANIMAL)
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA, 'shiba-black': SHIBA, 'lab': LAB}.get(ANIMAL)
     if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):

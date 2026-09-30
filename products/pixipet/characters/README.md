@@ -16,6 +16,8 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `docs/dachshund-prompts.md` | 닥스훈트 작업에 사용한 프롬프트 원문 |
 | `docs/shiba-design-log.md` | 시바견 작업 기록: 사진을 기준으로 잡은 비율, 뼈 마디가 있는 다리, 수정 요청과 원인·조치 |
 | `docs/shiba-prompts.md` | 시바견 작업에 사용한 프롬프트 원문 |
+| `docs/lab-design-log.md` | 래브라도 작업 기록: 대형견 비율, 입과 턱, 뼈 마디 다리, 수정 요청과 원인·조치 |
+| `docs/lab-prompts.md` | 래브라도 작업에 사용한 프롬프트 원문 |
 | `docs/corgi-design-log.md` | 웰시코기 작업 기록: 귀여운 비율로 다시 그린 과정, 수정 요청과 원인·조치 |
 | `docs/corgi-prompts.md` | 웰시코기 작업에 사용한 프롬프트 원문 |
 | `docs/penguin-design-log.md` | 펭귄 작업 기록: 황제펭귄과 새끼 디자인, 수정 요청과 원인·조치, 다음에 정할 동작 |
@@ -32,6 +34,8 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `tools/draft_shiba.py` | 시바견 프레임 생성기. 손으로 그린 몸과 머리, 길이가 고정된 뼈 두 개와 발로 코드가 그리는 다리 |
 | `tools/assemble_shiba.py` | 생성한 프레임과 동작 정의로 `sprites/shiba.json`을 씁니다 |
 | `tools/assemble_shiba_black.py` | 적색 시바의 프레임에 색만 바꾸고 눈 둘레에 황갈색을 넣어 `sprites/shiba-black.json`(흑갈색 시바)을 씁니다. 적색 시바를 고친 뒤 다시 실행합니다 |
+| `tools/draft_lab.py` | 래브라도 프레임 생성기. 코드로 그린 몸, 손으로 그린 머리, 3px 뼈 마디 다리, 목을 축으로 돌리는 머리, 밑동을 축으로 흔들리는 귀 |
+| `tools/assemble_lab.py` | 생성한 프레임과 동작 정의로 `sprites/lab.json`을 씁니다 |
 | `tools/draft_corgi.py` | 웰시코기 프레임 생성기. 몸, 머리 방향, 돌아서기, 앉기는 손으로 그린 문자 격자이고, 다리는 코드로 그립니다 |
 | `tools/assemble_corgi.py` | 생성한 프레임과 동작 정의로 `sprites/corgi.json`을 씁니다 |
 | `tools/draft_penguin.py` | 황제펭귄(과 새끼) 프레임 생성기. 기본 자세와 머리 방향, 돌아서기, 썰매, 날개는 손으로 그린 문자 격자입니다 |
@@ -39,14 +43,14 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `tools/assemble_hamster.py` | 생성한 프레임과 동작 정의로 `sprites/hamster.json`을 씁니다 |
 | `tools/assemble_fox.py` | 생성한 프레임과 동작 정의로 `sprites/fox.json`을 씁니다. 프레임을 손으로 고친 뒤에는 실행하지 않습니다 |
 | `tools/assemble_arctic_fox.py` | 여우 생성기의 머리 그림 몇 군데를 바꿔 실행하고, 여우의 동작 정의로 `sprites/arctic-fox.json`을 씁니다. 여우를 고친 뒤에도 다시 실행합니다 |
-| `tools/render_video.py` | 모든 동작을 한 번씩 이어 붙인 소개 영상을 만듭니다. `python3 tools/render_video.py fox`, `arctic-fox`, `penguin`, `corgi`, `dachshund`, `shiba`, `shiba-black`, `hamster`로 동물을 고르며, 결과는 `dist/<동물>-all-animations.mp4`입니다. 동물마다 무대가 다릅니다(여우: 해 질 녘 들판, 북극여우: 눈 내린 홋카이도, 펭귄: 백야의 남극 해빙, 웰시코기: 소가 풀을 뜯는 목장 가장자리 잔디밭, 닥스훈트: 단풍잎이 떨어지는 가을 숲 가장자리, 시바견과 흑갈색 시바: 꽃잎이 휘날리는 봄의 벚꽃 산책로, 햄스터: 저녁의 사육장). 동물 뒤에 무대 이름을 붙이면 다른 무대로 만듭니다(`hamster beach` → `dist/hamster-all-animations-beach.mp4`, 파도치는 모래사장). 햄스터 영상은 모래사장 무대를 쓰고, 사육장 무대(`hamster`)는 코드에만 남아 있습니다. Pillow, numpy, ffmpeg가 필요합니다 |
+| `tools/render_video.py` | 모든 동작을 한 번씩 이어 붙인 소개 영상을 만듭니다. `python3 tools/render_video.py fox`, `arctic-fox`, `penguin`, `corgi`, `dachshund`, `shiba`, `shiba-black`, `lab`, `hamster`로 동물을 고르며, 결과는 `dist/<동물>-all-animations.mp4`입니다. 동물마다 무대가 다릅니다(여우: 해 질 녘 들판, 북극여우: 눈 내린 홋카이도, 펭귄: 백야의 남극 해빙, 웰시코기: 소가 풀을 뜯는 목장 가장자리 잔디밭, 닥스훈트: 단풍잎이 떨어지는 가을 숲 가장자리, 시바견과 흑갈색 시바: 꽃잎이 휘날리는 봄의 벚꽃 산책로, 래브라도: 파스텔 톤의 교외 뒷마당, 햄스터: 저녁의 사육장). 동물 뒤에 무대 이름을 붙이면 다른 무대로 만듭니다(`hamster beach` → `dist/hamster-all-animations-beach.mp4`, 파도치는 모래사장). 햄스터 영상은 모래사장 무대를 쓰고, 사육장 무대(`hamster`)는 코드에만 남아 있습니다. Pillow, numpy, ffmpeg가 필요합니다 |
 | `viewer.html` | 재생, 배율, 배경, 테두리, 격자, 어니언 스킨, 이벤트 시뮬레이터를 갖춘 뷰어 |
 | `dist/` | 생성 결과: 뷰어 번들(`pet-data.js`), PNG 시트(테두리 없음·있음), 앱용 `*.sheet.json` |
 
 ## 작업 흐름
 
 ```sh
-# sprites/*.json 또는 events.json을 고친 뒤 (햄스터는 python3 tools/assemble_hamster.py, 펭귄은 assemble_penguin.py, 코기는 assemble_corgi.py, 닥스훈트는 assemble_dachshund.py, 시바견은 assemble_shiba.py와 assemble_shiba_black.py,
+# sprites/*.json 또는 events.json을 고친 뒤 (햄스터는 python3 tools/assemble_hamster.py, 펭귄은 assemble_penguin.py, 코기는 assemble_corgi.py, 닥스훈트는 assemble_dachshund.py, 시바견은 assemble_shiba.py와 assemble_shiba_black.py, 래브라도는 assemble_lab.py,
 # 여우를 고쳤으면 python3 tools/assemble_arctic_fox.py 먼저)
 node tools/build.mjs
 open viewer.html
@@ -61,6 +65,7 @@ open viewer.html
 - 닥스훈트(블랙탄): **완성**(2026-09-30). 늘어진 귀, 가는 주둥이, 긴 꼬리, 긴 소시지 몸, 프레임 50×28, 11개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`/`lie_up`, `burrow`, `wag`), 36프레임. 소개 영상 `dist/dachshund-all-animations.mp4`(가을 숲 가장자리, 45초).
 - 시바견(적색): **완성**(2026-09-30). 실제 시바 사진을 기준으로 잡은 정사각형 몸, 둥근 귀, 크림색 눈썹과 우라지로, 엉덩이 위에 말린 꼬리, 뼈 마디가 있는 다리, 프레임 38×24, 13개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`/`lie_up`, `refuse`, `mikaeri`, `smile`, `shake`), 43프레임. 흑갈색 시바는 적색이 완성된 뒤 같은 그림에 색만 바꿔 추가합니다. 소개 영상 `dist/shiba-all-animations.mp4`(벚꽃 산책로, 52초).
 - 흑갈색 시바: **완성**(2026-09-30). 적색 시바와 같은 그림과 13개 동작에 색만 바꿨습니다(검은 털, 황갈색 다리, 크림색 우라지로). 검은 머리에서 눈이 보이도록 눈 둘레(감은 눈, 스마일 눈 포함)에만 황갈색을 넣었습니다. 43프레임. 소개 영상 `dist/shiba-black-all-animations.mp4`(벚꽃 산책로).
+- 래브라도 리트리버(노란색): **완성**(2026-09-30). 대형견다운 짧고 깊은 주둥이와 두툼한 목·가슴, 3px 뼈 마디 다리와 큰 발, 긴 늘어진 귀, 수달 꼬리, 프레임 54×34, 12개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`/`lie_up`, `wag`, `show`(노란 오리 장난감), `splash`), 39프레임. 소개 영상 `dist/lab-all-animations.mp4`(파스텔 톤의 교외 뒷마당, 48초).
 - 웰시코기: **완성**(2026-09-29). 몸 약 28×20px(머리와 귀를 크게 키운 귀여운 비율), 프레임 44×26, 13개 동작(`idle`, `walk`, `run`/`run_stop`, `turn`, `sit`/`sit_up`, `lie_down`(스플루트)/`lie_up`, `bark`, `roll`, `spin`, `fetch`), 45프레임. 소개 영상 `dist/corgi-all-animations.mp4`(목장 가장자리 잔디밭).
 - 황제펭귄: **완성**(2026-09-29). 몸 13×19px(부리와 발 포함), 프레임 38×32, 17개 동작, 68프레임. 부모: `idle`, `walk`, `turn`, `slide`/`slide_stop`, `fall`, `flap`, `eat`, `preen`, `shake`, `sleep`/`wake`. 새끼(회색 솜털)가 나오는 동작: `brood`, `feed`, `walk_chick`, `sleep_chick`/`wake_chick`. 소개 영상 `dist/penguin-all-animations.mp4`(백야의 남극 해빙, 73초).
 - 햄스터(정글리안): **완성**(2026-09-29). 몸 13×10px, 프레임 26×28, 23개 동작, 157프레임. 소개 영상 `dist/hamster-all-animations-beach.mp4`(모래사장). 모든 동작을 확인했습니다.
