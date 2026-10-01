@@ -1,0 +1,1455 @@
+{
+  "name": "beagle",
+  "tickMs": 50,
+  "frameSize": [
+    52,
+    28
+  ],
+  "anchor": [
+    18,
+    27
+  ],
+  "images": {
+    "plain": {
+      "file": "beagle.png",
+      "size": [
+        1040,
+        420
+      ],
+      "frames": {
+        "idle_0": {
+          "x": 104,
+          "y": 112,
+          "w": 52,
+          "h": 28
+        },
+        "idle_1": {
+          "x": 52,
+          "y": 0,
+          "w": 52,
+          "h": 28
+        },
+        "walk_0": {
+          "x": 104,
+          "y": 84,
+          "w": 52,
+          "h": 28
+        },
+        "walk_1": {
+          "x": 52,
+          "y": 28,
+          "w": 52,
+          "h": 28
+        },
+        "walk_2": {
+          "x": 0,
+          "y": 84,
+          "w": 52,
+          "h": 28
+        },
+        "walk_3": {
+          "x": 52,
+          "y": 84,
+          "w": 52,
+          "h": 28
+        },
+        "run_0": {
+          "x": 0,
+          "y": 56,
+          "w": 52,
+          "h": 28
+        },
+        "run_1": {
+          "x": 52,
+          "y": 56,
+          "w": 52,
+          "h": 28
+        },
+        "run_2": {
+          "x": 104,
+          "y": 56,
+          "w": 52,
+          "h": 28
+        },
+        "run_3": {
+          "x": 156,
+          "y": 56,
+          "w": 52,
+          "h": 28
+        },
+        "run_4": {
+          "x": 208,
+          "y": 56,
+          "w": 52,
+          "h": 28
+        },
+        "run_5": {
+          "x": 260,
+          "y": 56,
+          "w": 52,
+          "h": 28
+        },
+        "stand": {
+          "x": 988,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "turn_a": {
+          "x": 0,
+          "y": 112,
+          "w": 52,
+          "h": 28
+        },
+        "turn_b": {
+          "x": 52,
+          "y": 112,
+          "w": 52,
+          "h": 28
+        },
+        "sit_a": {
+          "x": 0,
+          "y": 280,
+          "w": 52,
+          "h": 28
+        },
+        "sit_0": {
+          "x": 52,
+          "y": 280,
+          "w": 52,
+          "h": 28
+        },
+        "sit_1": {
+          "x": 104,
+          "y": 140,
+          "w": 52,
+          "h": 28
+        },
+        "sit_sniff_0": {
+          "x": 156,
+          "y": 140,
+          "w": 52,
+          "h": 28
+        },
+        "sit_sniff_1": {
+          "x": 208,
+          "y": 140,
+          "w": 52,
+          "h": 28
+        },
+        "sit_ear": {
+          "x": 260,
+          "y": 140,
+          "w": 52,
+          "h": 28
+        },
+        "lie_a": {
+          "x": 0,
+          "y": 224,
+          "w": 52,
+          "h": 28
+        },
+        "lie_0": {
+          "x": 52,
+          "y": 196,
+          "w": 52,
+          "h": 28
+        },
+        "lie_1": {
+          "x": 104,
+          "y": 196,
+          "w": 52,
+          "h": 28
+        },
+        "scent_0": {
+          "x": 0,
+          "y": 252,
+          "w": 52,
+          "h": 28
+        },
+        "scent_1": {
+          "x": 52,
+          "y": 252,
+          "w": 52,
+          "h": 28
+        },
+        "scent_2": {
+          "x": 104,
+          "y": 252,
+          "w": 52,
+          "h": 28
+        },
+        "scent_3": {
+          "x": 156,
+          "y": 252,
+          "w": 52,
+          "h": 28
+        },
+        "howl_a": {
+          "x": 104,
+          "y": 280,
+          "w": 52,
+          "h": 28
+        },
+        "howl_0": {
+          "x": 156,
+          "y": 280,
+          "w": 52,
+          "h": 28
+        },
+        "howl_1": {
+          "x": 208,
+          "y": 280,
+          "w": 52,
+          "h": 28
+        },
+        "howl_2": {
+          "x": 260,
+          "y": 280,
+          "w": 52,
+          "h": 28
+        },
+        "shake_0": {
+          "x": 0,
+          "y": 308,
+          "w": 52,
+          "h": 28
+        },
+        "shake_1": {
+          "x": 52,
+          "y": 308,
+          "w": 52,
+          "h": 28
+        },
+        "shake_settle": {
+          "x": 104,
+          "y": 308,
+          "w": 52,
+          "h": 28
+        },
+        "steal_spot": {
+          "x": 0,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_check": {
+          "x": 52,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_0": {
+          "x": 104,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_1": {
+          "x": 156,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_2": {
+          "x": 208,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_3": {
+          "x": 260,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_4": {
+          "x": 312,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_5": {
+          "x": 364,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_6": {
+          "x": 416,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_7": {
+          "x": 468,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_grab": {
+          "x": 520,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_hold": {
+          "x": 572,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_0": {
+          "x": 624,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_1": {
+          "x": 676,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_2": {
+          "x": 728,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_3": {
+          "x": 780,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_4": {
+          "x": 832,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_5": {
+          "x": 884,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "steal_gulp": {
+          "x": 936,
+          "y": 336,
+          "w": 52,
+          "h": 28
+        },
+        "idle_0_up_fwd": {
+          "x": 0,
+          "y": 364,
+          "w": 52,
+          "h": 28
+        },
+        "idle_1_up_fwd": {
+          "x": 52,
+          "y": 364,
+          "w": 52,
+          "h": 28
+        },
+        "idle_0_down_fwd": {
+          "x": 0,
+          "y": 392,
+          "w": 52,
+          "h": 28
+        },
+        "idle_1_down_fwd": {
+          "x": 52,
+          "y": 392,
+          "w": 52,
+          "h": 28
+        }
+      }
+    },
+    "outlined": {
+      "file": "beagle-outlined.png",
+      "size": [
+        1080,
+        450
+      ],
+      "padding": 1,
+      "frames": {
+        "idle_0": {
+          "x": 109,
+          "y": 121,
+          "w": 52,
+          "h": 28
+        },
+        "idle_1": {
+          "x": 55,
+          "y": 1,
+          "w": 52,
+          "h": 28
+        },
+        "walk_0": {
+          "x": 109,
+          "y": 91,
+          "w": 52,
+          "h": 28
+        },
+        "walk_1": {
+          "x": 55,
+          "y": 31,
+          "w": 52,
+          "h": 28
+        },
+        "walk_2": {
+          "x": 1,
+          "y": 91,
+          "w": 52,
+          "h": 28
+        },
+        "walk_3": {
+          "x": 55,
+          "y": 91,
+          "w": 52,
+          "h": 28
+        },
+        "run_0": {
+          "x": 1,
+          "y": 61,
+          "w": 52,
+          "h": 28
+        },
+        "run_1": {
+          "x": 55,
+          "y": 61,
+          "w": 52,
+          "h": 28
+        },
+        "run_2": {
+          "x": 109,
+          "y": 61,
+          "w": 52,
+          "h": 28
+        },
+        "run_3": {
+          "x": 163,
+          "y": 61,
+          "w": 52,
+          "h": 28
+        },
+        "run_4": {
+          "x": 217,
+          "y": 61,
+          "w": 52,
+          "h": 28
+        },
+        "run_5": {
+          "x": 271,
+          "y": 61,
+          "w": 52,
+          "h": 28
+        },
+        "stand": {
+          "x": 1027,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "turn_a": {
+          "x": 1,
+          "y": 121,
+          "w": 52,
+          "h": 28
+        },
+        "turn_b": {
+          "x": 55,
+          "y": 121,
+          "w": 52,
+          "h": 28
+        },
+        "sit_a": {
+          "x": 1,
+          "y": 301,
+          "w": 52,
+          "h": 28
+        },
+        "sit_0": {
+          "x": 55,
+          "y": 301,
+          "w": 52,
+          "h": 28
+        },
+        "sit_1": {
+          "x": 109,
+          "y": 151,
+          "w": 52,
+          "h": 28
+        },
+        "sit_sniff_0": {
+          "x": 163,
+          "y": 151,
+          "w": 52,
+          "h": 28
+        },
+        "sit_sniff_1": {
+          "x": 217,
+          "y": 151,
+          "w": 52,
+          "h": 28
+        },
+        "sit_ear": {
+          "x": 271,
+          "y": 151,
+          "w": 52,
+          "h": 28
+        },
+        "lie_a": {
+          "x": 1,
+          "y": 241,
+          "w": 52,
+          "h": 28
+        },
+        "lie_0": {
+          "x": 55,
+          "y": 211,
+          "w": 52,
+          "h": 28
+        },
+        "lie_1": {
+          "x": 109,
+          "y": 211,
+          "w": 52,
+          "h": 28
+        },
+        "scent_0": {
+          "x": 1,
+          "y": 271,
+          "w": 52,
+          "h": 28
+        },
+        "scent_1": {
+          "x": 55,
+          "y": 271,
+          "w": 52,
+          "h": 28
+        },
+        "scent_2": {
+          "x": 109,
+          "y": 271,
+          "w": 52,
+          "h": 28
+        },
+        "scent_3": {
+          "x": 163,
+          "y": 271,
+          "w": 52,
+          "h": 28
+        },
+        "howl_a": {
+          "x": 109,
+          "y": 301,
+          "w": 52,
+          "h": 28
+        },
+        "howl_0": {
+          "x": 163,
+          "y": 301,
+          "w": 52,
+          "h": 28
+        },
+        "howl_1": {
+          "x": 217,
+          "y": 301,
+          "w": 52,
+          "h": 28
+        },
+        "howl_2": {
+          "x": 271,
+          "y": 301,
+          "w": 52,
+          "h": 28
+        },
+        "shake_0": {
+          "x": 1,
+          "y": 331,
+          "w": 52,
+          "h": 28
+        },
+        "shake_1": {
+          "x": 55,
+          "y": 331,
+          "w": 52,
+          "h": 28
+        },
+        "shake_settle": {
+          "x": 109,
+          "y": 331,
+          "w": 52,
+          "h": 28
+        },
+        "steal_spot": {
+          "x": 1,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_check": {
+          "x": 55,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_0": {
+          "x": 109,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_1": {
+          "x": 163,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_2": {
+          "x": 217,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_3": {
+          "x": 271,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_4": {
+          "x": 325,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_5": {
+          "x": 379,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_6": {
+          "x": 433,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_sneak_7": {
+          "x": 487,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_grab": {
+          "x": 541,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_hold": {
+          "x": 595,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_0": {
+          "x": 649,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_1": {
+          "x": 703,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_2": {
+          "x": 757,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_3": {
+          "x": 811,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_4": {
+          "x": 865,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_run_5": {
+          "x": 919,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "steal_gulp": {
+          "x": 973,
+          "y": 361,
+          "w": 52,
+          "h": 28
+        },
+        "idle_0_up_fwd": {
+          "x": 1,
+          "y": 391,
+          "w": 52,
+          "h": 28
+        },
+        "idle_1_up_fwd": {
+          "x": 55,
+          "y": 391,
+          "w": 52,
+          "h": 28
+        },
+        "idle_0_down_fwd": {
+          "x": 1,
+          "y": 421,
+          "w": 52,
+          "h": 28
+        },
+        "idle_1_down_fwd": {
+          "x": 55,
+          "y": 421,
+          "w": 52,
+          "h": 28
+        }
+      }
+    }
+  },
+  "animations": {
+    "idle": {
+      "loop": true,
+      "steps": [
+        {
+          "frame": "idle_0",
+          "ms": 600
+        },
+        {
+          "frame": "idle_1",
+          "ms": 600
+        }
+      ]
+    },
+    "walk": {
+      "loop": true,
+      "moveXPerTick": 0.34,
+      "steps": [
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "walk_1",
+          "ms": 150
+        },
+        {
+          "frame": "walk_2",
+          "ms": 150
+        },
+        {
+          "frame": "walk_3",
+          "ms": 150
+        }
+      ]
+    },
+    "run": {
+      "loop": true,
+      "pose": [
+        "stand",
+        "running"
+      ],
+      "moveXPerTick": 3,
+      "steps": [
+        {
+          "frame": "run_0",
+          "ms": 50
+        },
+        {
+          "frame": "run_1",
+          "ms": 50
+        },
+        {
+          "frame": "run_2",
+          "ms": 50
+        },
+        {
+          "frame": "run_3",
+          "ms": 50
+        },
+        {
+          "frame": "run_4",
+          "ms": 50
+        },
+        {
+          "frame": "run_5",
+          "ms": 50
+        }
+      ]
+    },
+    "run_stop": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "running",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "walk_2",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "turn": {
+      "loop": false,
+      "holdMs": 0,
+      "flipAt": 2,
+      "steps": [
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "turn_b",
+          "ms": 100
+        },
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "idle_0",
+          "ms": 50
+        }
+      ]
+    },
+    "sit": {
+      "loop": false,
+      "holdMs": 2000,
+      "pose": [
+        "stand",
+        "sit"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "sit_0",
+          "ms": 600
+        },
+        {
+          "frame": "sit_1",
+          "ms": 600
+        },
+        {
+          "frame": "sit_0",
+          "ms": 700
+        },
+        {
+          "frame": "sit_sniff_0",
+          "ms": 200
+        },
+        {
+          "frame": "sit_sniff_1",
+          "ms": 100
+        },
+        {
+          "frame": "sit_sniff_0",
+          "ms": 100
+        },
+        {
+          "frame": "sit_sniff_1",
+          "ms": 100
+        },
+        {
+          "frame": "sit_sniff_0",
+          "ms": 100
+        },
+        {
+          "frame": "sit_sniff_1",
+          "ms": 100
+        },
+        {
+          "frame": "sit_sniff_0",
+          "ms": 100
+        },
+        {
+          "frame": "sit_0",
+          "ms": 500
+        },
+        {
+          "frame": "sit_1",
+          "ms": 600
+        },
+        {
+          "frame": "sit_ear",
+          "ms": 150
+        },
+        {
+          "frame": "sit_0",
+          "ms": 500
+        },
+        {
+          "frame": "sit_1",
+          "ms": 600
+        },
+        {
+          "frame": "sit_0",
+          "ms": 100
+        }
+      ]
+    },
+    "sit_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "sit",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_down": {
+      "loop": false,
+      "holdMs": 3000,
+      "pose": [
+        "stand",
+        "lie"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "lie_0",
+          "ms": 800
+        },
+        {
+          "frame": "lie_1",
+          "ms": 700
+        },
+        {
+          "frame": "lie_0",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "lie",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "scent": {
+      "loop": false,
+      "holdMs": 200,
+      "moveXPerTick": 0.25,
+      "steps": [
+        {
+          "frame": "scent_0",
+          "ms": 200
+        },
+        {
+          "frame": "scent_1",
+          "ms": 200
+        },
+        {
+          "frame": "scent_2",
+          "ms": 200
+        },
+        {
+          "frame": "scent_3",
+          "ms": 200
+        },
+        {
+          "frame": "scent_0",
+          "ms": 200
+        },
+        {
+          "frame": "scent_1",
+          "ms": 200
+        },
+        {
+          "frame": "scent_2",
+          "ms": 200
+        },
+        {
+          "frame": "scent_3",
+          "ms": 200
+        },
+        {
+          "frame": "scent_0",
+          "ms": 200
+        },
+        {
+          "frame": "scent_1",
+          "ms": 200
+        },
+        {
+          "frame": "scent_2",
+          "ms": 200
+        },
+        {
+          "frame": "scent_3",
+          "ms": 200
+        },
+        {
+          "frame": "scent_0",
+          "ms": 200
+        },
+        {
+          "frame": "scent_1",
+          "ms": 200
+        },
+        {
+          "frame": "scent_2",
+          "ms": 200
+        },
+        {
+          "frame": "scent_3",
+          "ms": 200
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "howl": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "sit_0",
+          "ms": 400
+        },
+        {
+          "frame": "howl_a",
+          "ms": 150
+        },
+        {
+          "frame": "howl_0",
+          "ms": 200
+        },
+        {
+          "frame": "howl_1",
+          "ms": 200
+        },
+        {
+          "frame": "howl_2",
+          "ms": 200
+        },
+        {
+          "frame": "howl_1",
+          "ms": 200
+        },
+        {
+          "frame": "howl_2",
+          "ms": 200
+        },
+        {
+          "frame": "howl_1",
+          "ms": 200
+        },
+        {
+          "frame": "howl_2",
+          "ms": 200
+        },
+        {
+          "frame": "howl_0",
+          "ms": 200
+        },
+        {
+          "frame": "howl_1",
+          "ms": 200
+        },
+        {
+          "frame": "howl_2",
+          "ms": 200
+        },
+        {
+          "frame": "howl_1",
+          "ms": 200
+        },
+        {
+          "frame": "howl_2",
+          "ms": 200
+        },
+        {
+          "frame": "howl_0",
+          "ms": 300
+        },
+        {
+          "frame": "howl_a",
+          "ms": 150
+        },
+        {
+          "frame": "sit_0",
+          "ms": 400
+        },
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "shake": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "shake_0",
+          "ms": 100
+        },
+        {
+          "frame": "shake_1",
+          "ms": 100
+        },
+        {
+          "frame": "shake_0",
+          "ms": 100
+        },
+        {
+          "frame": "shake_1",
+          "ms": 100
+        },
+        {
+          "frame": "shake_0",
+          "ms": 100
+        },
+        {
+          "frame": "shake_1",
+          "ms": 100
+        },
+        {
+          "frame": "shake_0",
+          "ms": 100
+        },
+        {
+          "frame": "shake_1",
+          "ms": 100
+        },
+        {
+          "frame": "shake_settle",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "steal": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "steal_spot",
+          "ms": 600
+        },
+        {
+          "frame": "steal_check",
+          "ms": 700
+        },
+        {
+          "frame": "steal_spot",
+          "ms": 300
+        },
+        {
+          "frame": "steal_sneak_0",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_sneak_1",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_sneak_2",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_sneak_3",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_sneak_4",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_sneak_5",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_sneak_6",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_sneak_7",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "steal_grab",
+          "ms": 300
+        },
+        {
+          "frame": "steal_hold",
+          "ms": 400
+        },
+        {
+          "frame": "steal_run_0",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_1",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_2",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_3",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_4",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_5",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_0",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_1",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_2",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_3",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_4",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_run_5",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "steal_hold",
+          "ms": 300
+        },
+        {
+          "frame": "steal_gulp",
+          "ms": 500
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    }
+  },
+  "outline": {
+    "skip": [
+      "W",
+      "z",
+      "m"
+    ]
+  },
+  "blink": {
+    "animations": [
+      "idle",
+      "sit",
+      "lie_down"
+    ],
+    "swap": {
+      "o": "b",
+      "v": "d"
+    },
+    "everyTicks": [
+      50,
+      120
+    ],
+    "forTicks": 2,
+    "doubleChance": 0.25
+  },
+  "transitions": {
+    "running": {
+      "stand": [
+        "run_stop"
+      ]
+    },
+    "sit": {
+      "stand": [
+        "sit_up"
+      ]
+    },
+    "lie": {
+      "stand": [
+        "lie_up"
+      ]
+    },
+    "stand": {
+      "sit": [
+        "sit"
+      ],
+      "lie": [
+        "lie_down"
+      ]
+    }
+  },
+  "idleVariants": [
+    "scent",
+    "howl",
+    "shake",
+    "steal"
+  ],
+  "look": {
+    "animations": [
+      "idle"
+    ],
+    "headCenter": [
+      30,
+      9
+    ],
+    "sectors": [
+      {
+        "dir": "up_fwd",
+        "min": 25
+      },
+      {
+        "dir": "fwd",
+        "min": -25
+      },
+      {
+        "dir": "down_fwd",
+        "min": -90
+      }
+    ],
+    "deadZone": 5,
+    "turnMargin": 4,
+    "frames": {
+      "up_fwd": {
+        "idle_0": "idle_0_up_fwd",
+        "idle_1": "idle_1_up_fwd"
+      },
+      "down_fwd": {
+        "idle_0": "idle_0_down_fwd",
+        "idle_1": "idle_1_down_fwd"
+      }
+    }
+  },
+  "reactions": {
+    "alert": [
+      "howl"
+    ],
+    "curious": [
+      "scent"
+    ],
+    "greet": [
+      "shake",
+      "howl"
+    ],
+    "wake": [
+      "shake"
+    ],
+    "sleepy": [
+      "lie_down"
+    ],
+    "celebrate": [
+      "howl",
+      "shake"
+    ],
+    "busy": [
+      "steal"
+    ],
+    "wander": [
+      "scent",
+      "walk"
+    ]
+  }
+}

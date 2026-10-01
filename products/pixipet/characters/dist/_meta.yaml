@@ -21,6 +21,9 @@ derived:
   - files: [lab.png, lab-outlined.png, lab.sheet.json]
     from: sprites/lab.json (written by tools/assemble_lab.py)
     by: node tools/build.mjs
+  - files: [beagle.png, beagle-outlined.png, beagle.sheet.json]
+    from: sprites/beagle.json (written by tools/assemble_beagle.py)
+    by: node tools/build.mjs
   - files: [corgi.png, corgi-outlined.png, corgi.sheet.json]
     from: sprites/corgi.json (written by tools/assemble_corgi.py)
     by: node tools/build.mjs
@@ -51,6 +54,9 @@ derived:
   - files: [lab-all-animations.mp4]
     from: sprites/lab.json
     by: tools/render_video.py lab (Pillow, numpy, ffmpeg)
+  - files: [beagle-all-animations.mp4]
+    from: sprites/beagle.json
+    by: tools/render_video.py beagle (Pillow, numpy, ffmpeg)
   - files: [penguin-all-animations.mp4]
     from: sprites/penguin.json
     by: tools/render_video.py penguin (Pillow, numpy, ffmpeg)
