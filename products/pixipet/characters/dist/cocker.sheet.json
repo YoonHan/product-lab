@@ -1,0 +1,1071 @@
+{
+  "name": "cocker",
+  "tickMs": 50,
+  "frameSize": [
+    56,
+    34
+  ],
+  "anchor": [
+    24,
+    33
+  ],
+  "images": {
+    "plain": {
+      "file": "cocker.png",
+      "size": [
+        336,
+        442
+      ],
+      "frames": {
+        "idle_0": {
+          "x": 112,
+          "y": 136,
+          "w": 56,
+          "h": 34
+        },
+        "idle_1": {
+          "x": 56,
+          "y": 0,
+          "w": 56,
+          "h": 34
+        },
+        "walk_0": {
+          "x": 112,
+          "y": 102,
+          "w": 56,
+          "h": 34
+        },
+        "walk_1": {
+          "x": 56,
+          "y": 34,
+          "w": 56,
+          "h": 34
+        },
+        "walk_2": {
+          "x": 0,
+          "y": 102,
+          "w": 56,
+          "h": 34
+        },
+        "walk_3": {
+          "x": 56,
+          "y": 102,
+          "w": 56,
+          "h": 34
+        },
+        "run_0": {
+          "x": 0,
+          "y": 68,
+          "w": 56,
+          "h": 34
+        },
+        "run_1": {
+          "x": 56,
+          "y": 68,
+          "w": 56,
+          "h": 34
+        },
+        "run_2": {
+          "x": 112,
+          "y": 68,
+          "w": 56,
+          "h": 34
+        },
+        "run_3": {
+          "x": 168,
+          "y": 68,
+          "w": 56,
+          "h": 34
+        },
+        "run_4": {
+          "x": 224,
+          "y": 68,
+          "w": 56,
+          "h": 34
+        },
+        "run_5": {
+          "x": 280,
+          "y": 68,
+          "w": 56,
+          "h": 34
+        },
+        "stand": {
+          "x": 280,
+          "y": 340,
+          "w": 56,
+          "h": 34
+        },
+        "turn_a": {
+          "x": 0,
+          "y": 136,
+          "w": 56,
+          "h": 34
+        },
+        "turn_b": {
+          "x": 56,
+          "y": 136,
+          "w": 56,
+          "h": 34
+        },
+        "sit_a": {
+          "x": 0,
+          "y": 204,
+          "w": 56,
+          "h": 34
+        },
+        "sit_0": {
+          "x": 56,
+          "y": 170,
+          "w": 56,
+          "h": 34
+        },
+        "sit_1": {
+          "x": 112,
+          "y": 170,
+          "w": 56,
+          "h": 34
+        },
+        "lie_a": {
+          "x": 0,
+          "y": 272,
+          "w": 56,
+          "h": 34
+        },
+        "lie_0": {
+          "x": 56,
+          "y": 238,
+          "w": 56,
+          "h": 34
+        },
+        "lie_1": {
+          "x": 112,
+          "y": 238,
+          "w": 56,
+          "h": 34
+        },
+        "wag_0": {
+          "x": 0,
+          "y": 306,
+          "w": 56,
+          "h": 34
+        },
+        "wag_1": {
+          "x": 56,
+          "y": 306,
+          "w": 56,
+          "h": 34
+        },
+        "wag_2": {
+          "x": 112,
+          "y": 306,
+          "w": 56,
+          "h": 34
+        },
+        "wag_3": {
+          "x": 168,
+          "y": 306,
+          "w": 56,
+          "h": 34
+        },
+        "hop_dip": {
+          "x": 0,
+          "y": 340,
+          "w": 56,
+          "h": 34
+        },
+        "hop_up": {
+          "x": 56,
+          "y": 340,
+          "w": 56,
+          "h": 34
+        },
+        "hop_top": {
+          "x": 112,
+          "y": 340,
+          "w": 56,
+          "h": 34
+        },
+        "hop_down": {
+          "x": 168,
+          "y": 340,
+          "w": 56,
+          "h": 34
+        },
+        "hop_land": {
+          "x": 224,
+          "y": 340,
+          "w": 56,
+          "h": 34
+        },
+        "idle_0_up_fwd": {
+          "x": 0,
+          "y": 374,
+          "w": 56,
+          "h": 34
+        },
+        "idle_1_up_fwd": {
+          "x": 56,
+          "y": 374,
+          "w": 56,
+          "h": 34
+        },
+        "idle_0_down_fwd": {
+          "x": 0,
+          "y": 408,
+          "w": 56,
+          "h": 34
+        },
+        "idle_1_down_fwd": {
+          "x": 56,
+          "y": 408,
+          "w": 56,
+          "h": 34
+        }
+      }
+    },
+    "outlined": {
+      "file": "cocker-outlined.png",
+      "size": [
+        348,
+        468
+      ],
+      "padding": 1,
+      "frames": {
+        "idle_0": {
+          "x": 117,
+          "y": 145,
+          "w": 56,
+          "h": 34
+        },
+        "idle_1": {
+          "x": 59,
+          "y": 1,
+          "w": 56,
+          "h": 34
+        },
+        "walk_0": {
+          "x": 117,
+          "y": 109,
+          "w": 56,
+          "h": 34
+        },
+        "walk_1": {
+          "x": 59,
+          "y": 37,
+          "w": 56,
+          "h": 34
+        },
+        "walk_2": {
+          "x": 1,
+          "y": 109,
+          "w": 56,
+          "h": 34
+        },
+        "walk_3": {
+          "x": 59,
+          "y": 109,
+          "w": 56,
+          "h": 34
+        },
+        "run_0": {
+          "x": 1,
+          "y": 73,
+          "w": 56,
+          "h": 34
+        },
+        "run_1": {
+          "x": 59,
+          "y": 73,
+          "w": 56,
+          "h": 34
+        },
+        "run_2": {
+          "x": 117,
+          "y": 73,
+          "w": 56,
+          "h": 34
+        },
+        "run_3": {
+          "x": 175,
+          "y": 73,
+          "w": 56,
+          "h": 34
+        },
+        "run_4": {
+          "x": 233,
+          "y": 73,
+          "w": 56,
+          "h": 34
+        },
+        "run_5": {
+          "x": 291,
+          "y": 73,
+          "w": 56,
+          "h": 34
+        },
+        "stand": {
+          "x": 291,
+          "y": 361,
+          "w": 56,
+          "h": 34
+        },
+        "turn_a": {
+          "x": 1,
+          "y": 145,
+          "w": 56,
+          "h": 34
+        },
+        "turn_b": {
+          "x": 59,
+          "y": 145,
+          "w": 56,
+          "h": 34
+        },
+        "sit_a": {
+          "x": 1,
+          "y": 217,
+          "w": 56,
+          "h": 34
+        },
+        "sit_0": {
+          "x": 59,
+          "y": 181,
+          "w": 56,
+          "h": 34
+        },
+        "sit_1": {
+          "x": 117,
+          "y": 181,
+          "w": 56,
+          "h": 34
+        },
+        "lie_a": {
+          "x": 1,
+          "y": 289,
+          "w": 56,
+          "h": 34
+        },
+        "lie_0": {
+          "x": 59,
+          "y": 253,
+          "w": 56,
+          "h": 34
+        },
+        "lie_1": {
+          "x": 117,
+          "y": 253,
+          "w": 56,
+          "h": 34
+        },
+        "wag_0": {
+          "x": 1,
+          "y": 325,
+          "w": 56,
+          "h": 34
+        },
+        "wag_1": {
+          "x": 59,
+          "y": 325,
+          "w": 56,
+          "h": 34
+        },
+        "wag_2": {
+          "x": 117,
+          "y": 325,
+          "w": 56,
+          "h": 34
+        },
+        "wag_3": {
+          "x": 175,
+          "y": 325,
+          "w": 56,
+          "h": 34
+        },
+        "hop_dip": {
+          "x": 1,
+          "y": 361,
+          "w": 56,
+          "h": 34
+        },
+        "hop_up": {
+          "x": 59,
+          "y": 361,
+          "w": 56,
+          "h": 34
+        },
+        "hop_top": {
+          "x": 117,
+          "y": 361,
+          "w": 56,
+          "h": 34
+        },
+        "hop_down": {
+          "x": 175,
+          "y": 361,
+          "w": 56,
+          "h": 34
+        },
+        "hop_land": {
+          "x": 233,
+          "y": 361,
+          "w": 56,
+          "h": 34
+        },
+        "idle_0_up_fwd": {
+          "x": 1,
+          "y": 397,
+          "w": 56,
+          "h": 34
+        },
+        "idle_1_up_fwd": {
+          "x": 59,
+          "y": 397,
+          "w": 56,
+          "h": 34
+        },
+        "idle_0_down_fwd": {
+          "x": 1,
+          "y": 433,
+          "w": 56,
+          "h": 34
+        },
+        "idle_1_down_fwd": {
+          "x": 59,
+          "y": 433,
+          "w": 56,
+          "h": 34
+        }
+      }
+    }
+  },
+  "animations": {
+    "idle": {
+      "loop": true,
+      "steps": [
+        {
+          "frame": "idle_0",
+          "ms": 600
+        },
+        {
+          "frame": "idle_1",
+          "ms": 600
+        }
+      ]
+    },
+    "walk": {
+      "loop": true,
+      "moveXPerTick": 0.34,
+      "steps": [
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "walk_1",
+          "ms": 150
+        },
+        {
+          "frame": "walk_2",
+          "ms": 150
+        },
+        {
+          "frame": "walk_3",
+          "ms": 150
+        }
+      ]
+    },
+    "run": {
+      "loop": true,
+      "pose": [
+        "stand",
+        "running"
+      ],
+      "moveXPerTick": 3,
+      "steps": [
+        {
+          "frame": "run_0",
+          "ms": 50
+        },
+        {
+          "frame": "run_1",
+          "ms": 50
+        },
+        {
+          "frame": "run_2",
+          "ms": 50
+        },
+        {
+          "frame": "run_3",
+          "ms": 50
+        },
+        {
+          "frame": "run_4",
+          "ms": 50
+        },
+        {
+          "frame": "run_5",
+          "ms": 50
+        }
+      ]
+    },
+    "run_stop": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "running",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "walk_2",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "turn": {
+      "loop": false,
+      "holdMs": 0,
+      "flipAt": 2,
+      "steps": [
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "turn_b",
+          "ms": 100
+        },
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "idle_0",
+          "ms": 50
+        }
+      ]
+    },
+    "sit": {
+      "loop": false,
+      "holdMs": 2000,
+      "pose": [
+        "stand",
+        "sit"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "sit_0",
+          "ms": 600
+        },
+        {
+          "frame": "sit_1",
+          "ms": 600
+        },
+        {
+          "frame": "sit_0",
+          "ms": 100
+        }
+      ]
+    },
+    "sit_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "sit",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_down": {
+      "loop": false,
+      "holdMs": 3000,
+      "pose": [
+        "stand",
+        "lie"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "lie_0",
+          "ms": 800
+        },
+        {
+          "frame": "lie_1",
+          "ms": 700
+        },
+        {
+          "frame": "lie_0",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "lie",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "wag": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "stand",
+          "ms": 300
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "wag_0",
+          "ms": 50
+        },
+        {
+          "frame": "wag_1",
+          "ms": 50
+        },
+        {
+          "frame": "wag_2",
+          "ms": 50
+        },
+        {
+          "frame": "wag_3",
+          "ms": 50
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "hop": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "hop_dip",
+          "ms": 150
+        },
+        {
+          "frame": "hop_up",
+          "ms": 100
+        },
+        {
+          "frame": "hop_top",
+          "ms": 150
+        },
+        {
+          "frame": "hop_down",
+          "ms": 100
+        },
+        {
+          "frame": "hop_land",
+          "ms": 150
+        },
+        {
+          "frame": "hop_dip",
+          "ms": 150
+        },
+        {
+          "frame": "hop_up",
+          "ms": 100
+        },
+        {
+          "frame": "hop_top",
+          "ms": 150
+        },
+        {
+          "frame": "hop_down",
+          "ms": 100
+        },
+        {
+          "frame": "hop_land",
+          "ms": 150
+        },
+        {
+          "frame": "hop_dip",
+          "ms": 150
+        },
+        {
+          "frame": "hop_up",
+          "ms": 100
+        },
+        {
+          "frame": "hop_top",
+          "ms": 150
+        },
+        {
+          "frame": "hop_down",
+          "ms": 100
+        },
+        {
+          "frame": "hop_land",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    }
+  },
+  "outline": {
+    "skip": []
+  },
+  "blink": {
+    "animations": [
+      "idle",
+      "sit",
+      "lie_down"
+    ],
+    "swap": {
+      "v": "O",
+      "y": "d"
+    },
+    "everyTicks": [
+      50,
+      120
+    ],
+    "forTicks": 2,
+    "doubleChance": 0.25
+  },
+  "transitions": {
+    "running": {
+      "stand": [
+        "run_stop"
+      ]
+    },
+    "sit": {
+      "stand": [
+        "sit_up"
+      ]
+    },
+    "lie": {
+      "stand": [
+        "lie_up"
+      ]
+    },
+    "stand": {
+      "sit": [
+        "sit"
+      ],
+      "lie": [
+        "lie_down"
+      ]
+    }
+  },
+  "idleVariants": [
+    "wag",
+    "hop"
+  ],
+  "look": {
+    "animations": [
+      "idle"
+    ],
+    "headCenter": [
+      38,
+      15
+    ],
+    "sectors": [
+      {
+        "dir": "up_fwd",
+        "min": 25
+      },
+      {
+        "dir": "fwd",
+        "min": -25
+      },
+      {
+        "dir": "down_fwd",
+        "min": -90
+      }
+    ],
+    "deadZone": 5,
+    "turnMargin": 4,
+    "frames": {
+      "up_fwd": {
+        "idle_0": "idle_0_up_fwd",
+        "idle_1": "idle_1_up_fwd"
+      },
+      "down_fwd": {
+        "idle_0": "idle_0_down_fwd",
+        "idle_1": "idle_1_down_fwd"
+      }
+    }
+  },
+  "reactions": {
+    "alert": [
+      "hop"
+    ],
+    "curious": [
+      "wag"
+    ],
+    "greet": [
+      "wag",
+      "hop"
+    ],
+    "wake": [
+      "wag"
+    ],
+    "sleepy": [
+      "lie_down"
+    ],
+    "celebrate": [
+      "hop",
+      "wag"
+    ],
+    "busy": [
+      "wag"
+    ],
+    "wander": [
+      "walk"
+    ]
+  }
+}

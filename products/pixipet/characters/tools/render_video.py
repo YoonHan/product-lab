@@ -7,12 +7,13 @@ across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midn
 corgi plays on a park lawn on a sunny day, and the hamster potters about its enclosure in the
 evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|shiba-black|lab|beagle|collie|hamster] [stage] [out.mp4]
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|shiba-black|lab|beagle|collie|cocker|hamster] [stage] [out.mp4]
        stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
                park (the corgi's), forest (the dachshund's), sakura (both shibas'), dock and backyard
                (the Labrador's candidates), farm (the beagle's), countryside, trail and parkpath (the
                beagle's other candidates), clifftop (the border collie's), highlands, fells and trial (the
-               collie's other candidates), hamster (the enclosure), beach (a sandy beach by the sea)
+               collie's other candidates), maple (the cocker spaniel's), cottage, pondmeadow and showring (the
+               cocker's other candidates), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -24,7 +25,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura', 'shiba-black': 'sakura', 'lab': 'backyard', 'beagle': 'farm', 'collie': 'clifftop'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura', 'shiba-black': 'sakura', 'lab': 'backyard', 'beagle': 'farm', 'collie': 'clifftop', 'cocker': 'maple'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -1725,6 +1726,26 @@ COLLIE = dict(
     ],
 )
 
+COCKER = dict(
+    SCALE=8, GROUND_Y=600, HORIZON_Y=500,
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 걷기', 48),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('run', 'RUN · 달리기', 48),
+        ('run_stop', 'RUN STOP · 멈추기', 6),
+        ('sit', 'SIT · 앉기', 10),
+        ('sit_up', 'SIT UP · 일어서기', 6),
+        ('lie_down', 'LIE DOWN · 엎드리기', 10),
+        ('lie_up', 'LIE UP · 엎드렸다 일어서기', 6),
+        ('wag', 'WAG · 꼬리 흔들며 엉덩이 씰룩', 8),
+        ('hop', 'HOP · 귀 펄럭이며 폴짝', 8),
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 30),
+    ],
+)
+
 def _strip(P, period, draw):
     im = Image.new('RGBA', (period * P, VIDEO_H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
@@ -2706,16 +2727,309 @@ def clifftop_stage():
     return background, draw_moving
 
 
+def cottage_stage():
+    """An English cottage garden in high summer: a whitewashed cottage with a thatched roof far off behind
+    the garden, tall hollyhocks in pink and white, climbing roses on a trellis, lavender, a white picket
+    fence along a gravel path."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (110, 170, 226)), (300, (176, 210, 236)), (480, (228, 236, 232))],
+                             [(500, (112, 168, 84)), (720, (82, 136, 60))], 31)
+    rnd = random.Random(91)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def far(cell):                                            # hedges and the cottage
+        for x in range(period):
+            top = int(base - 7 - 2 * (0.5 + 0.5 * math.sin(x / 5.3)) - math.sin(x / 13))
+            for y in range(top, base + 1):
+                cell(x, y, (74, 122, 66) if rnd.random() > 0.2 else (92, 140, 78))
+        cx = 40
+        for X in range(cx, cx + 22):
+            for y in range(base - 9, base - 2):
+                cell(X, y, (246, 242, 230) if (X - cx) % 7 else (230, 226, 214))
+            for y in range(base - 15, base - 9):
+                if abs(X - cx - 11) <= 12 - (base - 9 - y) * 2:
+                    cell(X, y, (196, 166, 104) if (X + y) % 3 else (176, 146, 90))
+        for X in (cx + 4, cx + 15):
+            for y in range(base - 7, base - 4):
+                cell(X, y, (90, 110, 130)); cell(X + 1, y, (90, 110, 130))
+        for y in range(base - 6, base - 2):
+            cell(cx + 10, y, (110, 82, 60)); cell(cx + 11, y, (110, 82, 60))
+    back = _strip(P, period, far)
+
+    def flowers(cell):                                        # hollyhock spires, roses on a trellis, lavender
+        x = 6
+        while x < period:
+            kind = rnd.choice(('holly', 'holly', 'rose', 'lav'))
+            if kind == 'holly':
+                h = rnd.randint(9, 13)
+                col = rnd.choice(((236, 132, 170), (250, 246, 240), (214, 92, 128)))
+                for y in range(base - h, base + 1):
+                    cell(x, y, (70, 124, 58))
+                    if y < base - 2 and y % 2 == 0:
+                        cell(x - 1, y, col); cell(x + 1, y, col); cell(x, y, col)
+                x += rnd.randint(4, 7)
+            elif kind == 'rose':
+                for X in range(x, x + 7):
+                    for y in range(base - 8, base + 1):
+                        if (X + y) % 3 == 0:
+                            cell(X, y, (150, 120, 90))
+                        elif rnd.random() < 0.5:
+                            cell(X, y, (64, 118, 56) if rnd.random() > 0.3 else (226, 84, 96))
+                x += 10
+            else:
+                for X in range(x, x + 6):
+                    for y in range(base - 3 - (X % 2), base + 1):
+                        cell(X, y, (150, 120, 200) if y < base - 1 else (90, 130, 80))
+                x += 8
+    garden = _strip(P, period, flowers)
+
+    def fence(cell):                                          # the white picket fence
+        for x in range(period):
+            cell(x, base + 2, (240, 238, 232)); cell(x, base + 5, (240, 238, 232))
+            if x % 3 == 0:
+                for y in range(base, base + 8):
+                    cell(x, y, (250, 248, 244) if y > base else (226, 224, 218))
+    pickets = _strip(P, period, fence)
+    clouds = _clouds(rnd, period, 5)
+    gravel = [(rnd.randrange(period), rnd.randrange(VIDEO_H // P - 16, VIDEO_H // P - 11)) for _ in range(90)]
+    path = (VIDEO_H // P - 16, VIDEO_H // P - 11)
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.25), period, P)
+        _scroll(canvas, back, round(travelled * 0.06), P, period)
+        _scroll(canvas, garden, round(travelled * 0.16), P, period)
+        _scroll(canvas, pickets, round(travelled * 0.3), P, period)
+        layer, cell = _cells(canvas)
+        for y in range(*path):                                # the gravel path, one speed
+            for x in range(cols):
+                cell(x, y, (214, 200, 172))
+        for gx, gy in gravel:
+            X = (gx - round(travelled)) % period
+            if X < cols:
+                cell(X, gy, (186, 172, 146))
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+def maple_stage():
+    """A New England town street in October: clapboard houses in colonial colours (barn red, slate blue,
+    sage, mustard) with white trim, a white church steeple far off, sugar maples blazing red, orange and
+    gold, leaves drifting down onto the sidewalk."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (98, 150, 214)), (300, (168, 198, 230)), (480, (236, 226, 210))],
+                             [(500, (150, 150, 110)), (720, (110, 108, 84))], 32)
+    rnd = random.Random(93)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    COLONIAL = [((154, 64, 54), (136, 54, 46)), ((84, 108, 136), (72, 94, 120)), ((122, 140, 104), (106, 124, 90)),
+                ((190, 148, 70), (170, 130, 60))]   # barn red, slate blue, sage, mustard (white houses hid the white dog)
+
+    def houses(cell):
+        x = 4
+        k = 0
+        while x < period:
+            w, h = rnd.randint(14, 18), rnd.randint(8, 10)
+            wall, shade = COLONIAL[k % len(COLONIAL)]
+            k += 1
+            for X in range(x, x + w):
+                for y in range(base - h, base + 1):
+                    cell(X, y, wall if (y - base) % 2 else shade)
+                for y in range(base - h - 5, base - h):
+                    if abs(X - x - w / 2) <= w / 2 - (base - h - y) * 1.5:
+                        cell(X, y, (70, 64, 70))
+            for X in range(x + 2, x + w - 2, 4):
+                for y in (base - h + 2, base - h + 3, base - 4, base - 3):
+                    cell(X, y, (60, 76, 92)); cell(X - 1, y, (236, 232, 222)); cell(X + 2, y, (236, 232, 222))
+            x += w + rnd.randint(6, 12)
+        sx = 128                                              # the steeple, off to the side
+        for y in range(base - 24, base - 8):
+            for X in range(sx - (0 if y < base - 18 else 1), sx + (1 if y < base - 18 else 2)):
+                cell(X, y, (250, 248, 244))
+    street = _strip(P, period, houses)
+
+    def maples(cell):
+        x = 10
+        while x < period:
+            r = rnd.randint(5, 7)
+            cx, cy = x, base - 9
+            for X in range(cx - r - 1, cx + r + 2):
+                for y in range(cy - r, cy + r):
+                    if ((X - cx) / (r + 1)) ** 2 + ((y - cy) / r) ** 2 <= 1 and rnd.random() > 0.08:
+                        cell(X, y, rnd.choice(((214, 64, 40), (232, 112, 40), (240, 168, 50), (196, 50, 36))))
+            for y in range(cy + r - 2, base + 1):
+                cell(cx, y, (96, 66, 50)); cell(cx + 1, y, (96, 66, 50))
+            x += rnd.randint(22, 34)
+    trees = _strip(P, period, maples)
+    clouds = _clouds(rnd, period, 4)
+    walk = (VIDEO_H // P - 16, VIDEO_H // P - 10)
+    leaves = [(rnd.randrange(cols), rnd.uniform(0, VIDEO_H // P), rnd.uniform(0.3, 0.7),
+               rnd.choice(((214, 64, 40), (232, 112, 40), (240, 168, 50)))) for _ in range(26)]
+    litter = [(rnd.randrange(period), rnd.randrange(walk[0], VIDEO_H // P), rnd.choice(((214, 64, 40), (232, 112, 40), (240, 168, 50))))
+              for _ in range(80)]
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.2), period, P)
+        _scroll(canvas, street, round(travelled * 0.08), P, period)
+        _scroll(canvas, trees, round(travelled * 0.16), P, period)
+        layer, cell = _cells(canvas)
+        for y in range(*walk):                                # the sidewalk, in slabs
+            for x in range(cols):
+                cell(x, y, (196, 192, 184) if (x + round(travelled)) % 10 else (170, 166, 160))
+        for lx, ly, col in litter:                            # fallen leaves on the ground, moving with it
+            X = (lx - round(travelled * ground_speed(ly * P + P / 2))) % period
+            if X < cols:
+                cell(X, ly, col)
+        for lx, ly, sp, col in leaves:                        # leaves drifting down
+            y = (ly + t * 6 * sp) % (VIDEO_H // P - 18)
+            x = (lx + 2 * math.sin(t * 1.5 + ly) - round(travelled * 0.2)) % cols
+            cell(int(x), int(y), col)
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+def pondmeadow_stage():
+    """A meadow by a pond in spring: willows hanging over the far bank, a still pond with ducks swimming
+    and lily pads, the grass thick with dandelions and clover, a few butterflies."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (120, 182, 232)), (300, (182, 218, 240)), (480, (230, 240, 236))],
+                             [(500, (124, 182, 90)), (720, (90, 150, 66))], 33)
+    rnd = random.Random(95)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def bank(cell):
+        for x in range(period):
+            top = int(base - 6 - 2 * (0.5 + 0.5 * math.sin(x / 9)))
+            for y in range(top, base - 3):
+                cell(x, y, (120, 170, 96))
+            for y in range(base - 3, base + 2):                # the pond
+                cell(x, y, (112, 170, 206) if rnd.random() > 0.06 else (210, 234, 246))
+        x = 8
+        while x < period:                                     # weeping willows: a round crown, then long hanging
+            for y in range(base - 10, base - 2):              # branches (a check of leaves read as a chessboard)
+                cell(x, y, (100, 80, 60))
+            for X in range(x - 6, x + 7):
+                for y in range(base - 17, base - 12):
+                    if ((X - x) / 6.5) ** 2 + ((y - base + 14) / 3) ** 2 <= 1:
+                        cell(X, y, (120, 168, 86) if rnd.random() > 0.25 else (100, 150, 72))
+                if X % 2 == 0 or abs(X - x) > 4:
+                    length = 6 + (6 - abs(X - x)) // 2 + rnd.randint(0, 2)
+                    for y in range(base - 13, base - 13 + length):
+                        cell(X, y, (126, 174, 90) if (y + X) % 4 else (104, 152, 74))
+            x += rnd.randint(36, 56)
+        for x in range(10, period, 23):                       # lily pads
+            for X in range(x, x + 3):
+                cell(X, base, (70, 140, 70))
+    far = _strip(P, period, bank)
+    ducks = [(rnd.randrange(period), base - 1, rnd.uniform(0, 6.3)) for _ in range(5)]
+    clouds = _clouds(rnd, period, 5)
+    blooms = [(rnd.randrange(period), rnd.randrange(base + 4, VIDEO_H // P), rnd.choice(((250, 220, 60), (250, 250, 244), (230, 160, 200))))
+              for _ in range(120)]
+    flies = [(rnd.uniform(0, cols), rnd.uniform(base + 2, base + 18), rnd.uniform(0, 6.3)) for _ in range(3)]
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.25), period, P)
+        _scroll(canvas, far, round(travelled * 0.08), P, period)
+        layer, cell = _cells(canvas)
+        for x0, y0, ph in ducks:                              # ducks paddling
+            X = (x0 + round(t * 0.8 + 2 * math.sin(t * 0.5 + ph)) - round(travelled * 0.08)) % period
+            if X < cols - 4:
+                for dx in range(3):
+                    cell(X + dx, y0, (250, 248, 240))
+                cell(X + 3, y0 - 1, (60, 120, 70)); cell(X + 3, y0, (60, 120, 70)); cell(X + 4, y0, (240, 170, 60))
+        for fx, fy, col in blooms:
+            X = (fx - round(travelled * ground_speed(fy * P + P / 2))) % period
+            if X < cols:
+                cell(X, fy, col); cell(X, fy + 1, (80, 130, 60))
+        for bx, by, ph in flies:                              # butterflies
+            x = (bx + t * 2 - round(travelled * 0.3)) % cols
+            y = by + 2 * math.sin(t * 3 + ph)
+            open_ = int(t * 8 + ph) % 2
+            cell(int(x), int(y), (250, 236, 120))
+            if open_:
+                cell(int(x) - 1, int(y) - 1, (250, 236, 120)); cell(int(x) + 1, int(y) - 1, (250, 236, 120))
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+def showring_stage():
+    """A dog show ring: green carpet with a white ring line, a low white rail with rosettes, banners and
+    bunting across the hall, rows of spectators' seats in shade, warm hall lights."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (60, 54, 78)), (300, (96, 84, 104)), (480, (150, 128, 120))],
+                             [(500, (74, 140, 84)), (720, (56, 114, 66))], 34)
+    rnd = random.Random(97)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def hall(cell):
+        for x in range(period):
+            for y in range(base - 14, base - 3):              # the stands, rows of seats and spectators
+                row = (y - base) % 3
+                cell(x, y, (88, 76, 96) if row else (104, 92, 110))
+                if row == 1 and rnd.random() < 0.35:
+                    cell(x, y, rnd.choice(((200, 160, 140), (180, 120, 100), (90, 110, 160), (200, 80, 80))))
+            for y in range(base - 3, base + 1):               # the low white rail
+                cell(x, y, (240, 238, 232) if y in (base - 3, base - 1) else (60, 110, 64))
+            if x % 6 == 0:
+                for y in range(base - 3, base + 1):
+                    cell(x, y, (250, 248, 244))
+        for x in range(8, period, 31):                        # rosettes on the rail
+            col = rnd.choice(((60, 90, 200), (210, 60, 60), (230, 190, 60)))
+            for dx, dy in ((0, 0), (1, 0), (0, 1), (1, 1), (-1, 0), (2, 1), (0, -1), (1, 2)):
+                cell(x + dx, base - 3 + dy, col)
+            cell(x, base, col); cell(x + 1, base + 1, col)
+        for x in range(period):                                # bunting across the hall
+            y = int(6 + 3 * math.sin(x / 20))
+            if x % 4 < 2:
+                cell(x, y, rnd.choice(((210, 60, 60), (240, 200, 60), (60, 120, 200))))
+                if x % 4 == 0:
+                    cell(x, y + 1, (240, 200, 60))
+        for x in range(30, period, 70):                       # banners
+            for X in range(x, x + 8):
+                for y in range(14, 24):
+                    cell(X, y, (130, 40, 60) if X in (x, x + 7) or y in (14, 23) else (170, 50, 70))
+    stands = _strip(P, period, hall)
+    lights = [(x, 2) for x in range(10, cols, 30)]
+
+    def draw_moving(canvas, t, travelled):
+        _scroll(canvas, stands, round(travelled * 0.1), P, period)
+        layer, cell = _cells(canvas)
+        for lx, ly in lights:                                  # the hall lights
+            for dx in range(-1, 2):
+                cell(lx + dx, ly, (255, 240, 200))
+            for k in range(1, 6):
+                cell(lx, ly + k, (255, 236, 190), 40)
+        for y in range(base + 6, VIDEO_H // P):                # the carpet's pile and the ring line
+            for x in range(cols):
+                if (x + round(travelled * ground_speed(y * P + P / 2)) + y) % 7 == 0:
+                    cell(x, y, (66, 128, 76))
+        for x in range(cols):
+            cell(x, VIDEO_H // P - 18, (236, 240, 230))
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
 STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
           'antarctica': antarctica_stage, 'park': park_stage, 'forest': forest_stage,
           'sakura': sakura_stage, 'dock': dock_stage, 'backyard': backyard_stage,
           'farm': farm_stage, 'countryside': countryside_stage, 'trail': trail_stage, 'parkpath': parkpath_stage,
-          'highlands': highlands_stage, 'fells': fells_stage, 'trial': trial_stage, 'clifftop': clifftop_stage}
+          'highlands': highlands_stage, 'fells': fells_stage, 'trial': trial_stage, 'clifftop': clifftop_stage,
+          'cottage': cottage_stage, 'maple': maple_stage, 'pondmeadow': pondmeadow_stage, 'showring': showring_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_chick': 'sleep_chick'}
 
 
 def main():
-    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA, 'shiba-black': SHIBA, 'lab': LAB, 'beagle': BEAGLE, 'collie': COLLIE}.get(ANIMAL)
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA, 'shiba-black': SHIBA, 'lab': LAB, 'beagle': BEAGLE, 'collie': COLLIE, 'cocker': COCKER}.get(ANIMAL)
     if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):

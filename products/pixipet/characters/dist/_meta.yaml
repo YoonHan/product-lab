@@ -27,6 +27,9 @@ derived:
   - files: [collie.png, collie-outlined.png, collie.sheet.json]
     from: sprites/collie.json (written by tools/assemble_collie.py)
     by: node tools/build.mjs
+  - files: [cocker.png, cocker-outlined.png, cocker.sheet.json]
+    from: sprites/cocker.json (written by tools/assemble_cocker.py)
+    by: node tools/build.mjs
   - files: [corgi.png, corgi-outlined.png, corgi.sheet.json]
     from: sprites/corgi.json (written by tools/assemble_corgi.py)
     by: node tools/build.mjs
@@ -63,6 +66,9 @@ derived:
   - files: [collie-all-animations.mp4]
     from: sprites/collie.json
     by: tools/render_video.py collie (Pillow, numpy, ffmpeg)
+  - files: [cocker-all-animations.mp4]
+    from: sprites/cocker.json
+    by: tools/render_video.py cocker (Pillow, numpy, ffmpeg)
   - files: [penguin-all-animations.mp4]
     from: sprites/penguin.json
     by: tools/render_video.py penguin (Pillow, numpy, ffmpeg)
