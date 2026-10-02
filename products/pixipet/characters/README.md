@@ -60,6 +60,21 @@ Pixipet 앱이 화면에 띄우는 픽셀 아트 동물의 스프라이트와 �
 | `viewer.html` | 재생, 배율, 배경, 테두리, 격자, 어니언 스킨, 이벤트 시뮬레이터를 갖춘 뷰어 |
 | `dist/` | 생성 결과: 뷰어 번들(`pet-data.js`), PNG 시트(테두리 없음·있음), 앱용 `*.sheet.json` |
 
+## 작업 환경
+
+새 머신에서는 다음을 한 번 설치합니다(macOS, Homebrew 기준).
+
+```sh
+brew install git-lfs python ffmpeg node
+git lfs install
+git lfs pull                                   # 저장소를 받은 뒤, 이미지와 영상 원본을 받습니다
+python3 -m pip install --user pillow numpy     # 프레임 생성기와 소개 영상(render_video.py)에 필요합니다
+```
+
+- 프레임 생성기(`tools/draft_*.py`, `tools/assemble_*.py`)는 표준 라이브러리만 씁니다. 소개 영상은 Pillow, numpy, ffmpeg가 필요하고, 빌드(`tools/build.mjs`)는 Node가 필요합니다.
+- macOS의 기본 Python에 pip로 설치가 막혀 있으면 가상 환경을 만들어 씁니다: `python3 -m venv .venv && .venv/bin/pip install pillow numpy`, 그 뒤 `.venv/bin/python tools/render_video.py <동물>`.
+- 새 동물을 시작하기 전에 `docs/preferences.md`와 아래의 "다음 작업"을 먼저 읽습니다.
+
 ## 작업 흐름
 
 ```sh
