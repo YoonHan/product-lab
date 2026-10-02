@@ -159,8 +159,10 @@ def body(head=None, hx=HEAD_X, hy=HEAD_Y, tail_deg=0, breath=False):
     g = [['.'] * ww for _ in range(pad)] + g
     put(g, head, hx, hy + pad)
     rows = rows_of(close_neck(g, hx))
-    if breath:                                                    # the chest swells 1px
-        at = BREATH_ROW + pad
+    if breath:                                                    # the chest swells 1px, at a chest row below
+        at = BREATH_ROW + pad                                     # the jaw (a lowered head reaches the usual
+        jaw = max(y for y, r in enumerate(rows) if 't' in r or 'd' in r)   # row, and its mouth line doubled)
+        at = max(at, jaw + 1)
         rows = rows[1:at] + [rows[at]] + rows[at:]
     return rows
 
@@ -350,9 +352,36 @@ def look_frames():
         rows, dy = head_tilted(k, gazing(LOOK_EYES[d]) if d in LOOK_EYES else None)
         fx, fy = LOOK_DROP[d]
         for i, breath in enumerate((False, True)):
-            b = body(rows, hx=HEAD_X + fx, hy=HEAD_Y + dy + fy, breath=breath)
+            hy = HEAD_Y + dy + fy
+            b = body(rows, hx=HEAD_X + fx, hy=hy, breath=breath)
+            if fy:                                            # the head lowered: the top of the neck comes down
+                pad, up = max(0, -hy), 1 if breath else 0     # with it (only the head moving, the standing mane
+                b = withers_line(b, (20, 10 + pad - up), (HEAD_X + fx - 1, hy + pad - dy + 5 - up))   # stayed up)
+                b = ruff_in(b)
             out[f'idle_{i}_{d}'] = rows_of(place(with_legs(trimmed(b, -dy)), PX))
     return out
+
+
+RUFF_KEEP = 4                     # under a lowered head, the ruff this many columns deep
+
+
+def ruff_in(rows):
+    """Under a lowered head, the white ruff pulled back toward the legs (left as it stands, it bulged
+    out round in front of the chest below the jaw)."""
+    g = [list(r) for r in rows]
+    jaw = max(y for y, r in enumerate(g) if 't' in r)
+    for y in range(jaw, len(g)):
+        xs = [x for x, ch in enumerate(g[y]) if ch == 'w']
+        if not xs:
+            continue
+        run = [xs[0]]                                             # only the ruff (the first run of white), not
+        while run[-1] + 1 in xs:                                  # the chin beside it
+            run.append(run[-1] + 1)
+        keep = xs[0] + RUFF_KEEP - (1 if y == len(g) - 1 else 0)
+        for x in run:
+            if x >= keep:
+                g[y][x] = '.'
+    return rows_of(g)
 
 
 def trimmed(rows, pad):
