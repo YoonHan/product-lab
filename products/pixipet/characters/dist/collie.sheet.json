@@ -1,0 +1,1327 @@
+{
+  "name": "collie",
+  "tickMs": 50,
+  "frameSize": [
+    96,
+    48
+  ],
+  "anchor": [
+    30,
+    47
+  ],
+  "images": {
+    "plain": {
+      "file": "collie.png",
+      "size": [
+        1920,
+        672
+      ],
+      "frames": {
+        "idle_0": {
+          "x": 192,
+          "y": 192,
+          "w": 96,
+          "h": 48
+        },
+        "idle_1": {
+          "x": 96,
+          "y": 0,
+          "w": 96,
+          "h": 48
+        },
+        "walk_0": {
+          "x": 1728,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "walk_1": {
+          "x": 96,
+          "y": 48,
+          "w": 96,
+          "h": 48
+        },
+        "walk_2": {
+          "x": 1536,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "walk_3": {
+          "x": 1632,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "run_0": {
+          "x": 960,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "run_1": {
+          "x": 1056,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "run_2": {
+          "x": 1152,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "run_3": {
+          "x": 1248,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "run_4": {
+          "x": 1344,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "run_5": {
+          "x": 1440,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "stand": {
+          "x": 1056,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "turn_a": {
+          "x": 0,
+          "y": 192,
+          "w": 96,
+          "h": 48
+        },
+        "turn_b": {
+          "x": 96,
+          "y": 192,
+          "w": 96,
+          "h": 48
+        },
+        "sit_a": {
+          "x": 0,
+          "y": 288,
+          "w": 96,
+          "h": 48
+        },
+        "sit_0": {
+          "x": 96,
+          "y": 240,
+          "w": 96,
+          "h": 48
+        },
+        "sit_1": {
+          "x": 192,
+          "y": 240,
+          "w": 96,
+          "h": 48
+        },
+        "lie_a": {
+          "x": 0,
+          "y": 480,
+          "w": 96,
+          "h": 48
+        },
+        "lie_0": {
+          "x": 96,
+          "y": 480,
+          "w": 96,
+          "h": 48
+        },
+        "lie_1": {
+          "x": 192,
+          "y": 336,
+          "w": 96,
+          "h": 48
+        },
+        "herd_down": {
+          "x": 0,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_crouch": {
+          "x": 96,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_0": {
+          "x": 192,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_1": {
+          "x": 288,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_2": {
+          "x": 384,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_3": {
+          "x": 480,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_4": {
+          "x": 576,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_5": {
+          "x": 672,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_clap": {
+          "x": 768,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "herd_freeze": {
+          "x": 864,
+          "y": 432,
+          "w": 96,
+          "h": 48
+        },
+        "chin_a": {
+          "x": 192,
+          "y": 480,
+          "w": 96,
+          "h": 48
+        },
+        "chin_0": {
+          "x": 288,
+          "y": 480,
+          "w": 96,
+          "h": 48
+        },
+        "chin_1": {
+          "x": 384,
+          "y": 480,
+          "w": 96,
+          "h": 48
+        },
+        "chin_up": {
+          "x": 480,
+          "y": 480,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_0": {
+          "x": 0,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_1": {
+          "x": 96,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_2": {
+          "x": 192,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_3": {
+          "x": 288,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_dip": {
+          "x": 384,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_jump_0": {
+          "x": 480,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_jump_1": {
+          "x": 576,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_fall": {
+          "x": 672,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_land": {
+          "x": 768,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_hold": {
+          "x": 864,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "fris_hold_1": {
+          "x": 960,
+          "y": 528,
+          "w": 96,
+          "h": 48
+        },
+        "idle_0_up_fwd": {
+          "x": 0,
+          "y": 576,
+          "w": 96,
+          "h": 48
+        },
+        "idle_1_up_fwd": {
+          "x": 96,
+          "y": 576,
+          "w": 96,
+          "h": 48
+        },
+        "idle_0_down_fwd": {
+          "x": 0,
+          "y": 624,
+          "w": 96,
+          "h": 48
+        },
+        "idle_1_down_fwd": {
+          "x": 96,
+          "y": 624,
+          "w": 96,
+          "h": 48
+        }
+      }
+    },
+    "outlined": {
+      "file": "collie-outlined.png",
+      "size": [
+        1960,
+        700
+      ],
+      "padding": 1,
+      "frames": {
+        "idle_0": {
+          "x": 197,
+          "y": 201,
+          "w": 96,
+          "h": 48
+        },
+        "idle_1": {
+          "x": 99,
+          "y": 1,
+          "w": 96,
+          "h": 48
+        },
+        "walk_0": {
+          "x": 1765,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "walk_1": {
+          "x": 99,
+          "y": 51,
+          "w": 96,
+          "h": 48
+        },
+        "walk_2": {
+          "x": 1569,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "walk_3": {
+          "x": 1667,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "run_0": {
+          "x": 981,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "run_1": {
+          "x": 1079,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "run_2": {
+          "x": 1177,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "run_3": {
+          "x": 1275,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "run_4": {
+          "x": 1373,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "run_5": {
+          "x": 1471,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "stand": {
+          "x": 1079,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "turn_a": {
+          "x": 1,
+          "y": 201,
+          "w": 96,
+          "h": 48
+        },
+        "turn_b": {
+          "x": 99,
+          "y": 201,
+          "w": 96,
+          "h": 48
+        },
+        "sit_a": {
+          "x": 1,
+          "y": 301,
+          "w": 96,
+          "h": 48
+        },
+        "sit_0": {
+          "x": 99,
+          "y": 251,
+          "w": 96,
+          "h": 48
+        },
+        "sit_1": {
+          "x": 197,
+          "y": 251,
+          "w": 96,
+          "h": 48
+        },
+        "lie_a": {
+          "x": 1,
+          "y": 501,
+          "w": 96,
+          "h": 48
+        },
+        "lie_0": {
+          "x": 99,
+          "y": 501,
+          "w": 96,
+          "h": 48
+        },
+        "lie_1": {
+          "x": 197,
+          "y": 351,
+          "w": 96,
+          "h": 48
+        },
+        "herd_down": {
+          "x": 1,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_crouch": {
+          "x": 99,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_0": {
+          "x": 197,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_1": {
+          "x": 295,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_2": {
+          "x": 393,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_3": {
+          "x": 491,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_4": {
+          "x": 589,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_stalk_5": {
+          "x": 687,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_clap": {
+          "x": 785,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "herd_freeze": {
+          "x": 883,
+          "y": 451,
+          "w": 96,
+          "h": 48
+        },
+        "chin_a": {
+          "x": 197,
+          "y": 501,
+          "w": 96,
+          "h": 48
+        },
+        "chin_0": {
+          "x": 295,
+          "y": 501,
+          "w": 96,
+          "h": 48
+        },
+        "chin_1": {
+          "x": 393,
+          "y": 501,
+          "w": 96,
+          "h": 48
+        },
+        "chin_up": {
+          "x": 491,
+          "y": 501,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_0": {
+          "x": 1,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_1": {
+          "x": 99,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_2": {
+          "x": 197,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_watch_3": {
+          "x": 295,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_dip": {
+          "x": 393,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_jump_0": {
+          "x": 491,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_jump_1": {
+          "x": 589,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_fall": {
+          "x": 687,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_land": {
+          "x": 785,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_hold": {
+          "x": 883,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "fris_hold_1": {
+          "x": 981,
+          "y": 551,
+          "w": 96,
+          "h": 48
+        },
+        "idle_0_up_fwd": {
+          "x": 1,
+          "y": 601,
+          "w": 96,
+          "h": 48
+        },
+        "idle_1_up_fwd": {
+          "x": 99,
+          "y": 601,
+          "w": 96,
+          "h": 48
+        },
+        "idle_0_down_fwd": {
+          "x": 1,
+          "y": 651,
+          "w": 96,
+          "h": 48
+        },
+        "idle_1_down_fwd": {
+          "x": 99,
+          "y": 651,
+          "w": 96,
+          "h": 48
+        }
+      }
+    }
+  },
+  "animations": {
+    "idle": {
+      "loop": true,
+      "steps": [
+        {
+          "frame": "idle_0",
+          "ms": 600
+        },
+        {
+          "frame": "idle_1",
+          "ms": 600
+        }
+      ]
+    },
+    "walk": {
+      "loop": true,
+      "moveXPerTick": 0.34,
+      "steps": [
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "walk_1",
+          "ms": 150
+        },
+        {
+          "frame": "walk_2",
+          "ms": 150
+        },
+        {
+          "frame": "walk_3",
+          "ms": 150
+        }
+      ]
+    },
+    "run": {
+      "loop": true,
+      "pose": [
+        "stand",
+        "running"
+      ],
+      "moveXPerTick": 3,
+      "steps": [
+        {
+          "frame": "run_0",
+          "ms": 50
+        },
+        {
+          "frame": "run_1",
+          "ms": 50
+        },
+        {
+          "frame": "run_2",
+          "ms": 50
+        },
+        {
+          "frame": "run_3",
+          "ms": 50
+        },
+        {
+          "frame": "run_4",
+          "ms": 50
+        },
+        {
+          "frame": "run_5",
+          "ms": 50
+        }
+      ]
+    },
+    "run_stop": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "running",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "walk_2",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "turn": {
+      "loop": false,
+      "holdMs": 0,
+      "flipAt": 2,
+      "steps": [
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "turn_b",
+          "ms": 100
+        },
+        {
+          "frame": "turn_a",
+          "ms": 50
+        },
+        {
+          "frame": "idle_0",
+          "ms": 50
+        }
+      ]
+    },
+    "sit": {
+      "loop": false,
+      "holdMs": 2000,
+      "pose": [
+        "stand",
+        "sit"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "sit_0",
+          "ms": 600
+        },
+        {
+          "frame": "sit_1",
+          "ms": 600
+        },
+        {
+          "frame": "sit_0",
+          "ms": 100
+        }
+      ]
+    },
+    "sit_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "sit",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "sit_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_down": {
+      "loop": false,
+      "holdMs": 3000,
+      "pose": [
+        "stand",
+        "lie"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "lie_0",
+          "ms": 800
+        },
+        {
+          "frame": "lie_1",
+          "ms": 700
+        },
+        {
+          "frame": "lie_0",
+          "ms": 100
+        }
+      ]
+    },
+    "lie_up": {
+      "loop": false,
+      "holdMs": 200,
+      "pose": [
+        "lie",
+        "stand"
+      ],
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "herd": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "herd_down",
+          "ms": 150
+        },
+        {
+          "frame": "herd_crouch",
+          "ms": 800
+        },
+        {
+          "frame": "herd_stalk_0",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_1",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_2",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_3",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_4",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_5",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_0",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_1",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_2",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_3",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_4",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_5",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_down",
+          "ms": 100
+        },
+        {
+          "frame": "herd_clap",
+          "ms": 1100
+        },
+        {
+          "frame": "herd_down",
+          "ms": 100
+        },
+        {
+          "frame": "herd_crouch",
+          "ms": 400
+        },
+        {
+          "frame": "herd_stalk_0",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_1",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_2",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_3",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_4",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_5",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_freeze",
+          "ms": 1000
+        },
+        {
+          "frame": "herd_stalk_0",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_1",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_2",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_3",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_4",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_stalk_5",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "herd_crouch",
+          "ms": 200
+        },
+        {
+          "frame": "run_0",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_1",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_2",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_3",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_4",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_5",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_0",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_1",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_2",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_3",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_4",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "run_5",
+          "ms": 50,
+          "moveX": 3
+        },
+        {
+          "frame": "walk_2",
+          "ms": 100,
+          "moveX": 2
+        },
+        {
+          "frame": "walk_3",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "walk_0",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "chin": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "lie_0",
+          "ms": 500
+        },
+        {
+          "frame": "chin_a",
+          "ms": 150
+        },
+        {
+          "frame": "chin_0",
+          "ms": 700
+        },
+        {
+          "frame": "chin_1",
+          "ms": 700
+        },
+        {
+          "frame": "chin_0",
+          "ms": 300
+        },
+        {
+          "frame": "chin_up",
+          "ms": 800
+        },
+        {
+          "frame": "chin_0",
+          "ms": 700
+        },
+        {
+          "frame": "chin_1",
+          "ms": 700
+        },
+        {
+          "frame": "chin_up",
+          "ms": 600
+        },
+        {
+          "frame": "chin_0",
+          "ms": 400
+        },
+        {
+          "frame": "chin_a",
+          "ms": 150
+        },
+        {
+          "frame": "lie_0",
+          "ms": 300
+        },
+        {
+          "frame": "lie_a",
+          "ms": 150
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    },
+    "frisbee": {
+      "loop": false,
+      "holdMs": 200,
+      "steps": [
+        {
+          "frame": "fris_watch_0",
+          "ms": 100
+        },
+        {
+          "frame": "fris_watch_1",
+          "ms": 100
+        },
+        {
+          "frame": "fris_watch_2",
+          "ms": 100
+        },
+        {
+          "frame": "fris_watch_3",
+          "ms": 100
+        },
+        {
+          "frame": "fris_dip",
+          "ms": 100
+        },
+        {
+          "frame": "fris_jump_0",
+          "ms": 100,
+          "moveX": 1
+        },
+        {
+          "frame": "fris_jump_1",
+          "ms": 200,
+          "moveX": 1
+        },
+        {
+          "frame": "fris_fall",
+          "ms": 150,
+          "moveX": 1
+        },
+        {
+          "frame": "fris_land",
+          "ms": 150
+        },
+        {
+          "frame": "fris_hold",
+          "ms": 300
+        },
+        {
+          "frame": "fris_hold_1",
+          "ms": 200
+        },
+        {
+          "frame": "fris_hold",
+          "ms": 200
+        },
+        {
+          "frame": "fris_hold_1",
+          "ms": 200
+        },
+        {
+          "frame": "fris_hold",
+          "ms": 500
+        },
+        {
+          "frame": "stand",
+          "ms": 100
+        }
+      ]
+    }
+  },
+  "outline": {
+    "skip": []
+  },
+  "blink": {
+    "animations": [
+      "idle",
+      "sit",
+      "lie_down",
+      "chin"
+    ],
+    "swap": {
+      "o": "S",
+      "v": "d"
+    },
+    "everyTicks": [
+      50,
+      120
+    ],
+    "forTicks": 2,
+    "doubleChance": 0.25
+  },
+  "transitions": {
+    "running": {
+      "stand": [
+        "run_stop"
+      ]
+    },
+    "sit": {
+      "stand": [
+        "sit_up"
+      ]
+    },
+    "lie": {
+      "stand": [
+        "lie_up"
+      ]
+    },
+    "stand": {
+      "sit": [
+        "sit"
+      ],
+      "lie": [
+        "lie_down"
+      ]
+    }
+  },
+  "idleVariants": [
+    "herd",
+    "chin",
+    "frisbee"
+  ],
+  "look": {
+    "animations": [
+      "idle"
+    ],
+    "headCenter": [
+      44,
+      21
+    ],
+    "sectors": [
+      {
+        "dir": "up_fwd",
+        "min": 25
+      },
+      {
+        "dir": "fwd",
+        "min": -25
+      },
+      {
+        "dir": "down_fwd",
+        "min": -90
+      }
+    ],
+    "deadZone": 5,
+    "turnMargin": 4,
+    "frames": {
+      "up_fwd": {
+        "idle_0": "idle_0_up_fwd",
+        "idle_1": "idle_1_up_fwd"
+      },
+      "down_fwd": {
+        "idle_0": "idle_0_down_fwd",
+        "idle_1": "idle_1_down_fwd"
+      }
+    }
+  },
+  "reactions": {
+    "alert": [
+      "herd"
+    ],
+    "curious": [
+      "herd"
+    ],
+    "greet": [
+      "frisbee"
+    ],
+    "wake": [
+      "frisbee"
+    ],
+    "sleepy": [
+      "chin",
+      "lie_down"
+    ],
+    "celebrate": [
+      "frisbee"
+    ],
+    "busy": [
+      "herd"
+    ],
+    "wander": [
+      "walk"
+    ]
+  }
+}

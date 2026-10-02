@@ -7,11 +7,12 @@ across snow in Hokkaido at dusk, the penguin on Antarctic sea ice under the midn
 corgi plays on a park lawn on a sunny day, and the hamster potters about its enclosure in the
 evening, on deep wood-shaving bedding.
 
-Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|shiba-black|lab|beagle|hamster] [stage] [out.mp4]
+Usage: python3 tools/render_video.py [fox|arctic-fox|penguin|corgi|dachshund|shiba|shiba-black|lab|beagle|collie|hamster] [stage] [out.mp4]
        stages: fox (the fox's default), hokkaido (the arctic fox's), antarctica (the penguin's),
                park (the corgi's), forest (the dachshund's), sakura (both shibas'), dock and backyard
                (the Labrador's candidates), farm (the beagle's), countryside, trail and parkpath (the
-               beagle's other candidates), hamster (the enclosure), beach (a sandy beach by the sea)
+               beagle's other candidates), clifftop (the border collie's), highlands, fells and trial (the
+               collie's other candidates), hamster (the enclosure), beach (a sandy beach by the sea)
 """
 import json
 import os
@@ -23,7 +24,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 _args = sys.argv[1:]
 ANIMAL = _args.pop(0) if _args and not _args[0].endswith('.mp4') else 'fox'
-DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura', 'shiba-black': 'sakura', 'lab': 'backyard', 'beagle': 'farm'}.get(ANIMAL, ANIMAL)
+DEFAULT_STAGE = {'arctic-fox': 'hokkaido', 'penguin': 'antarctica', 'corgi': 'park', 'dachshund': 'forest', 'shiba': 'sakura', 'shiba-black': 'sakura', 'lab': 'backyard', 'beagle': 'farm', 'collie': 'clifftop'}.get(ANIMAL, ANIMAL)
 STAGE = _args.pop(0) if _args and not _args[0].endswith('.mp4') else DEFAULT_STAGE     # e.g. "hamster beach"
 OUT = _args[0] if _args else os.path.join(ROOT, 'dist', f'{ANIMAL}-all-animations' + ('' if STAGE == DEFAULT_STAGE else f'-{STAGE}') + '.mp4')
 
@@ -1703,6 +1704,27 @@ BEAGLE = dict(
     ],
 )
 
+COLLIE = dict(
+    SCALE=8, GROUND_Y=600, HORIZON_Y=500,
+    SEGMENTS=[
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 60),
+        ('look', 'LOOK · 마우스 따라보기', 0),
+        ('walk', 'WALK · 걷기', 48),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('turn', 'TURN · 돌아서기', 10),
+        ('run', 'RUN · 달리기', 48),
+        ('run_stop', 'RUN STOP · 멈추기', 6),
+        ('sit', 'SIT · 앉기', 10),
+        ('sit_up', 'SIT UP · 일어서기', 6),
+        ('lie_down', 'LIE DOWN · 엎드리기', 10),
+        ('lie_up', 'LIE UP · 엎드렸다 일어서기', 6),
+        ('herd', 'HERD · 자세 낮춰 양몰이', 8),
+        ('chin', 'CHIN · 앞발에 턱 괴기', 8),
+        ('frisbee', 'FRISBEE · 프리스비 점프 캐치', 8),
+        ('idle', 'IDLE · 숨쉬기와 눈 깜빡임', 30),
+    ],
+)
+
 def _strip(P, period, draw):
     im = Image.new('RGBA', (period * P, VIDEO_H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
@@ -2424,15 +2446,276 @@ def parkpath_stage():
     return background, draw_moving
 
 
+def _sheep(cell, X, y0, t, ph, cols):
+    """A sheep grazing: a woolly body, a black face going down and up, black legs."""
+    import math
+    if not (0 <= X < cols - 8):
+        return
+    for dx in range(6):
+        for dy in range(3):
+            if not (dy == 0 and dx in (0, 5)):
+                cell(X + dx, y0 + dy, (246, 244, 236) if dy < 2 else (226, 222, 212))
+    hy = y0 + (2 if math.sin(t * 1.3 + ph) > 0.2 else 0)
+    cell(X + 6, hy, (40, 36, 36)); cell(X + 6, hy + 1, (40, 36, 36)); cell(X + 7, hy + 1, (40, 36, 36))
+    for lx in (1, 4):
+        cell(X + lx, y0 + 3, (40, 36, 36))
+
+
+def _ridge(x, base, height, freq, phase, wobble=1.5):
+    import math
+    return int(base - height * (0.6 + 0.4 * math.sin(x / freq + phase)) - wobble * math.sin(x / (freq / 3.1) + phase * 2))
+
+
+def highlands_stage():
+    """The Scottish Highlands, home of the working collie, on a late summer evening: blue-grey mountains
+    layered off into the haze, a loch below them catching the light, hills of purple heather and bracken,
+    sheep grazing the slopes, and a worn sheep track through the grass."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (104, 128, 170)), (280, (186, 178, 196)), (480, (246, 210, 170))],
+                             [(500, (118, 140, 82)), (720, (84, 108, 58))], 21)
+    rnd = random.Random(51)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def mountains(cell):                                      # three layers of mountains, the far ones palest
+        for x in range(period):
+            for k, (h, f, col) in enumerate(((30, 23, (160, 166, 190)), (24, 17, (128, 136, 166)), (16, 13, (102, 112, 140)))):
+                top = _ridge(x, base - 8 + k * 2, h, f, k * 1.7)
+                for y in range(top, base - 6 + k * 2):
+                    cell(x, y, col)
+            for y in range(base - 6, base - 2):              # the loch, with a glint along it
+                cell(x, y, (236, 214, 190) if rnd.random() < 0.05 else (176, 168, 182))
+    far = _strip(P, period, mountains)
+
+    def heather(cell):                                        # the near hills: heather in purple patches over the grass
+        for x in range(period):
+            top = _ridge(x, base + 1, 7, 15, 0.8, 1)
+            for y in range(top, base + 1):
+                patch = math.sin(x / 6 + y / 3) + math.sin(x / 13)
+                col = (146, 92, 140) if patch > 0.6 else (172, 116, 160) if patch > 0.2 else (128, 146, 80) if patch > -0.8 else (150, 120, 70)
+                cell(x, y, col if rnd.random() > 0.06 else (196, 150, 184))
+    hills = _strip(P, period, heather)
+    sheep = [(rnd.randrange(period), rnd.randrange(base - 4, base - 1), rnd.uniform(0, 6.3)) for _ in range(9)]
+    clouds = _clouds(rnd, period, 5)
+    tufts = [(rnd.randrange(period), rnd.randrange(base + 4, VIDEO_H // P), rnd.random() < 0.35) for _ in range(120)]
+    track = (VIDEO_H // P - 16, VIDEO_H // P - 11)
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.2), period, P)
+        _scroll(canvas, far, round(travelled * 0.05), P, period)
+        _scroll(canvas, hills, round(travelled * 0.12), P, period)
+        layer, cell = _cells(canvas)
+        for x0, y0, ph in sheep:
+            _sheep(cell, (x0 - round(travelled * 0.12)) % period, y0, t, ph, cols)
+        sh = round(travelled)
+        for y in range(*track):                               # the sheep track, worn bare
+            for x in range(cols):
+                cell(x, y, (150, 132, 96) if (x + sh + y * 3) % 17 else (132, 116, 84))
+        for tx, ty, purple in tufts:                          # heather and grass tufts, moving with the ground
+            if track[0] - 1 <= ty <= track[1]:
+                continue
+            X = (tx - round(travelled * ground_speed(ty * P + P / 2))) % period
+            if X < cols:
+                col = (156, 98, 150) if purple else (70, 98, 46)
+                cell(X, ty, col); cell(X + 1, ty - 1, col)
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+def fells_stage():
+    """The Lake District fells in the morning: steep green fells criss-crossed by dry stone walls, a
+    whitewashed stone farmhouse with a slate roof, a flock of sheep on the in-bye land, and a grassy
+    lane between walls."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (116, 160, 206)), (300, (180, 206, 228)), (480, (226, 232, 230))],
+                             [(500, (110, 160, 84)), (720, (76, 126, 58))], 22)
+    rnd = random.Random(61)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def fells(cell):
+        for x in range(period):
+            top = _ridge(x, base - 4, 28, 19, 0.4, 2.5)
+            for y in range(top, base + 1):
+                shade = (y - top) / max(1, base - top)
+                col = (124, 160, 108) if shade < 0.3 else (110, 152, 90) if shade < 0.7 else (98, 144, 78)
+                if shade < 0.45 and math.sin(x / 4 + y / 2.5) + math.sin(x / 11) > 1.2:
+                    col = (150, 138, 104)                     # patches of bracken and scree near the tops
+                cell(x, y, col)
+            if x % 2 == 0:
+                cell(x, base - 8, (150, 150, 140))            # a wall along the valley
+        for x0 in range(10, period, 37):                      # and walls running up the fellsides, thin lines
+            top = _ridge(x0, base - 4, 28, 19, 0.4, 2.5)
+            for y in range(top + 5, base - 7):
+                cell(x0 + (base - 8 - y) // 2, y, (150, 150, 140))
+        fx = 26                                               # the farmhouse: white walls, a dark slate roof
+        for X in range(fx, fx + 14):
+            for y in range(base - 7, base + 1):
+                cell(X, y, (240, 238, 230) if (X - fx) % 5 else (220, 218, 210))
+            for y in range(base - 10, base - 7):
+                if abs(X - fx - 7) <= 9 - (base - 7 - y) * 2:
+                    cell(X, y, (78, 84, 96))
+        for X in (fx + 3, fx + 10):
+            cell(X, base - 4, (70, 76, 90)); cell(X, base - 5, (70, 76, 90))
+        cell(fx + 11, base - 12, (110, 106, 100)); cell(fx + 11, base - 11, (110, 106, 100))
+    far = _strip(P, period, fells)
+
+    def walls(cell):                                          # the lane's near wall of grey stones
+        for x in range(period):
+            for y in range(base + 1, base + 5):
+                off = ((y - base) * 3) % 5
+                tone = ((172, 172, 164), (150, 150, 144), (190, 188, 180))[((x + off) // 5 * 7 + y) % 3]
+                cell(x, y, tone if (x + off) % 5 else (110, 110, 104))
+            cell(x, base, (140, 140, 132) if x % 2 else (124, 124, 118))
+    wall = _strip(P, period, walls)
+    sheep = [(rnd.randrange(period), rnd.randrange(base - 6, base - 2), rnd.uniform(0, 6.3)) for _ in range(12)]
+    clouds = _clouds(rnd, period, 6)
+    tufts = [(rnd.randrange(period), rnd.randrange(base + 6, VIDEO_H // P)) for _ in range(100)]
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.25), period, P)
+        _scroll(canvas, far, round(travelled * 0.08), P, period)
+        layer, cell = _cells(canvas)
+        for x0, y0, ph in sheep:
+            _sheep(cell, (x0 - round(travelled * 0.1)) % period, y0, t, ph, cols)
+        canvas.alpha_composite(layer)
+        _scroll(canvas, wall, round(travelled * 0.3), P, period)
+        layer, cell = _cells(canvas)
+        for tx, ty in tufts:
+            X = (tx - round(travelled * ground_speed(ty * P + P / 2))) % period
+            if X < cols:
+                cell(X, ty, (66, 112, 48)); cell(X + 1, ty - 1, (66, 112, 48))
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+def trial_stage():
+    """A sheepdog trial on a summer day: a big mown field with stripes, a little flock of sheep waiting
+    by the far hurdles, the pen of wooden hurdles with its gate, marker flags on posts, a line of trees
+    and a marquee at the far edge of the field."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (96, 156, 222)), (300, (164, 204, 238)), (480, (230, 238, 236))],
+                             [(500, (118, 172, 82)), (720, (88, 146, 62))], 23)
+    rnd = random.Random(71)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def edge(cell):                                           # the tree line and a white marquee
+        for x in range(period):
+            top = int(base - 9 - 3 * (0.5 + 0.5 * math.sin(x / 4.3)) - 2 * math.sin(x / 11))
+            for y in range(top, base - 2):
+                cell(x, y, (84, 130, 76) if rnd.random() < 0.2 else (64, 110, 64))
+            for y in range(base - 2, base + 1):
+                cell(x, y, (124, 176, 86) if (x // 6) % 2 else (136, 186, 94))
+        mx = 126
+        for X in range(mx, mx + 16):
+            for y in range(base - 6, base + 1):
+                cell(X, y, (250, 250, 246) if (X - mx) % 4 else (226, 226, 222))
+            for y in range(base - 9, base - 6):
+                if abs(X - mx - 8) <= 8 - (base - 6 - y) * 2:
+                    cell(X, y, (240, 240, 236))
+    far = _strip(P, period, edge)
+
+    def course(cell):                                         # the pen of hurdles and the marker flags
+        px = 30
+        for X in range(px, px + 14):
+            for y in (base - 1, base + 1):
+                cell(X, y, (176, 136, 90))
+            if (X - px) % 3 == 0:
+                for y in range(base - 2, base + 3):
+                    cell(X, y, (150, 112, 74))
+        for fx in (70, 130, 180):
+            for y in range(base - 7, base + 2):
+                cell(fx, y, (230, 226, 216))
+            for y in range(base - 7, base - 4):
+                for X in range(fx + 1, fx + 4 - (y - base + 7) // 2):
+                    cell(X, y, (220, 64, 60) if fx != 130 else (60, 96, 200))
+    pens = _strip(P, period, course)
+    flock = [(172 + rnd.randrange(-6, 7), base - 3 + rnd.randrange(0, 3), rnd.uniform(0, 6.3)) for _ in range(5)]
+    clouds = _clouds(rnd, period, 5)
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.25), period, P)
+        _scroll(canvas, far, round(travelled * 0.06), P, period)
+        _scroll(canvas, pens, round(travelled * 0.18), P, period)
+        layer, cell = _cells(canvas)
+        for x0, y0, ph in flock:
+            _sheep(cell, (x0 - round(travelled * 0.18)) % period, y0, t, ph, cols)
+        sh = round(travelled)
+        for y in range(base + 4, VIDEO_H // P):               # the mown stripes, moving with the ground
+            speed = ground_speed(y * P + P / 2)
+            for x in range(cols):
+                if ((x + round(travelled * speed)) // 9) % 2:
+                    cell(x, y, (100, 158, 70) if y > base + 12 else (110, 166, 76), 90)
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
+def clifftop_stage():
+    """A clifftop meadow by the sea in Wales: the open sea to the horizon with white horses, pale
+    limestone cliffs, a white lighthouse on the headland, sheep on the turf, pink sea thrift and white
+    sea campion in the grass."""
+    import math, random
+    P = SCALE
+    background = _base_image([(0, (92, 150, 210)), (280, (160, 200, 232)), (440, (210, 230, 240))],
+                             [(500, (118, 168, 82)), (720, (86, 138, 60))], 24)
+    rnd = random.Random(81)
+    cols, base = VIDEO_W // P, HORIZON_Y // P - 1
+    period = cols * 2
+
+    def sea(cell):
+        for x in range(period):
+            for y in range(base - 14, base - 4):              # the sea, darker toward the horizon
+                col = (64, 116, 168) if y < base - 10 else (80, 138, 186)
+                cell(x, y, (226, 240, 248) if rnd.random() < 0.015 else col)
+            top = int(base - 7 - 4 * max(0.0, math.sin(x / 18)) - math.sin(x / 5))   # headlands and cliffs
+            for y in range(top, base + 1):
+                cliff = y < top + 3 and math.sin(x / 18) > 0.2
+                cell(x, y, (226, 220, 204) if cliff else (122, 170, 88))
+        lx = 140                                              # the lighthouse on the headland
+        for y in range(base - 22, base - 9):
+            for X in range(lx, lx + 3):
+                cell(X, y, (250, 250, 246) if (y // 3) % 2 else (210, 70, 60))
+        for X in range(lx - 1, lx + 4):
+            cell(X, base - 23, (60, 60, 66))
+        cell(lx + 1, base - 24, (250, 230, 140))
+    far = _strip(P, period, sea)
+    sheep = [(rnd.randrange(period), rnd.randrange(base - 2, base + 2), rnd.uniform(0, 6.3)) for _ in range(8)]
+    clouds = _clouds(rnd, period, 6)
+    flowers = [(rnd.randrange(period), rnd.randrange(base + 5, VIDEO_H // P), rnd.choice(((236, 132, 170), (250, 250, 244), (236, 132, 170))))
+               for _ in range(110)]
+
+    def draw_moving(canvas, t, travelled):
+        dr = ImageDraw.Draw(canvas)
+        _draw_clouds(dr, clouds, round(travelled * 0.03 + t * 0.3), period, P)
+        _scroll(canvas, far, round(travelled * 0.06), P, period)
+        layer, cell = _cells(canvas)
+        for x0, y0, ph in sheep:
+            _sheep(cell, (x0 - round(travelled * 0.12)) % period, y0, t, ph, cols)
+        for fx, fy, col in flowers:
+            X = (fx - round(travelled * ground_speed(fy * P + P / 2))) % period
+            if X < cols:
+                cell(X, fy, col); cell(X, fy + 1, (70, 120, 52))
+        canvas.alpha_composite(layer)
+    return background, draw_moving
+
+
 STAGES = {'fox': fox_stage, 'hamster': hamster_stage, 'beach': beach_stage, 'hokkaido': hokkaido_stage,
           'antarctica': antarctica_stage, 'park': park_stage, 'forest': forest_stage,
           'sakura': sakura_stage, 'dock': dock_stage, 'backyard': backyard_stage,
-          'farm': farm_stage, 'countryside': countryside_stage, 'trail': trail_stage, 'parkpath': parkpath_stage}
+          'farm': farm_stage, 'countryside': countryside_stage, 'trail': trail_stage, 'parkpath': parkpath_stage,
+          'highlands': highlands_stage, 'fells': fells_stage, 'trial': trial_stage, 'clifftop': clifftop_stage}
 LOOP_POSES = {'curl': 'curl_sleep', 'burrow': 'hide', 'sleep': 'sleep', 'sleep_chick': 'sleep_chick'}
 
 
 def main():
-    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA, 'shiba-black': SHIBA, 'lab': LAB, 'beagle': BEAGLE}.get(ANIMAL)
+    conf = {'hamster': HAMSTER, 'penguin': PENGUIN, 'corgi': CORGI, 'dachshund': DACHSHUND, 'shiba': SHIBA, 'shiba-black': SHIBA, 'lab': LAB, 'beagle': BEAGLE, 'collie': COLLIE}.get(ANIMAL)
     if conf:
         g = globals()
         for key in ('SCALE', 'GROUND_Y', 'HORIZON_Y', 'SEGMENTS'):
